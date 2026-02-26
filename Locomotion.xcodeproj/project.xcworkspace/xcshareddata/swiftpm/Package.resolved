@@ -1,5 +1,5 @@
 {
-  "originHash" : "1fa961aa1dc717cea452f3389668f0f99a254f07e4eb11d190768a53798f744f",
+  "originHash" : "e12e2f52d3df13d92fbbcef0e4273d559a045900d03ae22d0d64a6a136f16111",
   "pins" : [
     {
       "identity" : "swiftlintplugins",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "8a4640d14777685ba8f14e832373160498fbab92",
         "version" : "0.63.2"
+      }
+    },
+    {
+      "identity" : "webrtc-xcframework",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/livekit/webrtc-xcframework.git",
+      "state" : {
+        "revision" : "0cdbbd1731050137dd7f3678c8ee626e1a32570c",
+        "version" : "137.7151.13"
       }
     }
   ],
