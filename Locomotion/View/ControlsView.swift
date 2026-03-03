@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ControlsView: View {
     @Environment(RobotWebRTCClient.self) var client
-    @State private var activeCommand: String? = nil
-    @State private var commandTimer: Timer? = nil
+    @State private var activeCommand: String?
+    @State private var commandTimer: Timer?
 
     var body: some View {
         VStack(spacing: 12) {

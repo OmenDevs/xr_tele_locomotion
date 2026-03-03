@@ -11,17 +11,14 @@ import LiveKitWebRTC
 
 @Observable
  class RobotWebRTCClient: NSObject {
-    
+
     /// The URL of the signaling server used to exchange WebRTC offers and answers.
     /// - Note: Change this to your server's specific IP/hostname (e.g., `https://192.168.1.10:8000/offer`).
-     /// julio: https://10.20.57.233:8000/offer
-     /// can: https://10.20.60.14:8000/offer
-     /// bek: https://10.20.59.24:8000/offer
-    let serverURL: String = "https://10.20.59.24:8000/offer"
-    
+    let serverURL: String = ""
+
     /// The factory used to create peer connections and media tracks.
     let factory: LKRTCPeerConnectionFactory
-    
+
     /// The current active WebRTC peer connection.
     var peerConnection: LKRTCPeerConnection?
     

@@ -77,8 +77,6 @@ struct CameraView: View {
         .task {
             client.connect()
             #if os(visionOS)
-            // Wait for the window system to be ready, then open the controls window
-            try? await Task.sleep(for: .seconds(1))
             openWindow(id: "controls")
             #endif
         }
