@@ -21,7 +21,7 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
         }
         print("📡 Data channel state: \(state)")
     }
-
+    
     /// Called when a message is received from the server on the data channel.
     func dataChannel(_ dataChannel: LKRTCDataChannel, didReceiveMessageWith buffer: LKRTCDataBuffer) {
         if let message = String(data: buffer.data, encoding: .utf8) {
@@ -31,7 +31,7 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
             print("📩 Server: \(message)")
         }
     }
-
+    
     /// Sends a command string to the server via the data channel.
     /// - Parameter command: The command to send (e.g., "forward", "stop").
     func sendCommand(_ command: String) {
@@ -39,7 +39,7 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
               dataChannel.readyState == .open,
               let data = command.data(using: .utf8)
         else { return }
-
+        
         let buffer = LKRTCDataBuffer(data: data, isBinary: false)
         dataChannel.sendData(buffer)
     }
