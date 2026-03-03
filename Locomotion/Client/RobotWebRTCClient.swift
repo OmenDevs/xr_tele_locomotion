@@ -8,7 +8,8 @@
 import LiveKitWebRTC
 
 /// A client that manages a WebRTC connection to a robot, handling video streaming and signaling.
- class RobotWebRTCClient: NSObject {
+@Observable
+class RobotWebRTCClient: NSObject {
 
     /// The URL of the signaling server used to exchange WebRTC offers and answers.
     /// - Note: Change this to your server's specific IP/hostname (e.g., `https://192.168.1.10:8000/offer`).
