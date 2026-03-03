@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct CameraView: View {
-    @State private var client = RobotWebRTCClient()
+    @Environment(RobotWebRTCClient.self) var client
+
+    #if os(visionOS)
+    @Environment(\.openWindow) private var openWindow
+    #endif
 
     var body: some View {
         ZStack {
@@ -33,6 +37,7 @@ struct CameraView: View {
 
             // Status + controls overlay
             VStack {
+                // ── Top bar: connection status ──
                 HStack {
                     Circle()
                         .fill(client.connectionState.contains("✅") ? Color.green : Color.red)
@@ -47,6 +52,13 @@ struct CameraView: View {
 
                 Spacer()
 
+                #if !os(visionOS)
+                // iOS: inline controls at the bottom
+                ControlsView()
+                    .padding(.bottom, 8)
+                #endif
+
+                // ── Connect / Disconnect ──
                 Button {
                     client.connectionState == "Disconnected"
                     ? client.connect()
@@ -62,7 +74,14 @@ struct CameraView: View {
                 .padding()
             }
         }
-        .onAppear { client.connect() }
+        .task {
+            client.connect()
+            #if os(visionOS)
+            // Wait for the window system to be ready, then open the controls window
+            try? await Task.sleep(for: .seconds(1))
+            openWindow(id: "controls")
+            #endif
+        }
         .onDisappear { client.disconnect() }
     }
 }
