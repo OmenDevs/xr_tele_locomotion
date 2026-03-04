@@ -8,10 +8,10 @@
 import LiveKitWebRTC
 
 extension RobotWebRTCClient: LKRTCPeerConnectionDelegate {
-
+    
     /// Called when the ICE connection state changes (e.g., connected, failed).
     func peerConnection(_ peerConnection: LKRTCPeerConnection, didChange newState: LKRTCIceConnectionState) {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             switch newState {
             case .connected:    self.connectionState = "Connected ✅"
             case .checking:     self.connectionState = "Checking..."
@@ -21,13 +21,13 @@ extension RobotWebRTCClient: LKRTCPeerConnectionDelegate {
             }
         }
     }
-
+    
     /// Called when a new media track (video/audio) is received from the remote peer.
     func peerConnection(_ peerConnection: LKRTCPeerConnection,
                         didAdd rtpReceiver: LKRTCRtpReceiver,
                         streams mediaStreams: [LKRTCMediaStream]) {
         if let videoTrack = rtpReceiver.track as? LKRTCVideoTrack {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.remoteVideoTrack = videoTrack
             }
         }
