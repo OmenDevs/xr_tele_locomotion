@@ -12,33 +12,44 @@ WebRTC server that streams a RealSense D435i camera to an iOS/visionOS client, w
 
 ## Setup
 
-### 1. Install dependencies
+### 1. Configure the RealSense backend
 
-```bash
-pip install -r requirements.txt
-```
+**macOS** — Install prerequisites and build `librealsense` locally:
 
-### 2. Set up pyrealsense2
+1. Install prerequisites:
+   ```bash
+   xcode-select --install
+   brew install cmake libusb pkg-config openssl
+   ```
 
-**macOS** — build librealsense locally and place it at the repo root:
-```
-Locomotion/
-└── librealsense/
-    └── build/
-        └── Release/      ← pyrealsense2.so lives here
-```
-Then run with `sudo` (required for USB access on macOS):
-```bash
-sudo python3 Server/app.py
-```
+2. Clone and build `librealsense` inside the project folder:
+   ```bash
+   cd Locomotion
+   git clone https://github.com/realsenseai/librealsense.git
+   cd librealsense
+   mkdir build && cd build
+   cmake .. \
+     -DBUILD_EXAMPLES=true \
+     -DBUILD_GRAPHICAL_EXAMPLES=true \
+     -DFORCE_RSUSB_BACKEND=ON \
+     -DBUILD_PYTHON_BINDINGS=ON \
+     -DPYTHON_EXECUTABLE=$(which python3)
+   make -j2
+   ```
 
-**Ubuntu** — install via pip (no `sudo` needed after setting udev rules):
+**Ubuntu** — Install via pip (no local build needed):
 ```bash
 pip install pyrealsense2
 # Install udev rules (one-time):
 sudo cp librealsense/config/99-realsense-libusb.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
-python3 Server/app.py
+```
+
+### 2. Install Python Server dependencies
+
+```bash
+cd Locomotion/Server
+pip3 install -r requirements.txt
 ```
 
 ### 3. Generate SSL certificates
