@@ -1,69 +1,89 @@
-# Enviar vídeo 📹 y audio 🔊 a través de WebRTC
+# Locomotion — Robot Camera Server 🤖
 
-¡Hola developer 👋🏻! En este branch del repo puedes ver cómo enviar vídeo y audio en tiempo real usando WebRTC y forma parte de mi vídeo [Enviar vídeo 📹 y audio 🔊 a través de WebRTC | Cap. 2](https://youtu.be/JPpmUoAlVRI)
+WebRTC server that streams a RealSense D435i camera to an iOS/visionOS client, with real-time depth, color, and infrared stream switching.
 
-[![enviar vídeo y audio a través de webrtc](https://github.com/user-attachments/assets/5330a7aa-82c4-4f88-a837-ab5747c5dbb7)](https://youtu.be/JPpmUoAlVRI)
+## Requirements
 
-
-## ¿Cómo funciona?
-
-1. **Captura de medios**  
-   El navegador solicita acceso a la cámara y micrófono del usuario usando la API getUserMedia. Así se obtiene el stream de vídeo y audio local.
-
-2. **Conexión peer-to-peer (P2P)**  
-   Se establece una conexión directa entre navegadores usando RTCPeerConnection de WebRTC. Esto permite enviar el vídeo y audio capturados de un usuario a otro sin pasar por un servidor intermedio.
-
-3. **Intercambio de señalización**  
-   Para que los dos puntos puedan conectarse, primero intercambian mensajes de señalización (SDP y ICE candidates). En esta demo, el intercambio se realiza a través de un servidor de señalización simple (por ejemplo, usando Python/AIOHTTP y HTTP).
-
-4. **Transmisión en tiempo real**  
-   Una vez negociada la conexión, el vídeo y audio fluyen directamente entre los peers. La transmisión es segura y con baja latencia.
-
-5. **Visualización**  
-   Los streams de vídeo local y remoto se muestran en la interfaz web usando etiquetas `<video>`, permitiendo la comunicación visual y auditiva en tiempo real.
-
-## Tecnologías utilizadas
-
-- WebRTC (JavaScript) para la comunicación en tiempo real
-- Python (AIOHTTP) para la señalización (negociación inicial)
-- HTML/CSS para la interfaz
+- Python 3.9+
+- Intel RealSense D435i camera
+- [librealsense](https://github.com/IntelRealSense/librealsense) built locally **or** `pyrealsense2` installed via pip (Ubuntu)
 
 ---
 
-¿Te gustaría añadir instrucciones para ejecutar la demo o detalles sobre dependencias? Si necesitas la sección de instalación o uso, dime y te ayudo a escribirla.
+## Setup
 
-## ¿Qué necesitas para empezar? 🛠️
-
-Para ejecutar este proyecto necesitas tener instalado Python 3.9 o superior 🐍.
-
-## Crea un entorno virtual 🛡️
-
-Utiliza un virtual environment para evitar conflictos con otras dependencias de tu sistema.
-
-```bash
-python -m venv venv
-source venv/bin/activate  # En Linux/Mac
-venv\Scripts\activate  # En Windows
-``` 
-
-### Instala las dependencias 📦
-
-Instala las dependencias necesarias:
+### 1. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Crea certificados SSL 🔒
+### 2. Set up pyrealsense2
 
-Cuando trabajamos con WebRTC, es necesario utilizar HTTPS y certificados SSL. Puedes generar certificados autofirmados para propósitos de desarrollo.
+**macOS** — build librealsense locally and place it at the repo root:
+```
+Locomotion/
+└── librealsense/
+    └── build/
+        └── Release/      ← pyrealsense2.so lives here
+```
+Then run with `sudo` (required for USB access on macOS):
+```bash
+sudo python3 Server/app.py
+```
+
+**Ubuntu** — install via pip (no `sudo` needed after setting udev rules):
+```bash
+pip install pyrealsense2
+# Install udev rules (one-time):
+sudo cp librealsense/config/99-realsense-libusb.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger
+python3 Server/app.py
+```
+
+### 3. Generate SSL certificates
+
+WebRTC requires HTTPS. Generate self-signed certs (development only):
 
 ```bash
+cd Server
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
 ```
 
-Para ejecutar el proyecto, utiliza el siguiente comando:
+### 4. Run the server
 
 ```bash
-python app.py
+sudo python3 Server/app.py   # macOS
+python3 Server/app.py        # Ubuntu (after udev rules)
 ```
+
+The server prints its local and network URLs on startup. Use the **Network URL** in the iOS app.
+
+---
+
+## Stream Switching
+
+The client can switch streams in real time over the WebRTC data channel:
+
+| Command | Stream |
+|---|---|
+| `stream:color` | RGB color (default) |
+| `stream:depth` | Colorized depth map |
+| `stream:infrared` | Infrared (grayscale) |
+
+---
+
+## Fallback
+
+If the RealSense camera is not connected, the server automatically falls back to a regular webcam via `MediaPlayer`. Stream switching commands will have no effect in fallback mode.
+
+---
+
+## Files
+
+| File | Description |
+|---|---|
+| `app.py` | WebRTC signaling server, HTTP routes, startup |
+| `realsense_track.py` | RealSense camera pipeline and stream switching |
+| `viewer.py` | Local debug tool — preview streams without WebRTC |
+| `requirements.txt` | Python dependencies |
