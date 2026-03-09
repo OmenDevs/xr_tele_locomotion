@@ -12,7 +12,6 @@ struct LocomotionApp: App {
     @State private var client = RobotWebRTCClient()
 
     var body: some Scene {
-        // visionOS: two separate, independently movable windows
         WindowGroup(id: "camera") {
             CameraView()
                 .environment(client)
@@ -20,7 +19,7 @@ struct LocomotionApp: App {
         .defaultSize(width: 1280, height: 720)
 
         WindowGroup(id: "controls") {
-            ControlsView()
+            PanelView()
                 .environment(client)
         }
         .defaultSize(width: 250, height: 280)

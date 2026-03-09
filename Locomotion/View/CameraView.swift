@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CameraView: View {
     @Environment(RobotWebRTCClient.self) var client
-
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
