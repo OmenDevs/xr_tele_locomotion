@@ -26,10 +26,7 @@ struct ControlsView: View {
             // Backward
             directionButton(symbol: "arrow.down", command: "backward")
 
-            CameraSwitchView()
-                .padding()
         }
-        .padding()
         .onDisappear {
             stopSendingCommand()
         }

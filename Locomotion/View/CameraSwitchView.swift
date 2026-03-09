@@ -21,8 +21,7 @@ struct CameraSwitchView: View {
             }
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal)
-        
+
         /// send stream changes to data channel
         .onChange(of: selectedStream) { _, newValue in
             client.sendCommand("stream:\(newValue.lowercased())")
