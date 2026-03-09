@@ -69,6 +69,7 @@ struct CameraView: View {
             client.connect()
             openWindow(id: "controls")
         }
+        .uniformWindowResize()
         .onDisappear { client.disconnect() }
     }
 }

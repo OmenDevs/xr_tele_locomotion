@@ -47,13 +47,7 @@ extension RobotWebRTCClient {
                 let remoteSdp = LKRTCSessionDescription(type: sdpType, sdp: remoteSdpString)
 
                 // Apply the robot's SDP as the remote description to finalize the handshake
-                self.peerConnection?.setRemoteDescription(remoteSdp) { error in
-                    if let error {
-                        Task { @MainActor in
-                            self.connectionState = "SDP error: \(error.localizedDescription)"
-                        }
-                    }
-                }
+                try await self.peerConnection?.setRemoteDescription(remoteSdp)
             } catch {
                 await MainActor.run {
                     self.connectionState = "Network error: \(error.localizedDescription)"

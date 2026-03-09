@@ -16,6 +16,7 @@ struct LocomotionApp: App {
             CameraView()
                 .environment(client)
         }
+        .defaultSize(width: 1280, height: 720)
 
         WindowGroup(id: "controls") {
             PanelView()
