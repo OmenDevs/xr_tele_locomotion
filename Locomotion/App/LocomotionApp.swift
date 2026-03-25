@@ -12,6 +12,11 @@ struct LocomotionApp: App {
     @State private var client = RobotWebRTCClient()
 
     var body: some Scene {
+        WindowGroup(id: "landing") {
+            LandingView()
+        }
+        .windowStyle(.plain)
+
         WindowGroup(id: "camera") {
             CameraView()
                 .environment(client)
