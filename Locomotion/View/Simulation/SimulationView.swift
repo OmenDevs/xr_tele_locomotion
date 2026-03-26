@@ -10,7 +10,7 @@ import RealityKit
 
 struct SimulationView: View {
     @State private var frameSubscription: EventSubscription?
-    @State private var recording = RecordingViewModel()
+    var recording: RecordingViewModel
     var body: some View {
         RealityView { content in
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -21,9 +21,9 @@ struct SimulationView: View {
     }
     func simulationTick(deltaTime: TimeInterval) {
         // TODO: Get normalize value x,y,w from protocol
-        let xxx = 0.0
-        let yyy = 0.0
-        let www = 0.0
+        let xxx = 0.5
+        let yyy = 0.2
+        let www = -0.8
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
             normalizedVelocityX: xxx,
@@ -34,5 +34,5 @@ struct SimulationView: View {
 }
 
 #Preview {
-    SimulationView()
+    SimulationView(recording: RecordingViewModel())
 }
