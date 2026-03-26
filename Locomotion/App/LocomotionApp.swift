@@ -28,5 +28,10 @@ struct LocomotionApp: App {
                 .environment(client)
         }
         .defaultSize(width: 250, height: 280)
+
+        WindowGroup(id: "simulation") {
+            SimulationView()
+        }
+        .windowStyle(.plain)
     }
 }

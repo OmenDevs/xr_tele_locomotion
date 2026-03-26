@@ -17,7 +17,7 @@ struct LandingView: View {
                 openWindow(id: "camera")
             }
             Button("Start Simulation") {
-                openWindow(id: "...")
+                openWindow(id: "simulation")
             }
         }
     }
