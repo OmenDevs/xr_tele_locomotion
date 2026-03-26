@@ -39,5 +39,10 @@ struct LocomotionApp: App {
             DashboardView(recording: recording)
         }
         .windowStyle(.plain)
+
+        WindowGroup(id: "log") {
+            LogView(recording: recording)
+        }
+        .windowStyle(.plain)
     }
 }
