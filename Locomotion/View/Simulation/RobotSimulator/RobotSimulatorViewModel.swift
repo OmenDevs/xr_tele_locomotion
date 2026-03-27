@@ -10,7 +10,7 @@ import Foundation
 @Observable
 class RobotSimulatorViewModel {
 
-    private var isSimulatorActive: Bool = true
+    private(set) var isSimulatorActive: Bool = true
 
     private var normalizedVelocityX: Double = 0.0
     private var normalizedVelocityY: Double = 0.0
