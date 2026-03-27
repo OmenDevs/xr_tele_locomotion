@@ -10,6 +10,7 @@ import RealityKit
 
 struct SimulationView: View {
     @State private var frameSubscription: EventSubscription?
+    @State private var robotSimulator = RobotSimulatorViewModel()
     var recording: RecordingViewModel
     var body: some View {
         RealityView { content in
@@ -29,7 +30,11 @@ struct SimulationView: View {
             normalizedVelocityX: xxx,
             normalizedVelocityY: yyy,
             normalizedAngularVelocity: www)
-        // TODO: Give value to the simulator
+        robotSimulator.updateInputs(
+            normalizedVelocityX: xxx,
+            normalizedVelocityY: yyy,
+            normalizedAngularVelocity: www)
+        robotSimulator.update(deltaTime: deltaTime)
     }
 }
 
