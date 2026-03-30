@@ -7,12 +7,12 @@
 
 import SwiftUI
 import RealityKit
-import Combine
 
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
 
+    var recording: RecordingViewModel
     var body: some View {
         RealityView { content in
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -26,15 +26,22 @@ struct SimulationView: View {
     }
     func simulationTick(deltaTime: TimeInterval) {
         // TODO: Get normalize value x,y,w from protocol
+
         let velocityX = InputViewModel.shared.velocityX
         let velocityY = InputViewModel.shared.velocityY
         let angularVelocity = InputViewModel.shared.angularVelocity
         
         // TODO: Save value x,y,w
+        recording.addTelemetryEntry(
+            deltaTime: deltaTime,
+            normalizedVelocityX: velocityX,
+            normalizedVelocityY: velocityY,
+            normalizedAngularVelocity: angularVelocity)
+
         // TODO: Give value to the simulator
     }
 }
 
 #Preview {
-    SimulationView()
+    SimulationView(recording: RecordingViewModel())
 }
