@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct LocomotionApp: App {
     @State private var client = RobotWebRTCClient()
+    @State private var input = InputViewModel.shared
     @State private var recording = RecordingViewModel()
 
     var body: some Scene {
@@ -44,5 +45,12 @@ struct LocomotionApp: App {
             LogView(recording: recording)
         }
         .windowStyle(.plain)
+
+        WindowGroup(id: "joystick") {
+            ControlPanelView()
+                .environment(input)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 620, height: 400)
     }
 }
