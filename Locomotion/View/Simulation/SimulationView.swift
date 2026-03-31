@@ -19,6 +19,8 @@ struct SimulationView: View {
             let material = SimpleMaterial(color: .cyan, roughness: 0.5, isMetallic: false)
             let robot = ModelEntity(mesh: mesh, materials: [material])
             robot.name = "robot"
+            robotSimulator.robotY = -1.0
+            robot.position = SIMD3<Float>(0, 1, -1)
             content.add(robot)
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -28,7 +30,7 @@ struct SimulationView: View {
                 guard let robot = event.scene.findEntity(named: "robot") else { return }
                                 robot.position = SIMD3<Float>(
                                     Float(robotSimulator.robotX),
-                                    0,
+                                    1,
                                     Float(robotSimulator.robotY)
                                 )
                                 robot.orientation = simd_quatf(
