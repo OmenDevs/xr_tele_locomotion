@@ -15,12 +15,13 @@ struct SimulationView: View {
     var recording: RecordingViewModel
     var body: some View {
         RealityView { content in
-            let mesh = MeshResource.generateBox(size: 0.3)
-            let material = SimpleMaterial(color: .cyan, roughness: 0.5, isMetallic: false)
-            let robot = ModelEntity(mesh: mesh, materials: [material])
+            guard let robot = try? await Entity(named: "Mech_Drone", in: Bundle.main) else { return }
             robot.name = "robot"
             robotSimulator.robotY = -1.0
             robot.position = SIMD3<Float>(0, 1, -1)
+            for animation in robot.availableAnimations {
+                robot.playAnimation(animation.repeat())
+            }
             content.add(robot)
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
