@@ -59,7 +59,7 @@ struct SimulationView: View {
             normalizedAngularVelocity: angularVelocity)
         robotSimulator.updateInputs(
             normalizedVelocityX: velocityX,
-            normalizedVelocityY: velocityY,
+            normalizedVelocityY: -velocityY,
             normalizedAngularVelocity: angularVelocity)
         robotSimulator.update(deltaTime: deltaTime)
     }
