@@ -12,8 +12,8 @@ class RecordingViewModel {
     var telemetry: [TelemetryEntry] = []
 
     private var timeSinceLastRecord: TimeInterval = 0
-    private let recordInterval: TimeInterval = 0.1
-    private let maxEntries = 3000
+    private let recordInterval: TimeInterval = 0.2
+    private let maxEntries = 100
 
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
