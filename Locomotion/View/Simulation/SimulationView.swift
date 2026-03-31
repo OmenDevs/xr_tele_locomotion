@@ -9,6 +9,7 @@ import SwiftUI
 import RealityKit
 
 struct SimulationView: View {
+    @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
     @State private var robotSimulator = RobotSimulatorViewModel()
     var recording: RecordingViewModel
@@ -37,21 +38,27 @@ struct SimulationView: View {
             }
 
         }
+        .onAppear {
+            openWindow(id: "joystick")
+        }
     }
     func simulationTick(deltaTime: TimeInterval) {
         // TODO: Get normalize value x,y,w from protocol
-        let xxx = 0.5
-        let yyy = 0.2
-        let www = -0.8
+
+        let velocityX = InputViewModel.shared.velocityX
+        let velocityY = InputViewModel.shared.velocityY
+        let angularVelocity = InputViewModel.shared.angularVelocity
+        
+        // TODO: Save value x,y,w
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
-            normalizedVelocityX: xxx,
-            normalizedVelocityY: yyy,
-            normalizedAngularVelocity: www)
+            normalizedVelocityX: velocityX,
+            normalizedVelocityY: velocityY,
+            normalizedAngularVelocity: angularVelocity)
         robotSimulator.updateInputs(
-            normalizedVelocityX: xxx,
-            normalizedVelocityY: yyy,
-            normalizedAngularVelocity: www)
+            normalizedVelocityX: velocityX,
+            normalizedVelocityY: velocityY,
+            normalizedAngularVelocity: angularVelocity)
         robotSimulator.update(deltaTime: deltaTime)
     }
 }
