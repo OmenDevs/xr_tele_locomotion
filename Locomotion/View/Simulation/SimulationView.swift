@@ -45,13 +45,10 @@ struct SimulationView: View {
         }
     }
     func simulationTick(deltaTime: TimeInterval) {
-        // TODO: Get normalize value x,y,w from protocol
-
         let velocityX = InputViewModel.shared.velocityX
         let velocityY = InputViewModel.shared.velocityY
         let angularVelocity = InputViewModel.shared.angularVelocity
-        
-        // TODO: Save value x,y,w
+
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
             normalizedVelocityX: velocityX,
