@@ -24,8 +24,8 @@ class RobotSimulatorViewModel {
     private var velocityY: Double = 0.0       // m/s
     private var angularVelocity: Double = 0.0 // rad/s
 
-    let maxLinearSpeed: Double  = 3.0   // m/s
-    let maxAngularSpeed: Double = 2.0   // rad/s
+    let maxLinearSpeed: Double  = 1.0   // m/s
+    let maxAngularSpeed: Double = 0.5   // rad/s
 
     func updateInputs(normalizedVelocityX: Double, normalizedVelocityY: Double, normalizedAngularVelocity: Double) {
         self.normalizedVelocityX = normalizedVelocityX
