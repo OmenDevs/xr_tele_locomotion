@@ -33,7 +33,6 @@ struct LocomotionApp: App {
         ImmersiveSpace(id: "simulation") {
             SimulationView(recording: recording)
         }
-        .windowStyle(.plain)
 
         WindowGroup(id: "dashboard") {
             DashboardView(recording: recording)
