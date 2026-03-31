@@ -78,3 +78,5 @@ build/
 
 # TLS certificates
 *.pem
+
+__pycache__/

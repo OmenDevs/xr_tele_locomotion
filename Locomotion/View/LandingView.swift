@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LandingView: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
 
     var body: some View {
         Text("Hello, World!")
@@ -17,9 +18,11 @@ struct LandingView: View {
                 openWindow(id: "camera")
             }
             Button("Start Simulation") {
-                openWindow(id: "simulation")
-                openWindow(id: "dashboard")
-                openWindow(id: "log")
+                Task {
+                    await openImmersiveSpace(id: "simulation")
+                    openWindow(id: "dashboard")
+                    // openWindow(id: "log")
+                }
             }
         }
     }

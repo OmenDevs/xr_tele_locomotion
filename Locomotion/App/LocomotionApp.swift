@@ -31,10 +31,9 @@ struct LocomotionApp: App {
         }
         .defaultSize(width: 250, height: 280)
 
-        WindowGroup(id: "simulation") {
+        ImmersiveSpace(id: "simulation") {
             SimulationView(recording: recording)
         }
-        .windowStyle(.plain)
 
         WindowGroup(id: "dashboard") {
             DashboardView(recording: recording)
