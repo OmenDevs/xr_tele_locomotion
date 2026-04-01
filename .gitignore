@@ -79,4 +79,5 @@ build/
 # TLS certificates
 *.pem
 
+.vscode/
 __pycache__/

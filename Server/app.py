@@ -70,10 +70,7 @@ def get_camera_track():
 
 async def home(request):
     """For serving the main HTML page"""
-    return web.Response(
-        text="<h2>🤖 Robot Camera Server</h2><p>POST to /offer to connect.</p>",
-        content_type="text/html",
-    )
+    return web.FileResponse('static/index.html')
 
 
 async def offer(request):
@@ -244,7 +241,7 @@ def build_ssl_context():
     ctx.load_cert_chain(certfile=CERT_FILE, keyfile=KEY_FILE)
     return ctx
 
-
+app.router.add_static('/static/', os.path.join(ROOT, 'static'), show_index=True) 
 app.router.add_get("/", home)
 app.router.add_post("/offer", offer)
 app.router.add_post("/stop", stop)
