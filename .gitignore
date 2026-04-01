@@ -77,9 +77,7 @@ Server/recordings/
 build/
 
 # TLS certificates
-*.pemù
-
-
+*.pem
 
 .vscode/
 __pycache__/
