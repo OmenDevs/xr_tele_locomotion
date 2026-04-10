@@ -22,15 +22,30 @@ struct LandingView: View {
                }
         HStack {
             Button("Start RobotControl") {
-                openWindow(id: "camera")
+                Task { await openRobotControl() }
             }
             Button("Start Simulation") {
-                Task {
-                    await openImmersiveSpace(id: "simulation")
-                    openWindow(id: "dashboard")
-                    // openWindow(id: "log")
-                }
+                Task { await openSimulation() }
             }
+        }
+    }
+    // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
+    // Inmersive protocolos need to be added inside TeleoperationView(). For more information: Julio
+    private func openRobotControl() async {
+        openWindow(id: "camera")
+        if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
+            openWindow(id: "joystick")
+        } else {
+            await openImmersiveSpace(id: "teleoperation")
+        }
+    }
+    // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
+    // Inmersive protocolos need to be added inside simulationView(). For more information: Julio
+    private func openSimulation() async {
+        await openImmersiveSpace(id: "simulation")
+        openWindow(id: "dashboard")
+        if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
+            openWindow(id: "joystick")
         }
     }
 }

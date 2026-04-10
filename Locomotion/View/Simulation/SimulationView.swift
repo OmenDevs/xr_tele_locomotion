@@ -42,9 +42,6 @@ struct SimulationView: View {
             }
 
         }
-        .onAppear {
-            openWindow(id: "joystick")
-        }
     }
     func simulationTick(deltaTime: TimeInterval) {
         let velocityX = InputViewModel.shared.velocityX
