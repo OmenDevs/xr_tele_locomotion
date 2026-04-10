@@ -34,6 +34,11 @@ struct LocomotionApp: App {
         }
         .defaultSize(width: 250, height: 280)
 
+        ImmersiveSpace(id: "teleoperation") {
+            TeleoperationView()
+                .environment(interactionConfig)
+        }
+
         ImmersiveSpace(id: "simulation") {
             SimulationView(recording: recording)
                 .environment(interactionConfig)
