@@ -89,7 +89,6 @@ struct JoystickView: View {
             .animation(.interactiveSpring(response: 0.2), value: thumbOffset)
     }
 
-
     private var sublabelFooter: some View {
         Text(sublabel)
             .font(.system(size: 9, weight: .regular, design: .monospaced))
