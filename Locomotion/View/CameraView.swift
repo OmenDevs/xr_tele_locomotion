@@ -10,6 +10,7 @@ import SwiftUI
 struct CameraView: View {
     @Environment(RobotWebRTCClient.self) var client
     @Environment(\.openWindow) private var openWindow
+    @Environment(InteractionConfig.self) private var interactionConfig
 
     var body: some View {
         ZStack {

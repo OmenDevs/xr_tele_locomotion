@@ -12,6 +12,7 @@ struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
     @State private var robotSimulator = RobotSimulatorViewModel()
+    @Environment(InteractionConfig.self) private var interactionConfig
     var recording: RecordingViewModel
     var body: some View {
         RealityView { content in
@@ -40,9 +41,6 @@ struct SimulationView: View {
                                 )
             }
 
-        }
-        .onAppear {
-            openWindow(id: "joystick")
         }
     }
     func simulationTick(deltaTime: TimeInterval) {
