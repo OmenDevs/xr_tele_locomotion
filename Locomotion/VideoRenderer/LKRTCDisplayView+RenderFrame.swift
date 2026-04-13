@@ -8,7 +8,7 @@
 import LiveKitWebRTC
 
 extension LKRTCDisplayView {
-    
+
     /// Processes and renders a video frame.
     ///
     /// This method converts the pixel buffer into a `CMSampleBuffer`, adds timing metadata,
@@ -25,7 +25,7 @@ extension LKRTCDisplayView {
             presentationTimeStamp: CMClockGetTime(CMClockGetHostTimeClock()),
             decodeTimeStamp: .invalid
         )
-        
+
         // Create a video format description from the image buffer
         var formatDesc: CMVideoFormatDescription?
         CMVideoFormatDescriptionCreateForImageBuffer(
@@ -47,18 +47,18 @@ extension LKRTCDisplayView {
             sampleTiming: &timing,
             sampleBufferOut: &sampleBuffer
         )
-        
+
         guard let sampleBuffer else { return }
 
         // Enqueue the frame to the layer on the main thread
         Task { @MainActor [weak self] in
             guard let self else { return }
-            
+
             // If the renderer enters a failed state (e.g., due to backgrounding), flush it
             if self.sampleBufferLayer.sampleBufferRenderer.status == .failed {
                 self.sampleBufferLayer.sampleBufferRenderer.flush()
             }
-            
+
             self.sampleBufferLayer.sampleBufferRenderer.enqueue(sampleBuffer)
         }
     }

@@ -10,26 +10,55 @@ import SwiftUI
 @main
 struct LocomotionApp: App {
     @State private var client = RobotWebRTCClient()
+    @State private var input = InputViewModel.shared
+    @State private var recording = RecordingViewModel()
+    @State private var interactionConfig = InteractionConfig()
 
     var body: some Scene {
-        #if os(visionOS)
-        // visionOS: two separate, independently movable windows
+        WindowGroup(id: "landing") {
+            LandingView()
+                .environment(interactionConfig)
+        }
+        .windowStyle(.plain)
+
         WindowGroup(id: "camera") {
             CameraView()
                 .environment(client)
+                .environment(interactionConfig)
         }
+        .defaultSize(width: 1280, height: 720)
 
         WindowGroup(id: "controls") {
-            ControlsView()
+            PanelView()
                 .environment(client)
         }
         .defaultSize(width: 250, height: 280)
-        #else
-        // iOS / macOS: single window with inline controls
-        WindowGroup {
-            CameraView()
-                .environment(client)
+
+        ImmersiveSpace(id: "teleoperation") {
+            TeleoperationView()
+                .environment(interactionConfig)
         }
-        #endif
+
+        ImmersiveSpace(id: "simulation") {
+            SimulationView(recording: recording)
+                .environment(interactionConfig)
+        }
+
+        WindowGroup(id: "dashboard") {
+            DashboardView(recording: recording)
+        }
+        .windowStyle(.plain)
+
+        WindowGroup(id: "log") {
+            LogView(recording: recording)
+        }
+        .windowStyle(.plain)
+
+        WindowGroup(id: "joystick") {
+            ControlPanelView()
+                .environment(input)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 620, height: 400)
     }
 }

@@ -65,3 +65,19 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+librealsense/
+
+*.pem
+Server/recordings/
+
+*.mp4
+*.bag
+*.log
+build/
+
+# TLS certificates
+*.pem
+
+.vscode/
+__pycache__/

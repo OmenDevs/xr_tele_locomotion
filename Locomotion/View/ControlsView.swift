@@ -25,14 +25,14 @@ struct ControlsView: View {
 
             // Backward
             directionButton(symbol: "arrow.down", command: "backward")
+
         }
-        .padding()
         .onDisappear {
             stopSendingCommand()
         }
     }
 
-    // MARK: - Direction Button (Dead-Man's Switch)
+    // MARK: - Direction Button
 
     @ViewBuilder
     private func directionButton(symbol: String, command: String) -> some View {
