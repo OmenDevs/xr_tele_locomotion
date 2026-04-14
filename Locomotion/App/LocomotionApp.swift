@@ -37,6 +37,8 @@ struct LocomotionApp: App {
         ImmersiveSpace(id: "teleoperation") {
             TeleoperationView()
                 .environment(interactionConfig)
+                .environment(client)
+                .environment(input)
         }
 
         ImmersiveSpace(id: "simulation") {
