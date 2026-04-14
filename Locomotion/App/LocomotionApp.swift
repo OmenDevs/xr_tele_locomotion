@@ -55,7 +55,7 @@ struct LocomotionApp: App {
         .windowStyle(.plain)
 
         WindowGroup(id: "joystick") {
-            ControlPanelView()
+            ControlPanelView(client: client)
                 .environment(input)
         }
         .windowStyle(.plain)

@@ -10,8 +10,6 @@ import SwiftUI
 struct PanelView: View {
     var body: some View {
         VStack(spacing: 10) {
-            ControlsView()
-
             CameraSwitchView()
         }
         .padding()
