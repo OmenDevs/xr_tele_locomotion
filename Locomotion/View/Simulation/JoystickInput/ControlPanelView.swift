@@ -2,16 +2,19 @@
 //  ControlPanelView.swift
 //  Locomotion
 //
-//  Migrated from Robot Pilot – cleaned for Locomotion.
+//  Created by Bekhruzjon Hakmirzaev on 26/03/26.
 //
 
 import SwiftUI
 
 /// Joystick control panel: two sticks + three velocity readouts.
-/// Only handles Part 1 — producing velocityX, velocityY, angularVelocity.
+/// Only handles — producing velocityX, velocityY, angularVelocity.
 struct ControlPanelView: View {
 
     @Environment(InputViewModel.self) private var input
+    var client: RobotWebRTCClient?
+
+    @State private var sendTimer: Timer?
 
     private let blue  = Color(red: 0.35, green: 0.78, blue: 1.00)
     private let green = Color(red: 0.20, green: 0.90, blue: 0.55)
@@ -46,6 +49,9 @@ struct ControlPanelView: View {
         }
         .padding(20)
         .glassBackgroundEffect()
+        .onChange(of: input.velocityX) { onJoystickChanged() }
+        .onChange(of: input.velocityY) { onJoystickChanged() }
+        .onChange(of: input.angularVelocity) { onJoystickChanged() }
     }
 
     // MARK: - HUD bar
@@ -121,6 +127,36 @@ struct ControlPanelView: View {
                     .stroke(color.opacity(0.18), lineWidth: 0.5)
             )
     }
+
+    /// Called when any joystick value changes.
+    /// Sends 5 commands in 1 second while held; sends one final zero on release.
+    private func onJoystickChanged() {
+        let isActive = input.velocityX != 0
+            || input.velocityY != 0
+            || input.angularVelocity != 0
+
+        if isActive {
+            guard sendTimer == nil else { return }
+            sendVelocity()
+            sendTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+                Task { @MainActor in
+                    sendVelocity()
+                }
+            }
+        } else {
+            sendTimer?.invalidate()
+            sendTimer = nil
+            sendVelocity()
+        }
+    }
+
+    private func sendVelocity() {
+        client?.sendVelocity(
+            velocityX: input.velocityX,
+            velocityY: input.velocityY,
+            omega: input.angularVelocity
+        )
+    }
 }
 
 // MARK: - Metric Card
@@ -164,7 +200,7 @@ struct MetricCardView: View {
 }
 
 #Preview {
-    ControlPanelView()
+    ControlPanelView(client: nil)
         .environment(InputViewModel())
         .frame(width: 720, height: 400)
 }

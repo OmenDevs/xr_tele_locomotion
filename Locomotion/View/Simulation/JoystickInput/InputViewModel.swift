@@ -10,9 +10,7 @@ import Observation
 
 /// Observable source of truth for joystick input → normalized velocities.
 ///
-/// **Your part (Part 1):** Produce `velocityX`, `velocityY`, `angularVelocity`
-/// from joystick input. Teammates will later consume these values for
-/// Part 2 (save) and Part 3 (send to simulator).
+/// Produce `velocityX`, `velocityY`, `angularVelocity` from joystick input.
 @Observable @MainActor
 final class InputViewModel {
 

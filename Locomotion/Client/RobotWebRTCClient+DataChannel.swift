@@ -43,4 +43,11 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
         let buffer = LKRTCDataBuffer(data: data, isBinary: false)
         dataChannel.sendData(buffer)
     }
+
+    /// Sends joystick velocity values as JSON via the data channel.
+    /// Format: `{"vx": 0.0, "vy": 0.0, "omega": 0.0}`
+    func sendVelocity(velocityX: Double, velocityY: Double, omega: Double) {
+        let json = String(format: "{\"vx\": %.2f, \"vy\": %.2f, \"omega\": %.2f}", velocityX, velocityY, omega)
+        sendCommand(json)
+    }
 }
