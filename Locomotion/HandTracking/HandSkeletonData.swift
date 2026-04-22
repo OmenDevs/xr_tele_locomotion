@@ -57,7 +57,7 @@ class HandSkeletonData {
                 return
             }
             if isLeftPinch {
-                if pinchDistance > Self.pinchExitThreshold  { isLeftPinch = false }
+                if pinchDistance > Self.pinchExitThreshold { isLeftPinch = false }
             } else {
                 if pinchDistance < Self.pinchEnterThreshold { isLeftPinch = true  }
             }
@@ -67,7 +67,7 @@ class HandSkeletonData {
                 return
             }
             if isRightPinch {
-                if pinchDistance > Self.pinchExitThreshold  { isRightPinch = false }
+                if pinchDistance > Self.pinchExitThreshold { isRightPinch = false }
             } else {
                 if pinchDistance < Self.pinchEnterThreshold { isRightPinch = true  }
             }
