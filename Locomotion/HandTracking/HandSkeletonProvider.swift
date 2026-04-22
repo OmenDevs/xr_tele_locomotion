@@ -1,25 +1,7 @@
 //
 //  HandSkeletonProvider.swift
-//  Extracting files
-//
-//  The ARKit half of the extraction.
-//
-//  - Runs an ARKitSession with a HandTrackingProvider.
-//  - For every HandAnchor update, reads every joint's
-//    `anchorFromJointTransform`, composes it with
-//    `originFromAnchorTransform` to get world-space, and writes the
-//    result into HandSkeletonData.
-//  - Also runs a simple fist heuristic (middle-finger tip closer to
-//    the wrist than the middle-finger knuckle).
-//  - If a visualizer is attached, forwards joint transforms to it so
-//    per-joint spheres follow the hand.
-//
-//  Nothing here is RealityKit-dependent; you can strip the visualizer
-//  block out entirely if you only want data.
-//
 
 import ARKit
-import simd
 
 @MainActor
 final class HandSkeletonProvider {
@@ -49,31 +31,20 @@ final class HandSkeletonProvider {
                 let joint = skeleton.joint(jointName)
                 guard joint.isTracked else { continue }
                 joints[jointName] = anchorTransform * joint.anchorFromJointTransform
-            }
 
-            let isFist = detectFist(skeleton: skeleton)
+                if jointName == .thumbTip || jointName == .indexFingerTip {
+                        let ttt = joints[jointName]!          // safe: we just assigned it above
+                        let pos = SIMD3<Float>(ttt.columns.3.x, ttt.columns.3.y, ttt.columns.3.z)
+                        print("[\(anchor.chirality)] \(jointName): \(pos)")
+                    }
+            }
 
             switch anchor.chirality {
             case .left:
                 skeletonData?.leftJoints = joints
-                skeletonData?.isLeftFist = isFist
             case .right:
                 skeletonData?.rightJoints = joints
-                skeletonData?.isRightFist = isFist
             }
         }
-    }
-
-    private func detectFist(skeleton: HandSkeleton) -> Bool {
-        let wrist         = localPosition(of: skeleton.joint(.wrist))
-        let middleTip     = localPosition(of: skeleton.joint(.middleFingerTip))
-        let middleKnuckle = localPosition(of: skeleton.joint(.middleFingerKnuckle))
-
-        return simd_length(middleTip - wrist) < simd_length(middleKnuckle - wrist)
-    }
-
-    private func localPosition(of joint: HandSkeleton.Joint) -> SIMD3<Float> {
-        let anchorJoint = joint.anchorFromJointTransform
-        return SIMD3<Float>(anchorJoint.columns.3.x, anchorJoint.columns.3.y, anchorJoint.columns.3.z)
     }
 }
