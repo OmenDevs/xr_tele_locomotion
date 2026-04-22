@@ -20,16 +20,20 @@ final class HandSkeletonProvider {
         }
 
         for await update in handTrackingProvider.anchorUpdates {
-            let anchor = update.anchor
-            guard anchor.isTracked else { continue }
-            updateSkeletonData(from: anchor)
+            updateSkeletonData(from: update.anchor)
         }
     }
 
     private func updateSkeletonData(from anchor: HandAnchor) {
-        guard let skeleton = anchor.handSkeleton else { return }
-        let anchorTransform = anchor.originFromAnchorTransform
+        guard anchor.isTracked, let skeleton = anchor.handSkeleton else {
+            switch anchor.chirality {
+            case .left:  skeletonData?.isLeftTracked  = false
+            case .right: skeletonData?.isRightTracked = false
+            }
+            return
+        }
 
+        let anchorTransform = anchor.originFromAnchorTransform
         let thumbTip      = jointTransform(of: .thumbTip,
                                            in: skeleton,
                                            anchorTransform: anchorTransform)
@@ -45,15 +49,17 @@ final class HandSkeletonProvider {
 
         switch anchor.chirality {
         case .left:
-            skeletonData?.leftThumbTip      = thumbTip
-            skeletonData?.leftMiddleTip     = middleTip
-            skeletonData?.leftMiddleKnuckle = middleKnuckle
-            skeletonData?.leftWrist         = wrist
+            if let tip = thumbTip { skeletonData?.leftThumbTip = tip }
+            if let tip = middleTip { skeletonData?.leftMiddleTip = tip }
+            if let tip = middleKnuckle { skeletonData?.leftMiddleKnuckle = tip }
+            if let tip = wrist { skeletonData?.leftWrist = tip }
+            skeletonData?.isLeftTracked = true
         case .right:
-            skeletonData?.rightThumbTip      = thumbTip
-            skeletonData?.rightMiddleTip     = middleTip
-            skeletonData?.rightMiddleKnuckle = middleKnuckle
-            skeletonData?.rightWrist         = wrist
+            if let tip = thumbTip { skeletonData?.rightThumbTip = tip }
+            if let tip = middleTip { skeletonData?.rightMiddleTip = tip }
+            if let tip = middleKnuckle { skeletonData?.rightMiddleKnuckle = tip }
+            if let tip = wrist { skeletonData?.rightWrist = tip }
+            skeletonData?.isRightTracked = true
         }
     }
 
