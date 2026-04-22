@@ -43,14 +43,35 @@ class HandSkeletonData {
         return distance(between: rightThumbTip, and: rightMiddleTip)
     }
 
-    var isLeftPinch: Bool {
-        guard isLeftTracked, let leftPinchDistance else { return false }
-        return leftPinchDistance < 0.03
-    }
+    var isLeftPinch: Bool = false
+    var isRightPinch: Bool = false
 
-    var isRightPinch: Bool {
-        guard isRightTracked, let rightPinchDistance else { return false }
-        return rightPinchDistance < 0.03
+    private static let pinchEnterThreshold: Float = 0.02   // engage  at 2 cm
+    private static let pinchExitThreshold: Float = 0.04   // release at 4 cm
+
+    func updatePinch(for chirality: HandAnchor.Chirality) {
+        switch chirality {
+        case .left:
+            guard isLeftTracked, let pinchDistance = leftPinchDistance else {
+                isLeftPinch = false
+                return
+            }
+            if isLeftPinch {
+                if pinchDistance > Self.pinchExitThreshold  { isLeftPinch = false }
+            } else {
+                if pinchDistance < Self.pinchEnterThreshold { isLeftPinch = true  }
+            }
+        case .right:
+            guard isRightTracked, let pinchDistance = rightPinchDistance else {
+                isRightPinch = false
+                return
+            }
+            if isRightPinch {
+                if pinchDistance > Self.pinchExitThreshold  { isRightPinch = false }
+            } else {
+                if pinchDistance < Self.pinchEnterThreshold { isRightPinch = true  }
+            }
+        }
     }
 
     private func distance(between aAnchor: simd_float4x4, and bAnchor: simd_float4x4) -> Float {

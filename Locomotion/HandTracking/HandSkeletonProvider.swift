@@ -30,6 +30,7 @@ final class HandSkeletonProvider {
             case .left:  skeletonData?.isLeftTracked  = false
             case .right: skeletonData?.isRightTracked = false
             }
+            skeletonData?.updatePinch(for: anchor.chirality)
             return
         }
 
@@ -61,6 +62,7 @@ final class HandSkeletonProvider {
             if let tip = wrist { skeletonData?.rightWrist = tip }
             skeletonData?.isRightTracked = true
         }
+        skeletonData?.updatePinch(for: anchor.chirality)
     }
 
     private func jointTransform(of jointName: HandSkeleton.JointName,
