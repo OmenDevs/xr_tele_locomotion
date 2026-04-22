@@ -13,7 +13,12 @@ struct SimulationView: View {
     @State private var frameSubscription: EventSubscription?
     @State private var robotSimulator = RobotSimulatorViewModel()
     @Environment(InteractionConfig.self) private var interactionConfig
+
+    @State private var handSkeletonProvider = HandSkeletonProvider()
+    @Environment(HandSkeletonData.self) private var skeletonData
+
     var recording: RecordingViewModel
+
     var body: some View {
         RealityView { content in
             guard let robot = try? await Entity(named: "Mech_Drone", in: Bundle.main) else { return }
@@ -24,6 +29,9 @@ struct SimulationView: View {
                 robot.playAnimation(animation.repeat())
             }
             content.add(robot)
+
+            handSkeletonProvider.skeletonData = skeletonData
+            Task { await handSkeletonProvider.start() }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
