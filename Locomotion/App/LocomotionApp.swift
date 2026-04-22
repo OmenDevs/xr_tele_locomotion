@@ -13,6 +13,7 @@ struct LocomotionApp: App {
     @State private var input = InputViewModel.shared
     @State private var recording = RecordingViewModel()
     @State private var interactionConfig = InteractionConfig()
+    @State private var skeletonData = HandSkeletonData()
 
     var body: some Scene {
         WindowGroup(id: "landing") {
@@ -37,11 +38,13 @@ struct LocomotionApp: App {
         ImmersiveSpace(id: "teleoperation") {
             TeleoperationView()
                 .environment(interactionConfig)
+                .environment(skeletonData)
         }
 
         ImmersiveSpace(id: "simulation") {
             SimulationView(recording: recording)
                 .environment(interactionConfig)
+                .environment(skeletonData)
         }
 
         WindowGroup(id: "dashboard") {
