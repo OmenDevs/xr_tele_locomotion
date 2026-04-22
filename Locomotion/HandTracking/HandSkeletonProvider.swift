@@ -21,30 +21,47 @@ final class HandSkeletonProvider {
 
         for await update in handTrackingProvider.anchorUpdates {
             let anchor = update.anchor
-            guard anchor.isTracked, let skeleton = anchor.handSkeleton else { continue }
-
-            let anchorTransform = anchor.originFromAnchorTransform
-            var joints: [HandSkeleton.JointName: simd_float4x4] = [:]
-            joints.reserveCapacity(HandSkeleton.JointName.allCases.count)
-
-            for jointName in HandSkeleton.JointName.allCases {
-                let joint = skeleton.joint(jointName)
-                guard joint.isTracked else { continue }
-                joints[jointName] = anchorTransform * joint.anchorFromJointTransform
-
-                if jointName == .thumbTip || jointName == .indexFingerTip {
-                        let ttt = joints[jointName]!          // safe: we just assigned it above
-                        let pos = SIMD3<Float>(ttt.columns.3.x, ttt.columns.3.y, ttt.columns.3.z)
-                        print("[\(anchor.chirality)] \(jointName): \(pos)")
-                    }
-            }
-
-            switch anchor.chirality {
-            case .left:
-                skeletonData?.leftJoints = joints
-            case .right:
-                skeletonData?.rightJoints = joints
-            }
+            guard anchor.isTracked else { continue }
+            updateSkeletonData(from: anchor)
         }
+    }
+
+    private func updateSkeletonData(from anchor: HandAnchor) {
+        guard let skeleton = anchor.handSkeleton else { return }
+        let anchorTransform = anchor.originFromAnchorTransform
+
+        let thumbTip      = jointTransform(of: .thumbTip,
+                                           in: skeleton,
+                                           anchorTransform: anchorTransform)
+        let middleTip     = jointTransform(of: .middleFingerTip,
+                                           in: skeleton,
+                                           anchorTransform: anchorTransform)
+        let middleKnuckle = jointTransform(of: .middleFingerKnuckle,
+                                           in: skeleton,
+                                           anchorTransform: anchorTransform)
+        let wrist         = jointTransform(of: .wrist,
+                                           in: skeleton,
+                                           anchorTransform: anchorTransform)
+
+        switch anchor.chirality {
+        case .left:
+            skeletonData?.leftThumbTip      = thumbTip
+            skeletonData?.leftMiddleTip     = middleTip
+            skeletonData?.leftMiddleKnuckle = middleKnuckle
+            skeletonData?.leftWrist         = wrist
+        case .right:
+            skeletonData?.rightThumbTip      = thumbTip
+            skeletonData?.rightMiddleTip     = middleTip
+            skeletonData?.rightMiddleKnuckle = middleKnuckle
+            skeletonData?.rightWrist         = wrist
+        }
+    }
+
+    private func jointTransform(of jointName: HandSkeleton.JointName,
+                                in skeleton: HandSkeleton,
+                                anchorTransform: simd_float4x4) -> simd_float4x4? {
+        let joint = skeleton.joint(jointName)
+        guard joint.isTracked else { return nil }
+        return anchorTransform * joint.anchorFromJointTransform
     }
 }
