@@ -37,39 +37,49 @@ class HandSkeletonData {
         guard isLeftTracked else { return nil }
         return distance(between: leftThumbTip, and: leftMiddleTip)
     }
-
     var rightPinchDistance: Float? {
         guard isRightTracked else { return nil }
         return distance(between: rightThumbTip, and: rightMiddleTip)
     }
+    var smoothedLeftPinchDistance: Float = 0
+    var smoothedRightPinchDistance: Float = 0
+    private static let smoothAlpha: Float = 0.4
 
     var isLeftPinch: Bool = false
     var isRightPinch: Bool = false
 
-    private static let pinchEnterThreshold: Float = 0.02   // engage  at 2 cm
-    private static let pinchExitThreshold: Float = 0.04   // release at 4 cm
+    private static let pinchEnterThreshold: Float = 0.02   // engage  at 1 cm
+    private static let pinchExitThreshold: Float = 0.03   // release at 3 cm
 
     func updatePinch(for chirality: HandAnchor.Chirality) {
         switch chirality {
         case .left:
-            guard isLeftTracked, let pinchDistance = leftPinchDistance else {
+            guard isLeftTracked, let rawDistance = leftPinchDistance else {
                 isLeftPinch = false
                 return
             }
+            smoothedLeftPinchDistance = applyEMA(
+                newValue: rawDistance,
+                previousEMA: self.smoothedLeftPinchDistance,
+                alpha: Self.smoothAlpha)
             if isLeftPinch {
-                if pinchDistance > Self.pinchExitThreshold { isLeftPinch = false }
+                if smoothedLeftPinchDistance > Self.pinchExitThreshold { isLeftPinch = false }
             } else {
-                if pinchDistance < Self.pinchEnterThreshold { isLeftPinch = true  }
+                if smoothedLeftPinchDistance < Self.pinchEnterThreshold { isLeftPinch = true }
             }
         case .right:
-            guard isRightTracked, let pinchDistance = rightPinchDistance else {
+            guard isRightTracked, let rawDistance = rightPinchDistance else {
                 isRightPinch = false
                 return
             }
+            smoothedRightPinchDistance = applyEMA(
+                newValue: rawDistance,
+                previousEMA: self.smoothedRightPinchDistance,
+                alpha: Self.smoothAlpha)
             if isRightPinch {
-                if pinchDistance > Self.pinchExitThreshold { isRightPinch = false }
+                if smoothedRightPinchDistance > Self.pinchExitThreshold { isRightPinch = false }
             } else {
-                if pinchDistance < Self.pinchEnterThreshold { isRightPinch = true  }
+                if smoothedRightPinchDistance < Self.pinchEnterThreshold { isRightPinch = true }
             }
         }
     }
@@ -78,5 +88,9 @@ class HandSkeletonData {
         let aPosition = SIMD3<Float>(aAnchor.columns.3.x, aAnchor.columns.3.y, aAnchor.columns.3.z)
         let bPosition = SIMD3<Float>(bAnchor.columns.3.x, bAnchor.columns.3.y, bAnchor.columns.3.z)
         return simd_distance(aPosition, bPosition)
+    }
+
+    private func applyEMA(newValue: Float, previousEMA: Float, alpha: Float) -> Float {
+        return alpha * newValue + (1 - alpha) * previousEMA
     }
 }
