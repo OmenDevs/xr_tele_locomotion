@@ -1,6 +1,6 @@
 //
 //  CameraView.swift
-//  TestWebRTC
+//  Locomotion
 //
 //  Created by Can Dindar on 23/02/26.
 //

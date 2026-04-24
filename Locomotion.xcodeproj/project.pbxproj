@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC05A3472F9B887B00B12FF7 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FC05A3462F9B887B00B12FF7 /* RealityKitContent */; };
 		FC99215C2F504606008AE079 /* LiveKitWebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = FC99215B2F504606008AE079 /* LiveKitWebRTC */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FC05A3412F9B872500B12FF7 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FCF41E702F45BE9C006293B5 /* LocomotionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocomotionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -40,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC05A3472F9B887B00B12FF7 /* RealityKitContent in Frameworks */,
 				FC99215C2F504606008AE079 /* LiveKitWebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,10 +50,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FC05A3422F9B873D00B12FF7 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				FC05A3412F9B872500B12FF7 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
 		FCF41E672F45BE9C006293B5 = {
 			isa = PBXGroup;
 			children = (
 				FCF41E722F45BE9C006293B5 /* Locomotion */,
+				FC05A3422F9B873D00B12FF7 /* Packages */,
 				FCF41E712F45BE9C006293B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,6 +97,7 @@
 			name = Locomotion;
 			packageProductDependencies = (
 				FC99215B2F504606008AE079 /* LiveKitWebRTC */,
+				FC05A3462F9B887B00B12FF7 /* RealityKitContent */,
 			);
 			productName = Locomotion;
 			productReference = FCF41E702F45BE9C006293B5 /* LocomotionApp.app */;
@@ -425,6 +438,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FC05A3462F9B887B00B12FF7 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
 		FC99215B2F504606008AE079 /* LiveKitWebRTC */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FC99215A2F504606008AE079 /* XCRemoteSwiftPackageReference "webrtc-xcframework" */;
