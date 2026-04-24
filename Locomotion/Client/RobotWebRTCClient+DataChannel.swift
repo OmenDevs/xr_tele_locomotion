@@ -1,8 +1,8 @@
 //
 //  RobotWebRTCClient+DataChannel.swift
-//  TestWebRTC
+//  Locomotion
 //
-//  Handles the WebRTC data channel delegate and command sending.
+//  Created by Can Dindar on 25/02/26.
 //
 
 import LiveKitWebRTC
