@@ -1,8 +1,8 @@
 import Foundation
 import simd
 
-@MainActor @Observable
-final class PinchInputViewModel {
+@Observable
+class PinchInputViewModel {
 
     static let shared = PinchInputViewModel()
 

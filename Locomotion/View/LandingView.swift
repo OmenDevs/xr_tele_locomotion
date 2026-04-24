@@ -27,9 +27,6 @@ struct LandingView: View {
             Button("Start Simulation") {
                 Task { await openSimulation() }
             }
-            Button("Pinch Test") {
-                Task { await openImmersiveSpace(id: "pinchTest") }
-            }
         }
     }
     // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
