@@ -47,7 +47,7 @@ class HandSkeletonData {
     var isRightPinch: Bool = false
 
     private static let pinchEnterThreshold: Float = 0.02   // engage  at 2 cm
-    private static let pinchExitThreshold: Float = 0.04   // release at 4 cm
+    private static let pinchExitThreshold: Float = 0.03   // release at 4 cm
 
     func updatePinch(for chirality: HandAnchor.Chirality) {
         switch chirality {

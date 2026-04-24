@@ -17,6 +17,8 @@ struct SimulationView: View {
     @State private var handSkeletonProvider = HandSkeletonProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
+    @State private var pinchInput = PinchInputViewModel.shared
+
     var recording: RecordingViewModel
 
     var body: some View {
@@ -31,6 +33,7 @@ struct SimulationView: View {
             content.add(robot)
 
             handSkeletonProvider.skeletonData = skeletonData
+            pinchInput.skeletonData = skeletonData
             Task { await handSkeletonProvider.start() }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -47,6 +50,7 @@ struct SimulationView: View {
                                     angle: Float(-robotSimulator.robotHeading),
                                     axis: SIMD3<Float>(0, 1, 0)
                                 )
+                pinchInput.update()
             }
 
         }
