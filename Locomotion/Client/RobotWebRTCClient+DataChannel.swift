@@ -33,7 +33,7 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
     }
 
     /// Sends a command string to the server via the data channel.
-    /// - Parameter command: The command to send (e.g., "forward", "stop", "color", "infrared").
+    /// - Parameter command: The command to send.
     func sendCommand(_ command: String) {
         guard let dataChannel,
               dataChannel.readyState == .open,
