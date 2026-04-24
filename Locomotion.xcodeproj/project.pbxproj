@@ -58,19 +58,11 @@
 			path = Packages;
 			sourceTree = "<group>";
 		};
-		FC05A3432F9B885B00B12FF7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		FCF41E672F45BE9C006293B5 = {
 			isa = PBXGroup;
 			children = (
 				FCF41E722F45BE9C006293B5 /* Locomotion */,
 				FC05A3422F9B873D00B12FF7 /* Packages */,
-				FC05A3432F9B885B00B12FF7 /* Frameworks */,
 				FCF41E712F45BE9C006293B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -302,7 +294,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J2Y9Q88D3V;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -356,7 +348,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J2Y9Q88D3V;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
