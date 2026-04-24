@@ -32,10 +32,14 @@ struct SimulationView: View {
                 robot.playAnimation(animation.repeat())
             }
             content.add(robot)
-
-            handSkeletonProvider.skeletonData = skeletonData
-            pinchInput.skeletonData = skeletonData
-            Task { await handSkeletonProvider.start() }
+            switch interactionConfig.selectedInteraction {
+            case .joystick2D:
+                break
+            case .joystick3D, .firstInteraction:
+                handSkeletonProvider.skeletonData = skeletonData
+                pinchInput.skeletonData = skeletonData
+                Task { await handSkeletonProvider.start() }
+            }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
