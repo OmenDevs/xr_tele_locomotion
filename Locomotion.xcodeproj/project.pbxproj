@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC05A3472F9B887B00B12FF7 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FC05A3462F9B887B00B12FF7 /* RealityKitContent */; };
 		FC99215C2F504606008AE079 /* LiveKitWebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = FC99215B2F504606008AE079 /* LiveKitWebRTC */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC05A3472F9B887B00B12FF7 /* RealityKitContent in Frameworks */,
 				FC99215C2F504606008AE079 /* LiveKitWebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,11 +58,19 @@
 			path = Packages;
 			sourceTree = "<group>";
 		};
+		FC05A3432F9B885B00B12FF7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		FCF41E672F45BE9C006293B5 = {
 			isa = PBXGroup;
 			children = (
 				FCF41E722F45BE9C006293B5 /* Locomotion */,
 				FC05A3422F9B873D00B12FF7 /* Packages */,
+				FC05A3432F9B885B00B12FF7 /* Frameworks */,
 				FCF41E712F45BE9C006293B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,6 +105,7 @@
 			name = Locomotion;
 			packageProductDependencies = (
 				FC99215B2F504606008AE079 /* LiveKitWebRTC */,
+				FC05A3462F9B887B00B12FF7 /* RealityKitContent */,
 			);
 			productName = Locomotion;
 			productReference = FCF41E702F45BE9C006293B5 /* LocomotionApp.app */;
@@ -291,7 +302,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -345,7 +356,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -435,6 +446,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FC05A3462F9B887B00B12FF7 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
 		FC99215B2F504606008AE079 /* LiveKitWebRTC */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FC99215A2F504606008AE079 /* XCRemoteSwiftPackageReference "webrtc-xcframework" */;
