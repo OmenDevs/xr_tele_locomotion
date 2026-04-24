@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RealityKit
+import RealityKitContent
 
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
@@ -22,12 +23,13 @@ struct SimulationView: View {
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var turnVisualizer = TurnGestureVisualizer()
+    @State private var pinchInput = PinchInputViewModel.shared
 
     var recording: RecordingViewModel
 
     var body: some View {
         RealityView { content in
-            guard let robot = try? await Entity(named: "Mech_Drone", in: Bundle.main) else { return }
+            guard let robot = try? await Entity(named: "Mech_Drone", in: realityKitContentBundle) else { return }
             robot.name = "robot"
             robotSimulator.robotY = -1.0
             robot.position = SIMD3<Float>(0, 1, -1)
@@ -35,12 +37,20 @@ struct SimulationView: View {
                 robot.playAnimation(animation.repeat())
             }
             content.add(robot)
-
-            // Add gesture visualizer root to the scene.
-            content.add(turnVisualizer.rootEntity)
-
-            handSkeletonProvider.skeletonData = skeletonData
-            Task { await handSkeletonProvider.start() }
+            switch interactionConfig.selectedInteraction {
+            case .joystick2D:
+                break
+            case .joystick3D:
+                handSkeletonProvider.skeletonData = skeletonData
+                pinchInput.skeletonData = skeletonData
+                Task { await handSkeletonProvider.start() }
+            case .firstInteraction:
+                // Add gesture visualizer root to the scene.
+                content.add(turnVisualizer.rootEntity)
+                handSkeletonProvider.skeletonData = skeletonData
+                Task { await handSkeletonProvider.start() }
+            }
+            
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
@@ -56,6 +66,14 @@ struct SimulationView: View {
                                     angle: Float(-robotSimulator.robotHeading),
                                     axis: SIMD3<Float>(0, 1, 0)
                                 )
+                switch interactionConfig.selectedInteraction {
+                case .joystick2D:
+                    break
+                case .joystick3D:
+                    pinchInput.update()
+                case .firstInteraction:
+                    break
+                }
             }
 
         }

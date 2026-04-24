@@ -25,10 +25,16 @@ struct LandingView: View {
                }
         HStack {
             Button("Start RobotControl") {
-                Task { await openRobotControl() }
+                Task {
+                    await dismissImmersiveSpace()
+                    await openRobotControl()
+                }
             }
             Button("Start Simulation") {
-                Task { await openSimulation() }
+                Task {
+                    await dismissImmersiveSpace()
+                    await openSimulation()
+                }
             }
         }
     }

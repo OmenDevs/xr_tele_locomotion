@@ -1,8 +1,8 @@
 //
 //  RobotWebRTCClient+DataChannel.swift
-//  TestWebRTC
+//  Locomotion
 //
-//  Handles the WebRTC data channel delegate and command sending.
+//  Created by Can Dindar on 25/02/26.
 //
 
 import LiveKitWebRTC
@@ -33,7 +33,7 @@ extension RobotWebRTCClient: LKRTCDataChannelDelegate {
     }
 
     /// Sends a command string to the server via the data channel.
-    /// - Parameter command: The command to send (e.g., "forward", "stop", "color", "infrared").
+    /// - Parameter command: The command to send.
     func sendCommand(_ command: String) {
         guard let dataChannel,
               dataChannel.readyState == .open,

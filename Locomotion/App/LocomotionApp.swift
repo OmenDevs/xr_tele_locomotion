@@ -63,5 +63,6 @@ struct LocomotionApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 620, height: 400)
+
     }
 }
