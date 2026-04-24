@@ -44,13 +44,12 @@ struct SimulationView: View {
                 handSkeletonProvider.skeletonData = skeletonData
                 pinchInput.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
-            case .firstInteraction:
+            case .gestureBased:
                 // Add gesture visualizer root to the scene.
                 content.add(turnVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             }
-            
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
@@ -71,7 +70,7 @@ struct SimulationView: View {
                     break
                 case .joystick3D:
                     pinchInput.update()
-                case .firstInteraction:
+                case .gestureBased:
                     break
                 }
             }

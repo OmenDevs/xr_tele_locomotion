@@ -69,18 +69,14 @@ struct TeleoperationView: View {
             turnVisualizer.hide()
         }
 
-        // Check if we just released — send one final zero.
         if previouslyActive && !gestureInputState.isActive {
             previouslyActive = false
-            // TODO: Send final zero velocity via WebRTC.
-            // client.sendVelocity(velocityX: 0, velocityY: 0, omega: 0)
             return
         }
         previouslyActive = gestureInputState.isActive
 
         guard gestureInputState.isActive else { return }
 
-        // Throttle: only send at sendInterval (10 Hz).
         lastSendTime += deltaTime
         guard lastSendTime >= sendInterval else { return }
         lastSendTime = 0
@@ -89,8 +85,6 @@ struct TeleoperationView: View {
         let velY = gestureInputState.velocityY
         let omega = gestureInputState.angularVelocity
 
-        // TODO: Uncomment when RobotWebRTCClient is injected.
-        // client.sendVelocity(velocityX: velX, velocityY: velY, omega: omega)
         print("🤖 Gesture → vx: \(String(format: "%.2f", velX)),"
               + " vy: \(String(format: "%.2f", velY)),"
               + " ω: \(String(format: "%.2f", omega))")
