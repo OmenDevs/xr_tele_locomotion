@@ -16,21 +16,21 @@ class HandSkeletonData {
     var leftMiddleTip: simd_float4x4
     var rightMiddleTip: simd_float4x4
 
-    var leftMiddleKnuckle: simd_float4x4
-    var rightMiddleKnuckle: simd_float4x4
+    var leftIndexKnuckle: simd_float4x4
+    var rightIndexKnuckle: simd_float4x4
 
-    var leftWrist: simd_float4x4
-    var rightWrist: simd_float4x4
+    var leftThumbKnuckle: simd_float4x4
+    var rightThumbKnuckle: simd_float4x4
 
     init() {
         self.leftThumbTip = matrix_identity_float4x4
         self.rightThumbTip = matrix_identity_float4x4
         self.leftMiddleTip = matrix_identity_float4x4
         self.rightMiddleTip = matrix_identity_float4x4
-        self.leftMiddleKnuckle = matrix_identity_float4x4
-        self.rightMiddleKnuckle = matrix_identity_float4x4
-        self.leftWrist = matrix_identity_float4x4
-        self.rightWrist = matrix_identity_float4x4
+        self.leftIndexKnuckle = matrix_identity_float4x4
+        self.rightIndexKnuckle = matrix_identity_float4x4
+        self.leftThumbKnuckle = matrix_identity_float4x4
+        self.rightThumbKnuckle = matrix_identity_float4x4
     }
 
     var leftPinchDistance: Float? {
@@ -47,7 +47,7 @@ class HandSkeletonData {
     var isRightPinch: Bool = false
 
     private static let pinchEnterThreshold: Float = 0.02   // engage  at 2 cm
-    private static let pinchExitThreshold: Float = 0.04   // release at 4 cm
+    private static let pinchExitThreshold: Float = 0.03   // release at 4 cm
 
     func updatePinch(for chirality: HandAnchor.Chirality) {
         switch chirality {

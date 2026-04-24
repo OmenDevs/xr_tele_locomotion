@@ -2,9 +2,7 @@
 //  TurnGestureProcessor.swift
 //  Locomotion
 //
-//  Pure-logic processor for the turning gesture.
-//  Reads joint positions from HandSkeletonData, computes normalized angular velocity.
-//  No SwiftUI, no RealityKit.
+//  Created by Bekhruzjon Hakmirzaev on 23/04/26.
 //
 
 import Foundation
@@ -12,66 +10,44 @@ import simd
 
 // MARK: - Joint Positions
 
-/// World-space positions of the three joints used by the turn gesture.
 struct TurnJointPositions {
-    let wrist: SIMD3<Float>
+    let thumbKnuckle: SIMD3<Float>
     let thumbTip: SIMD3<Float>
-    let middleKnuckle: SIMD3<Float>
+    let indexKnuckle: SIMD3<Float>
 }
 
-/// Computes a normalized turn angle from hand rotation around the wrist→thumbTip axis.
-///
-/// **Algorithm**:
-/// 1. On pinch activation, capture the reference direction by projecting
-///    `middleFingerKnuckle` onto the disk plane perpendicular to the wrist→thumbTip axis.
-/// 2. Each frame, project `middleFingerKnuckle` again, compute the signed angle
-///    from the reference direction to the current direction.
-/// 3. Apply deadzone, clamp to ±maxAngle, and normalize to -1…+1.
+/// Computes a normalized turn angle from hand rotation around the thumbKnuckle→thumbTip axis.
 @MainActor
 final class TurnGestureProcessor {
 
     // MARK: - Tunable Constants
 
-    /// Angles below this threshold are treated as zero (tremor suppression).
-    static let deadzone: Float = 5.0 * .pi / 180.0       // 5° in radians
-
-    /// Maximum angle for full-speed output. Angle is clamped to ±maxAngle.
-    static let maxAngle: Float = 45.0 * .pi / 180.0      // 45° in radians
-
-    /// Exponential smoothing factor applied to the raw angle (0 = frozen, 1 = instant).
+    static let deadzone: Float = 8.0 * .pi / 180.0    // 8°
+    static let maxAngle: Float = 45.0 * .pi / 180.0   // 45°
     static let smoothingAlpha: Float = 0.2
 
     // MARK: - Internal State
 
-    /// The reference direction captured on the first frame of activation.
     private var referenceDirection: SIMD3<Float>?
-
-    /// Low-pass filtered angle for stable output.
     private var smoothedAngle: Float = 0.0
-
-    /// Which hand activated first. Prevents switching mid-gesture.
     private var lockedHand: ActiveHand = .none
 
-    // MARK: - Debug / Visualization Data
+    // MARK: - Visualization Data
 
-    /// Current signed angle in radians (pre-deadzone, pre-clamp). Useful for the visualizer.
+    /// Pre-deadzone signed angle in radians.
     private(set) var rawAngle: Float = 0.0
-
-    /// Current axis origin (thumbTip world position). Useful for the visualizer.
+    /// Axis origin (thumbTip world position).
     private(set) var axisOrigin: SIMD3<Float> = .zero
-
-    /// Current axis direction. Useful for the visualizer.
+    /// Rotation axis direction.
     private(set) var axisDirection: SIMD3<Float> = .init(0, 1, 0)
-
-    /// Current reference direction in the plane. Useful for the visualizer.
+    /// Reference direction in the disk plane, captured on activation.
     private(set) var currentReferenceDirection: SIMD3<Float>?
-
-    /// Current finger projection direction in the plane. Useful for the visualizer.
+    /// Current finger projection direction in the disk plane.
     private(set) var currentFingerDirection: SIMD3<Float>?
 
     // MARK: - Public API
 
-    /// Call once per frame. Reads pinch + joint data, writes to `state`.
+    /// Call once per frame.
     func update(skeletonData: HandSkeletonData, state: GestureInputState) {
         let isActive = resolveActiveHand(skeletonData: skeletonData)
 
@@ -87,14 +63,13 @@ final class TurnGestureProcessor {
         computeTurnAngle(joints: joints, state: state)
     }
 
-    /// Resets internal state.  Call when gesture ends or interaction changes.
+    /// Resets all gesture state.
     func resetAll(state: GestureInputState) {
         resetState(state: state)
     }
 
     // MARK: - Hand Selection
 
-    /// Determines which hand is active. Returns true if a hand is pinching.
     private func resolveActiveHand(skeletonData: HandSkeletonData) -> Bool {
         let leftPinching = skeletonData.isLeftPinch
         let rightPinching = skeletonData.isRightPinch
@@ -117,17 +92,15 @@ final class TurnGestureProcessor {
 
     // MARK: - Turn Angle Computation
 
-    /// Core geometry: projects middleKnuckle onto the disk plane and computes the angle.
     private func computeTurnAngle(joints: TurnJointPositions, state: GestureInputState) {
-        let axis = simd_normalize(joints.thumbTip - joints.wrist)
-        let axisLen = simd_length(joints.thumbTip - joints.wrist)
+        let axis = simd_normalize(joints.thumbTip - joints.thumbKnuckle)
+        let axisLen = simd_length(joints.thumbTip - joints.thumbKnuckle)
         guard axisLen > 0.001 else { return }
 
         axisOrigin = joints.thumbTip
         axisDirection = axis
 
-        // Project middleFingerKnuckle onto the disk plane at thumbTip.
-        let toKnuckle = joints.middleKnuckle - joints.thumbTip
+        let toKnuckle = joints.indexKnuckle - joints.thumbTip
         let projOnAxis = simd_dot(toKnuckle, axis) * axis
         let projOnPlane = toKnuckle - projOnAxis
 
@@ -136,7 +109,6 @@ final class TurnGestureProcessor {
         let currentDir = simd_normalize(projOnPlane)
         currentFingerDirection = currentDir
 
-        // Capture reference on first active frame.
         if referenceDirection == nil {
             referenceDirection = currentDir
             currentReferenceDirection = currentDir
@@ -155,7 +127,6 @@ final class TurnGestureProcessor {
         let refDir = simd_normalize(refOnCurrentPlane)
         currentReferenceDirection = refDir
 
-        // Signed angle via atan2.
         let dotVal = simd_clamp(simd_dot(refDir, currentDir), -1.0, 1.0)
         let crossVal = simd_cross(refDir, currentDir)
         let signedSin = simd_dot(crossVal, axis)
@@ -165,13 +136,11 @@ final class TurnGestureProcessor {
         smoothedAngle = Self.smoothingAlpha * angle + (1.0 - Self.smoothingAlpha) * smoothedAngle
         rawAngle = smoothedAngle
 
-        // Deadzone.
         guard abs(smoothedAngle) >= Self.deadzone else {
             state.normalizedTurnAngle = 0.0
             return
         }
 
-        // Clamp and normalize to -1…+1.
         let clampedAngle = simd_clamp(smoothedAngle, -Self.maxAngle, Self.maxAngle)
         state.normalizedTurnAngle = Double(clampedAngle / Self.maxAngle)
     }
@@ -192,34 +161,32 @@ final class TurnGestureProcessor {
 
     // MARK: - Joint Extraction
 
-    /// Extracts world-space positions for the three joints from the skeleton data.
     private func jointPositions(
         for hand: ActiveHand,
         skeletonData: HandSkeletonData
     ) -> TurnJointPositions {
-        let wristMatrix: simd_float4x4
+        let thumbKnuckleMatrix: simd_float4x4
         let thumbTipMatrix: simd_float4x4
-        let middleKnuckleMatrix: simd_float4x4
+        let indexKnuckleMatrix: simd_float4x4
 
         switch hand {
         case .left:
-            wristMatrix = skeletonData.leftWrist
+            thumbKnuckleMatrix = skeletonData.leftThumbKnuckle
             thumbTipMatrix = skeletonData.leftThumbTip
-            middleKnuckleMatrix = skeletonData.leftMiddleKnuckle
+            indexKnuckleMatrix = skeletonData.leftIndexKnuckle
         case .right, .none:
-            wristMatrix = skeletonData.rightWrist
+            thumbKnuckleMatrix = skeletonData.rightThumbKnuckle
             thumbTipMatrix = skeletonData.rightThumbTip
-            middleKnuckleMatrix = skeletonData.rightMiddleKnuckle
+            indexKnuckleMatrix = skeletonData.rightIndexKnuckle
         }
 
         return TurnJointPositions(
-            wrist: position(from: wristMatrix),
+            thumbKnuckle: position(from: thumbKnuckleMatrix),
             thumbTip: position(from: thumbTipMatrix),
-            middleKnuckle: position(from: middleKnuckleMatrix)
+            indexKnuckle: position(from: indexKnuckleMatrix)
         )
     }
 
-    /// Extracts the translation column from a 4×4 transform matrix.
     private func position(from matrix: simd_float4x4) -> SIMD3<Float> {
         SIMD3<Float>(matrix.columns.3.x, matrix.columns.3.y, matrix.columns.3.z)
     }

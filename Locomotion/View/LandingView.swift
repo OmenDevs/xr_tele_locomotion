@@ -10,7 +10,10 @@ import SwiftUI
 struct LandingView: View {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(InteractionConfig.self) private var interactionConfig
+
+    @State private var immersiveSpaceIsShown = false
 
     var body: some View {
         @Bindable var interactionConfig = interactionConfig
@@ -36,13 +39,27 @@ struct LandingView: View {
         if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
             openWindow(id: "joystick")
         } else {
-            await openImmersiveSpace(id: "teleoperation")
+            if immersiveSpaceIsShown {
+                await dismissImmersiveSpace()
+                immersiveSpaceIsShown = false
+            }
+            switch await openImmersiveSpace(id: "teleoperation") {
+            case .opened: immersiveSpaceIsShown = true
+            default: break
+            }
         }
     }
     // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
     // Inmersive protocolos need to be added inside simulationView(). For more information: Julio
     private func openSimulation() async {
-        await openImmersiveSpace(id: "simulation")
+        if immersiveSpaceIsShown {
+            await dismissImmersiveSpace()
+            immersiveSpaceIsShown = false
+        }
+        switch await openImmersiveSpace(id: "simulation") {
+        case .opened: immersiveSpaceIsShown = true
+        default: break
+        }
         openWindow(id: "dashboard")
         if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
             openWindow(id: "joystick")

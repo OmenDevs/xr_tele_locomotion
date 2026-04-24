@@ -2,7 +2,7 @@
 //  GestureInputState.swift
 //  Locomotion
 //
-//  Observable state shared between gesture processors and the simulation/robot pipeline.
+//  Created by Bekhruzjon Hakmirzaev on 23/04/26.
 //
 
 import Foundation

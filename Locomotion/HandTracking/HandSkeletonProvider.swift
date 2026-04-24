@@ -45,34 +45,40 @@ final class HandSkeletonProvider {
                                anchorTransform: simd_float4x4) -> HandJoints {
         HandJoints(
             thumbTip: jointTransform(of: .thumbTip, in: skeleton, anchorTransform: anchorTransform),
+            thumbKnuckle: jointTransform(of: .thumbKnuckle, in: skeleton, anchorTransform: anchorTransform),
             middleTip: jointTransform(of: .middleFingerTip, in: skeleton, anchorTransform: anchorTransform),
-            middleKnuckle: jointTransform(of: .middleFingerKnuckle, in: skeleton, anchorTransform: anchorTransform),
-            wrist: jointTransform(of: .wrist, in: skeleton, anchorTransform: anchorTransform)
+            indexKnuckle: jointTransform(of: .indexFingerKnuckle, in: skeleton, anchorTransform: anchorTransform)
         )
     }
 
     private func applyJoints(_ joints: HandJoints, for chirality: HandAnchor.Chirality) {
         switch chirality {
-        case .left:
-            if let val = joints.thumbTip { skeletonData?.leftThumbTip = val }
-            if let val = joints.middleTip { skeletonData?.leftMiddleTip = val }
-            if let val = joints.middleKnuckle { skeletonData?.leftMiddleKnuckle = val }
-            if let val = joints.wrist { skeletonData?.leftWrist = val }
-            skeletonData?.isLeftTracked = true
-        case .right:
-            if let val = joints.thumbTip { skeletonData?.rightThumbTip = val }
-            if let val = joints.middleTip { skeletonData?.rightMiddleTip = val }
-            if let val = joints.middleKnuckle { skeletonData?.rightMiddleKnuckle = val }
-            if let val = joints.wrist { skeletonData?.rightWrist = val }
-            skeletonData?.isRightTracked = true
+        case .left:  applyJointsToLeft(joints)
+        case .right: applyJointsToRight(joints)
         }
+    }
+
+    private func applyJointsToLeft(_ joints: HandJoints) {
+        if let val = joints.thumbTip { skeletonData?.leftThumbTip = val }
+        if let val = joints.thumbKnuckle { skeletonData?.leftThumbKnuckle = val }
+        if let val = joints.middleTip { skeletonData?.leftMiddleTip = val }
+        if let val = joints.indexKnuckle { skeletonData?.leftIndexKnuckle = val }
+        skeletonData?.isLeftTracked = true
+    }
+
+    private func applyJointsToRight(_ joints: HandJoints) {
+        if let val = joints.thumbTip { skeletonData?.rightThumbTip = val }
+        if let val = joints.thumbKnuckle { skeletonData?.rightThumbKnuckle = val }
+        if let val = joints.middleTip { skeletonData?.rightMiddleTip = val }
+        if let val = joints.indexKnuckle { skeletonData?.rightIndexKnuckle = val }
+        skeletonData?.isRightTracked = true
     }
 
     private struct HandJoints {
         var thumbTip: simd_float4x4?
+        var thumbKnuckle: simd_float4x4?
         var middleTip: simd_float4x4?
-        var middleKnuckle: simd_float4x4?
-        var wrist: simd_float4x4?
+        var indexKnuckle: simd_float4x4?
     }
 
     private func jointTransform(of jointName: HandSkeleton.JointName,
