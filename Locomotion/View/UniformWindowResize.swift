@@ -1,8 +1,8 @@
 //
 //  UniformWindowResize.swift
-//  TestWebRTC
+//  Locomotion
 //
-//  Applies uniform (aspect-ratio-locked) resizing to the current visionOS window.
+//  Created by Bekhruzjon Hakmirzaev on 26/03/26.
 //
 
 import SwiftUI
