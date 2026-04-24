@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RealityKit
+import RealityKitContent
 
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
@@ -23,7 +24,7 @@ struct SimulationView: View {
 
     var body: some View {
         RealityView { content in
-            guard let robot = try? await Entity(named: "Mech_Drone", in: Bundle.main) else { return }
+            guard let robot = try? await Entity(named: "Mech_Drone", in: realityKitContentBundle) else { return }
             robot.name = "robot"
             robotSimulator.robotY = -1.0
             robot.position = SIMD3<Float>(0, 1, -1)
