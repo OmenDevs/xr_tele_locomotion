@@ -10,6 +10,7 @@ import SwiftUI
 struct LandingView: View {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
     @Environment(InteractionConfig.self) private var interactionConfig
 
     var body: some View {
@@ -22,10 +23,16 @@ struct LandingView: View {
                }
         HStack {
             Button("Start RobotControl") {
-                Task { await openRobotControl() }
+                Task {
+                    await dismissImmersiveSpace()
+                    await openRobotControl()
+                }
             }
             Button("Start Simulation") {
-                Task { await openSimulation() }
+                Task {
+                    await dismissImmersiveSpace()
+                    await openSimulation()
+                }
             }
         }
     }

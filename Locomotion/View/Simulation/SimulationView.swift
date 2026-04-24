@@ -35,11 +35,15 @@ struct SimulationView: View {
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
                 break
-            case .joystick3D, .firstInteraction:
+            case .joystick3D:
                 handSkeletonProvider.skeletonData = skeletonData
                 pinchInput.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+            case .firstInteraction:
+                handSkeletonProvider.skeletonData = skeletonData
+                Task { await handSkeletonProvider.start() }
             }
+            
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
@@ -55,7 +59,14 @@ struct SimulationView: View {
                                     angle: Float(-robotSimulator.robotHeading),
                                     axis: SIMD3<Float>(0, 1, 0)
                                 )
-                pinchInput.update()
+                switch interactionConfig.selectedInteraction {
+                case .joystick2D:
+                    break
+                case .joystick3D:
+                    pinchInput.update()
+                case .firstInteraction:
+                    break
+                }
             }
 
         }
