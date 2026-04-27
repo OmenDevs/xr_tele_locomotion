@@ -6,10 +6,21 @@ class GestureInputViewModel {
 
     static let shared = GestureInputViewModel()
 
-    let dragScale: Float = 0.08
+    let dragScale: Float = 0.16
 
     private var lockedHand: ActiveHand = .none
     private var referencePoint: SIMD3<Float>?
+
+    // MARK: - Visualization data
+
+    /// Pinch origin in world space. `nil` while no pinch is active.
+    private(set) var dragOrigin: SIMD3<Float>?
+
+    /// Current cursor position in world space, clamped to the drag circle radius.
+    /// Sits on the same horizontal plane (y) as `dragOrigin`.
+    private(set) var cursorPoint: SIMD3<Float>?
+
+    // MARK: - Update
 
     func update(skeletonData: HandSkeletonData, state: GestureInputState) {
         // First-pinch wins: acquire lock on the first frame either hand pinches.
@@ -51,7 +62,10 @@ class GestureInputViewModel {
 
     private func acquireLock(_ hand: ActiveHand, thumb: simd_float4x4, middle: simd_float4x4) {
         lockedHand = hand
-        referencePoint = midpoint(thumb: thumb, middle: middle)
+        let mid = midpoint(thumb: thumb, middle: middle)
+        referencePoint = mid
+        dragOrigin = mid
+        cursorPoint = mid
         print("\(hand == .left ? "left" : "right") pinch: ACTIVE")
     }
 
@@ -60,13 +74,30 @@ class GestureInputViewModel {
         let mid = midpoint(thumb: thumb, middle: middle)
         let delta = mid - ref
 
-        let velocityX = (delta.x / dragScale).clamped(to: -1...1)
-        let velocityY = (-delta.z / dragScale).clamped(to: -1...1)
+        // Project onto the drag plane: (worldX, -worldZ) → (velX, velY).
+        let planar = SIMD2<Float>(delta.x, -delta.z)
+        let radius = simd_length(planar)
 
-        state.dragX = Double(velocityX)
-        state.dragY = Double(velocityY)
+        // Circular clamp: saturate at radius `dragScale`.
+        let normalized: SIMD2<Float>
+        let clampedPlanar: SIMD2<Float>
+        if radius > dragScale {
+            let unit = planar / radius
+            normalized = unit
+            clampedPlanar = unit * dragScale
+        } else {
+            normalized = planar / dragScale
+            clampedPlanar = planar
+        }
 
-        print(String(format: "drag vel: %+.3f x  %+.3f y", velocityX, velocityY))
+        state.dragX = Double(normalized.x)
+        state.dragY = Double(normalized.y)
+
+        // Reproject clamped planar back to world XZ (planar.y = -delta.z).
+        let worldDelta = SIMD3<Float>(clampedPlanar.x, 0, -clampedPlanar.y)
+        cursorPoint = ref + worldDelta
+
+        print(String(format: "drag vel: %+.3f x  %+.3f y", normalized.x, normalized.y))
     }
 
     private func release(state: GestureInputState) {
@@ -74,6 +105,8 @@ class GestureInputViewModel {
         state.dragY = 0
         lockedHand = .none
         referencePoint = nil
+        dragOrigin = nil
+        cursorPoint = nil
         print("pinch: RELEASED")
     }
 

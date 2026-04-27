@@ -23,6 +23,7 @@ struct SimulationView: View {
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var turnVisualizer = TurnGestureVisualizer()
+    @State private var dragVisualizer = DragGestureVisualizer()
     @State private var pinchInput = PinchInputViewModel.shared
 
     var recording: RecordingViewModel
@@ -45,8 +46,9 @@ struct SimulationView: View {
                 pinchInput.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             case .gestureBased:
-                // Add gesture visualizer root to the scene.
+                // Add gesture visualizer roots to the scene.
                 content.add(turnVisualizer.rootEntity)
+                content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             }
@@ -89,7 +91,7 @@ struct SimulationView: View {
             turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
 
             GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
-        
+
             // Update visualization.
             if gestureInputState.isActive,
                let refDir = turnProcessor.currentReferenceDirection,
@@ -102,6 +104,17 @@ struct SimulationView: View {
                 ))
             } else {
                 turnVisualizer.hide()
+            }
+
+            if gestureInputState.isActive,
+               let dragOrigin = GestureInputViewModel.shared.dragOrigin,
+               let cursor = GestureInputViewModel.shared.cursorPoint {
+                dragVisualizer.update(with: DragVisualizerState(
+                    origin: dragOrigin,
+                    cursor: cursor
+                ))
+            } else {
+                dragVisualizer.hide()
             }
 
             velocityX = gestureInputState.velocityX
