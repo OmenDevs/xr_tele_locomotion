@@ -18,6 +18,11 @@ struct SimulationView: View {
     @State private var handSkeletonProvider = HandSkeletonProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
+    // MARK: - Gesture-based interaction
+
+    @State private var gestureInputState = GestureInputState()
+    @State private var turnProcessor = TurnGestureProcessor()
+    @State private var turnVisualizer = TurnGestureVisualizer()
     @State private var pinchInput = PinchInputViewModel.shared
 
     var recording: RecordingViewModel
@@ -39,7 +44,9 @@ struct SimulationView: View {
                 handSkeletonProvider.skeletonData = skeletonData
                 pinchInput.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
-            case .firstInteraction:
+            case .gestureBased:
+                // Add gesture visualizer root to the scene.
+                content.add(turnVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             }
@@ -64,17 +71,47 @@ struct SimulationView: View {
                     break
                 case .joystick3D:
                     pinchInput.update()
-                case .firstInteraction:
+                case .gestureBased:
                     break
                 }
             }
 
         }
     }
+
     func simulationTick(deltaTime: TimeInterval) {
-        let velocityX = InputViewModel.shared.velocityX
-        let velocityY = InputViewModel.shared.velocityY
-        let angularVelocity = InputViewModel.shared.angularVelocity
+        let velocityX: Double
+        let velocityY: Double
+        let angularVelocity: Double
+
+        switch interactionConfig.selectedInteraction {
+        case .gestureBased:
+            // Run the turn gesture processor.
+            turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
+
+            // Update visualization.
+            if gestureInputState.isActive,
+               let refDir = turnProcessor.currentReferenceDirection,
+               let curDir = turnProcessor.currentFingerDirection {
+                turnVisualizer.update(with: TurnVisualizerState(
+                    origin: turnProcessor.axisOrigin,
+                    axis: turnProcessor.axisDirection,
+                    referenceDir: refDir,
+                    currentDir: curDir
+                ))
+            } else {
+                turnVisualizer.hide()
+            }
+
+            velocityX = gestureInputState.velocityX
+            velocityY = gestureInputState.velocityY
+            angularVelocity = gestureInputState.angularVelocity
+
+        case .joystick2D, .joystick3D:
+            velocityX = InputViewModel.shared.velocityX
+            velocityY = InputViewModel.shared.velocityY
+            angularVelocity = InputViewModel.shared.angularVelocity
+        }
 
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
