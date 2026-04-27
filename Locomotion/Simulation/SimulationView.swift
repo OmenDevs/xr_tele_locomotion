@@ -50,7 +50,6 @@ struct SimulationView: View {
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             }
-            
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
