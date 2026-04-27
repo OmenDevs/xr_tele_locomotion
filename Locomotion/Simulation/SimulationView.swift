@@ -88,6 +88,8 @@ struct SimulationView: View {
             // Run the turn gesture processor.
             turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
 
+            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
+        
             // Update visualization.
             if gestureInputState.isActive,
                let refDir = turnProcessor.currentReferenceDirection,

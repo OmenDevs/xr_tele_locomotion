@@ -6,92 +6,82 @@ class GestureInputViewModel {
 
     static let shared = GestureInputViewModel()
 
-    var skeletonData: HandSkeletonData?
-
     let dragScale: Float = 0.08
 
-    private var leftReferencePoint: SIMD3<Float>?
-    private var rightReferencePoint: SIMD3<Float>?
-    private var wasLeftPinching: Bool = false
-    private var wasRightPinching: Bool = false
+    private var lockedHand: ActiveHand = .none
+    private var referencePoint: SIMD3<Float>?
 
-    func update() {
-        guard let skeleton = skeletonData else { return }
-
-        updateLeft(skeleton)
-        updateRight(skeleton)
-    }
-
-    private func position(from matrix: simd_float4x4) -> SIMD3<Float> {
-        SIMD3(matrix.columns.3.x, matrix.columns.3.y, matrix.columns.3.z)
-    }
-
-    private func updateLeft(_ skeleton: HandSkeletonData) {
-        let isPinching = skeleton.isLeftPinch
-
-        if isPinching && !wasLeftPinching {
-            let thumb = position(from: skeleton.leftThumbTip)
-            let middle = position(from: skeleton.leftMiddleTip)
-            leftReferencePoint = (thumb + middle) / 2
-            wasLeftPinching = true
-            print("left pinch: ACTIVE")
+    func update(skeletonData: HandSkeletonData, state: GestureInputState) {
+        // First-pinch wins: acquire lock on the first frame either hand pinches.
+        // Left is checked before right to match TurnGestureProcessor's priority,
+        // so both processors converge on the same active hand.
+        if lockedHand == .none {
+            if skeletonData.isLeftPinch {
+                acquireLock(.left,
+                            thumb: skeletonData.leftThumbTip,
+                            middle: skeletonData.leftMiddleTip)
+            } else if skeletonData.isRightPinch {
+                acquireLock(.right,
+                            thumb: skeletonData.rightThumbTip,
+                            middle: skeletonData.rightMiddleTip)
+            }
         }
 
-        if !isPinching && wasLeftPinching {
-            wasLeftPinching = false
-            leftReferencePoint = nil
-            InputViewModel.shared.leftStickX = 0
-            InputViewModel.shared.leftStickY = 0
-            print("left pinch: RELEASED")
+        switch lockedHand {
+        case .none:
             return
+        case .left:
+            if skeletonData.isLeftPinch {
+                drive(thumb: skeletonData.leftThumbTip,
+                      middle: skeletonData.leftMiddleTip,
+                      state: state)
+            } else {
+                release(state: state)
+            }
+        case .right:
+            if skeletonData.isRightPinch {
+                drive(thumb: skeletonData.rightThumbTip,
+                      middle: skeletonData.rightMiddleTip,
+                      state: state)
+            } else {
+                release(state: state)
+            }
         }
+    }
 
-        guard isPinching, let ref = leftReferencePoint else { return }
+    private func acquireLock(_ hand: ActiveHand, thumb: simd_float4x4, middle: simd_float4x4) {
+        lockedHand = hand
+        referencePoint = midpoint(thumb: thumb, middle: middle)
+        print("\(hand == .left ? "left" : "right") pinch: ACTIVE")
+    }
 
-        let thumb = position(from: skeleton.leftThumbTip)
-        let middle = position(from: skeleton.leftMiddleTip)
-        let midpoint = (thumb + middle) / 2
-        let delta = midpoint - ref
+    private func drive(thumb: simd_float4x4, middle: simd_float4x4, state: GestureInputState) {
+        guard let ref = referencePoint else { return }
+        let mid = midpoint(thumb: thumb, middle: middle)
+        let delta = mid - ref
 
         let velocityX = (delta.x / dragScale).clamped(to: -1...1)
         let velocityY = (-delta.z / dragScale).clamped(to: -1...1)
 
-        InputViewModel.shared.leftStickX = Double(velocityX)
-        InputViewModel.shared.leftStickY = Double(velocityY)
+        state.dragX = Double(velocityX)
+        state.dragY = Double(velocityY)
 
-        print(String(format: "left vel: %+.3f x  %+.3f y", velocityX, velocityY))
+        print(String(format: "drag vel: %+.3f x  %+.3f y", velocityX, velocityY))
     }
 
-    private func updateRight(_ skeleton: HandSkeletonData) {
-        let isPinching = skeleton.isRightPinch
+    private func release(state: GestureInputState) {
+        state.dragX = 0
+        state.dragY = 0
+        lockedHand = .none
+        referencePoint = nil
+        print("pinch: RELEASED")
+    }
 
-        if isPinching && !wasRightPinching {
-            let thumb = position(from: skeleton.rightThumbTip)
-            let middle = position(from: skeleton.rightMiddleTip)
-            rightReferencePoint = (thumb + middle) / 2
-            wasRightPinching = true
-            print("right pinch: ACTIVE")
-        }
+    private func midpoint(thumb: simd_float4x4, middle: simd_float4x4) -> SIMD3<Float> {
+        (position(from: thumb) + position(from: middle)) / 2
+    }
 
-        if !isPinching && wasRightPinching {
-            wasRightPinching = false
-            rightReferencePoint = nil
-            InputViewModel.shared.rightStickX = 0
-            print("right pinch: RELEASED")
-            return
-        }
-
-        guard isPinching, let ref = rightReferencePoint else { return }
-
-        let thumb = position(from: skeleton.rightThumbTip)
-        let middle = position(from: skeleton.rightMiddleTip)
-        let midpoint = (thumb + middle) / 2
-        let delta = midpoint - ref
-
-        let angularVelocity = (delta.x / dragScale).clamped(to: -1...1)
-
-        InputViewModel.shared.rightStickX = Double(angularVelocity)
-
-        print(String(format: "right vel: %+.3f angular", angularVelocity))
+    private func position(from matrix: simd_float4x4) -> SIMD3<Float> {
+        SIMD3(matrix.columns.3.x, matrix.columns.3.y, matrix.columns.3.z)
     }
 }
