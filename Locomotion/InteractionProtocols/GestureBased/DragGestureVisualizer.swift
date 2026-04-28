@@ -33,12 +33,16 @@ final class DragGestureVisualizer {
     private let turnNeutralTheta: Float = .pi / 2   // top of the XY ring (+Y)
     private let turnMaxAngularTravel: Float = .pi / 2  // 90° per side at saturation
 
+    private let neutralMarkLength: Float = 0.012
+    private let neutralMarkThickness: Float = 0.003
+
     // MARK: - Child Entities
 
     private var centerDotEntity: ModelEntity?
     private var dragRingEntity: ModelEntity?
     private var cursorDotEntity: ModelEntity?
     private var turnRingEntity: ModelEntity?
+    private var turnNeutralMarkEntity: ModelEntity?
     private var turnBallEntity: ModelEntity?
     private var isShowing = false
 
@@ -118,9 +122,10 @@ final class DragGestureVisualizer {
         rootEntity.addChild(cursor)
         cursorDotEntity = cursor
 
-        // --- Turn ring (white) on the XY plane, perpendicular to the drag ring ---
+        // --- Turn ring (white) — top half-circle on the XY plane, +X → +Y → −X ---
         if let mesh = buildRingMesh(
             radius: radius, thickness: ringThickness, segments: ringSegments,
+            startAngle: 0, endAngle: .pi,
             basisU: SIMD3<Float>(1, 0, 0),
             basisV: SIMD3<Float>(0, 1, 0),
             normal: SIMD3<Float>(0, 0, -1)
@@ -133,6 +138,18 @@ final class DragGestureVisualizer {
             rootEntity.addChild(ring)
             turnRingEntity = ring
         }
+
+        // --- Neutral mark (white) — radial tick extending outward at θ = π/2 ---
+        let markMesh = MeshResource.generateBox(
+            size: SIMD3<Float>(neutralMarkThickness, neutralMarkLength, neutralMarkThickness)
+        )
+        var markMat = UnlitMaterial()
+        markMat.color = .init(tint: .white)
+        let mark = ModelEntity(mesh: markMesh, materials: [markMat])
+        mark.name = "turnNeutralMark"
+        mark.position = SIMD3<Float>(0, radius + neutralMarkLength / 2, 0)
+        rootEntity.addChild(mark)
+        turnNeutralMarkEntity = mark
 
         // --- Turn ball (cyan) traveling along the turn ring ---
         let ballMesh = MeshResource.generateSphere(radius: turnBallRadius)
@@ -158,13 +175,15 @@ final class DragGestureVisualizer {
 
     // MARK: - Mesh Generation
 
-    /// Flat annulus around the local origin in the plane spanned by `basisU` × `basisV`.
+    /// Annulus arc around the local origin in the plane spanned by `basisU` × `basisV`.
     /// `basisU` and `basisV` should be orthonormal; `normal` is used for the vertex normals.
+    /// Pass `startAngle = 0`, `endAngle = 2π` for a full ring.
     private func buildRingMesh(
         radius: Float, thickness: Float, segments: Int,
+        startAngle: Float = 0, endAngle: Float = 2 * .pi,
         basisU: SIMD3<Float>, basisV: SIMD3<Float>, normal: SIMD3<Float>
     ) -> MeshResource? {
-        guard segments >= 3 else { return nil }
+        guard segments >= 1, endAngle > startAngle else { return nil }
 
         let inner = max(radius - thickness / 2, 0.0001)
         let outer = radius + thickness / 2
@@ -173,9 +192,9 @@ final class DragGestureVisualizer {
         var normals: [SIMD3<Float>] = []
         var indices: [UInt32] = []
 
-        let step = (2.0 * .pi) / Float(segments)
-        for idx in 0..<segments {
-            let theta = step * Float(idx)
+        let step = (endAngle - startAngle) / Float(segments)
+        for idx in 0...segments {
+            let theta = startAngle + step * Float(idx)
             let cosT = cos(theta)
             let sinT = sin(theta)
             positions.append(inner * cosT * basisU + inner * sinT * basisV)
@@ -185,11 +204,10 @@ final class DragGestureVisualizer {
         }
 
         for idx in 0..<segments {
-            let next = (idx + 1) % segments
-            let index0 = UInt32(idx * 2)        // inner current
-            let index1 = UInt32(idx * 2 + 1)    // outer current
-            let index2 = UInt32(next * 2)       // inner next
-            let index3 = UInt32(next * 2 + 1)   // outer next
+            let index0 = UInt32(idx * 2)
+            let index1 = UInt32(idx * 2 + 1)
+            let index2 = UInt32((idx + 1) * 2)
+            let index3 = UInt32((idx + 1) * 2 + 1)
 
             indices.append(contentsOf: [index0, index1, index3])
             indices.append(contentsOf: [index0, index3, index2])
