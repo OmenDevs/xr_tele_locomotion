@@ -16,7 +16,6 @@ struct TeleoperationView: View {
     // MARK: - Gesture-based interaction
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
-    @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var dragVisualizer = DragGestureVisualizer()
 
@@ -53,36 +52,36 @@ struct TeleoperationView: View {
 
         // Run both gesture processors. The first-pinch-wins lock in each
         // converges on the same hand so drag and turn share an active hand.
-        turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
-        GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
+        turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
+        GestureInputViewModel.shared.update(skeletonData: skeletonData, state: InputViewModel.shared)
 
-        if gestureInputState.isActive,
+        if InputViewModel.shared.isActive,
            let dragOrigin = GestureInputViewModel.shared.dragOrigin,
            let cursor = GestureInputViewModel.shared.cursorPoint {
             dragVisualizer.update(with: DragVisualizerState(
                 origin: dragOrigin,
                 cursor: cursor,
-                normalizedTurnAngle: gestureInputState.normalizedTurnAngle
+                normalizedTurnAngle: InputViewModel.shared.angularVelocity
             ))
         } else {
             dragVisualizer.hide()
         }
 
-        if previouslyActive && !gestureInputState.isActive {
+        if previouslyActive && !InputViewModel.shared.isActive {
             previouslyActive = false
             return
         }
-        previouslyActive = gestureInputState.isActive
+        previouslyActive = InputViewModel.shared.isActive
 
-        guard gestureInputState.isActive else { return }
+        guard InputViewModel.shared.isActive else { return }
 
         lastSendTime += deltaTime
         guard lastSendTime >= sendInterval else { return }
         lastSendTime = 0
 
-        let velX = gestureInputState.velocityX
-        let velY = gestureInputState.velocityY
-        let omega = gestureInputState.angularVelocity
+        let velX = InputViewModel.shared.velocityX
+        let velY = InputViewModel.shared.velocityY
+        let omega = InputViewModel.shared.angularVelocity
 
         print("🤖 Gesture → vx: \(String(format: "%.2f", velX)),"
               + " vy: \(String(format: "%.2f", velY)),"

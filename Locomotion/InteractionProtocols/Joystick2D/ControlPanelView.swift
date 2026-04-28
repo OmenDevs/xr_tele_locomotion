@@ -31,15 +31,15 @@ struct ControlPanelView: View {
                     label: "Left Stick",
                     sublabel: "lin. velocity  x / y",
                     accentColor: .white,
-                    xAxis: $input.leftStickX,
-                    yAxis: $input.leftStickY
+                    xAxis: $input.velocityX,
+                    yAxis: $input.velocityY
                 )
                 Spacer()
                 JoystickView(
                     label: "Right Stick",
                     sublabel: "angular  ω",
                     accentColor: .white,
-                    xAxis: $input.rightStickX,
+                    xAxis: $input.angularVelocity,
                     yAxis: .constant(0)
                 )
             }

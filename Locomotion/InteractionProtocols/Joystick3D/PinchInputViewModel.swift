@@ -40,8 +40,8 @@ class PinchInputViewModel {
         if !isPinching && wasLeftPinching {
             wasLeftPinching = false
             leftReferencePoint = nil
-            InputViewModel.shared.leftStickX = 0
-            InputViewModel.shared.leftStickY = 0
+            InputViewModel.shared.velocityX = 0
+            InputViewModel.shared.velocityY = 0
             print("left pinch: RELEASED")
             return
         }
@@ -56,8 +56,8 @@ class PinchInputViewModel {
         let velocityX = (delta.x / dragScale).clamped(to: -1...1)
         let velocityY = (-delta.z / dragScale).clamped(to: -1...1)
 
-        InputViewModel.shared.leftStickX = Double(velocityX)
-        InputViewModel.shared.leftStickY = Double(velocityY)
+        InputViewModel.shared.velocityX = Double(velocityX)
+        InputViewModel.shared.velocityY = Double(velocityY)
 
         print(String(format: "left vel: %+.3f x  %+.3f y", velocityX, velocityY))
     }
@@ -76,7 +76,7 @@ class PinchInputViewModel {
         if !isPinching && wasRightPinching {
             wasRightPinching = false
             rightReferencePoint = nil
-            InputViewModel.shared.rightStickX = 0
+            InputViewModel.shared.angularVelocity = 0
             print("right pinch: RELEASED")
             return
         }
@@ -90,7 +90,7 @@ class PinchInputViewModel {
 
         let angularVelocity = (delta.x / dragScale).clamped(to: -1...1)
 
-        InputViewModel.shared.rightStickX = Double(angularVelocity)
+        InputViewModel.shared.angularVelocity = Double(angularVelocity)
 
         print(String(format: "right vel: %+.3f angular", angularVelocity))
     }

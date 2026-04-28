@@ -20,7 +20,6 @@ struct SimulationView: View {
 
     // MARK: - Gesture-based interaction
 
-    @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var dragVisualizer = DragGestureVisualizer()
     @State private var pinchInput = PinchInputViewModel.shared
@@ -78,48 +77,32 @@ struct SimulationView: View {
     }
 
     func simulationTick(deltaTime: TimeInterval) {
-        let velocityX: Double
-        let velocityY: Double
-        let angularVelocity: Double
+        if interactionConfig.selectedInteraction == .gestureBased {
+            turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
+            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: InputViewModel.shared)
 
-        switch interactionConfig.selectedInteraction {
-        case .gestureBased:
-            // Run the turn gesture processor.
-            turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
-
-            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
-
-            if gestureInputState.isActive,
+            if InputViewModel.shared.isActive,
                let dragOrigin = GestureInputViewModel.shared.dragOrigin,
                let cursor = GestureInputViewModel.shared.cursorPoint {
                 dragVisualizer.update(with: DragVisualizerState(
                     origin: dragOrigin,
                     cursor: cursor,
-                    normalizedTurnAngle: gestureInputState.normalizedTurnAngle
+                    normalizedTurnAngle: InputViewModel.shared.angularVelocity
                 ))
             } else {
                 dragVisualizer.hide()
             }
-
-            velocityX = gestureInputState.velocityX
-            velocityY = gestureInputState.velocityY
-            angularVelocity = gestureInputState.angularVelocity
-
-        case .joystick2D, .joystick3D:
-            velocityX = InputViewModel.shared.velocityX
-            velocityY = InputViewModel.shared.velocityY
-            angularVelocity = InputViewModel.shared.angularVelocity
         }
 
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: velocityY,
-            normalizedAngularVelocity: angularVelocity)
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
         robotSimulator.updateInputs(
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: -velocityY,
-            normalizedAngularVelocity: angularVelocity)
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: -InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
         robotSimulator.update(deltaTime: deltaTime)
     }
 }

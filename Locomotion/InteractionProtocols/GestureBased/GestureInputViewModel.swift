@@ -22,7 +22,7 @@ class GestureInputViewModel {
 
     // MARK: - Update
 
-    func update(skeletonData: HandSkeletonData, state: GestureInputState) {
+    func update(skeletonData: HandSkeletonData, state: InputViewModel) {
         // First-pinch wins: acquire lock on the first frame either hand pinches.
         // Left is checked before right to match TurnGestureProcessor's priority,
         // so both processors converge on the same active hand.
@@ -69,7 +69,7 @@ class GestureInputViewModel {
         print("\(hand == .left ? "left" : "right") pinch: ACTIVE")
     }
 
-    private func drive(thumb: simd_float4x4, middle: simd_float4x4, state: GestureInputState) {
+    private func drive(thumb: simd_float4x4, middle: simd_float4x4, state: InputViewModel) {
         guard let ref = referencePoint else { return }
         let mid = midpoint(thumb: thumb, middle: middle)
         let delta = mid - ref
@@ -90,8 +90,8 @@ class GestureInputViewModel {
             clampedPlanar = planar
         }
 
-        state.dragX = Double(normalized.x)
-        state.dragY = Double(normalized.y)
+        state.velocityX = Double(normalized.x)
+        state.velocityY = Double(normalized.y)
 
         // Reproject clamped planar back to world XZ (planar.y = -delta.z).
         let worldDelta = SIMD3<Float>(clampedPlanar.x, 0, -clampedPlanar.y)
@@ -100,9 +100,9 @@ class GestureInputViewModel {
         print(String(format: "drag vel: %+.3f x  %+.3f y", normalized.x, normalized.y))
     }
 
-    private func release(state: GestureInputState) {
-        state.dragX = 0
-        state.dragY = 0
+    private func release(state: InputViewModel) {
+        state.velocityX = 0
+        state.velocityY = 0
         lockedHand = .none
         referencePoint = nil
         dragOrigin = nil
