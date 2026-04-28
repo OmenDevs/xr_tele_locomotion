@@ -22,7 +22,6 @@ struct SimulationView: View {
 
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
-    @State private var turnVisualizer = TurnGestureVisualizer()
     @State private var dragVisualizer = DragGestureVisualizer()
     @State private var pinchInput = PinchInputViewModel.shared
 
@@ -46,8 +45,6 @@ struct SimulationView: View {
                 pinchInput.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
             case .gestureBased:
-                // Add gesture visualizer roots to the scene.
-                content.add(turnVisualizer.rootEntity)
                 content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
@@ -92,26 +89,13 @@ struct SimulationView: View {
 
             GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
 
-            // Update visualization.
-            if gestureInputState.isActive,
-               let refDir = turnProcessor.currentReferenceDirection,
-               let curDir = turnProcessor.currentFingerDirection {
-                turnVisualizer.update(with: TurnVisualizerState(
-                    origin: turnProcessor.axisOrigin,
-                    axis: turnProcessor.axisDirection,
-                    referenceDir: refDir,
-                    currentDir: curDir
-                ))
-            } else {
-                turnVisualizer.hide()
-            }
-
             if gestureInputState.isActive,
                let dragOrigin = GestureInputViewModel.shared.dragOrigin,
                let cursor = GestureInputViewModel.shared.cursorPoint {
                 dragVisualizer.update(with: DragVisualizerState(
                     origin: dragOrigin,
-                    cursor: cursor
+                    cursor: cursor,
+                    normalizedTurnAngle: gestureInputState.normalizedTurnAngle
                 ))
             } else {
                 dragVisualizer.hide()

@@ -5,11 +5,15 @@ import simd
 struct DragVisualizerState {
     let origin: SIMD3<Float>
     let cursor: SIMD3<Float>
+    let normalizedTurnAngle: Double
 }
 
-/// Manages RealityKit entities that visualize the drag gesture:
-/// a horizontal outline ring at the saturation radius, a center dot at
-/// the pinch origin, and a moving cursor dot tracking the clamped drag.
+/// Manages RealityKit entities that visualize the drag + turn gesture:
+/// - A horizontal drag ring at the saturation radius (XZ plane).
+/// - A center mark at the pinch origin where the two rings cross.
+/// - A cursor dot tracking the clamped drag position on the drag ring.
+/// - A vertical turn ring (XY plane, faces the user) concentric with the drag ring.
+/// - A ball traveling along the turn ring whose angular position reflects turn magnitude.
 @MainActor
 final class DragGestureVisualizer {
 
@@ -25,11 +29,17 @@ final class DragGestureVisualizer {
     private let cursorDotRadius: Float = 0.008
     private let ringSegments: Int = 64
 
+    private let turnBallRadius: Float = 0.01
+    private let turnNeutralTheta: Float = .pi / 2   // top of the XY ring (+Y)
+    private let turnMaxAngularTravel: Float = .pi / 2  // 90° per side at saturation
+
     // MARK: - Child Entities
 
     private var centerDotEntity: ModelEntity?
-    private var ringEntity: ModelEntity?
+    private var dragRingEntity: ModelEntity?
     private var cursorDotEntity: ModelEntity?
+    private var turnRingEntity: ModelEntity?
+    private var turnBallEntity: ModelEntity?
     private var isShowing = false
 
     // MARK: - Initialization
@@ -49,16 +59,19 @@ final class DragGestureVisualizer {
         }
 
         // Root sits at the pinch origin, axis-aligned with world.
-        // The ring lies in the world XZ plane, matching the drag input axes.
+        // Drag ring lies in world XZ; turn ring lies in world XY (faces -Z, the user).
         rootEntity.position = state.origin
         rootEntity.orientation = simd_quatf()
 
         centerDotEntity?.position = .zero
-        ringEntity?.position = .zero
+        dragRingEntity?.position = .zero
+        turnRingEntity?.position = .zero
 
         // Cursor offset is purely horizontal; flatten any y drift to the disk plane.
         let local = state.cursor - state.origin
         cursorDotEntity?.position = SIMD3<Float>(local.x, 0, local.z)
+
+        updateTurnBall(normalizedTurnAngle: state.normalizedTurnAngle)
     }
 
     func hide() {
@@ -71,29 +84,32 @@ final class DragGestureVisualizer {
     private func buildEntities() {
         guard centerDotEntity == nil else { return }
 
-        // --- Center dot (white) at pinch origin ---
+        // --- Center mark (white) at pinch origin, where the two rings cross ---
         let centerMesh = MeshResource.generateSphere(radius: centerDotRadius)
         var centerMat = UnlitMaterial()
         centerMat.color = .init(tint: .white)
         let center = ModelEntity(mesh: centerMesh, materials: [centerMat])
-        center.name = "dragCenter"
+        center.name = "centerMark"
         rootEntity.addChild(center)
         centerDotEntity = center
 
-        // --- Outline ring (white) at saturation radius ---
-        if let ringMesh = buildRingMesh(
-            radius: radius, thickness: ringThickness, segments: ringSegments
+        // --- Drag ring (white) on the XZ plane ---
+        if let mesh = buildRingMesh(
+            radius: radius, thickness: ringThickness, segments: ringSegments,
+            basisU: SIMD3<Float>(1, 0, 0),
+            basisV: SIMD3<Float>(0, 0, 1),
+            normal: SIMD3<Float>(0, 1, 0)
         ) {
-            var ringMat = UnlitMaterial()
-            ringMat.color = .init(tint: .white)
-            ringMat.faceCulling = .none
-            let ring = ModelEntity(mesh: ringMesh, materials: [ringMat])
+            var mat = UnlitMaterial()
+            mat.color = .init(tint: .white)
+            mat.faceCulling = .none
+            let ring = ModelEntity(mesh: mesh, materials: [mat])
             ring.name = "dragRing"
             rootEntity.addChild(ring)
-            ringEntity = ring
+            dragRingEntity = ring
         }
 
-        // --- Cursor dot (cyan) inside the ring ---
+        // --- Cursor dot (cyan) on the drag ring plane ---
         let cursorMesh = MeshResource.generateSphere(radius: cursorDotRadius)
         var cursorMat = UnlitMaterial()
         cursorMat.color = .init(tint: .cyan)
@@ -101,13 +117,53 @@ final class DragGestureVisualizer {
         cursor.name = "dragCursor"
         rootEntity.addChild(cursor)
         cursorDotEntity = cursor
+
+        // --- Turn ring (white) on the XY plane, perpendicular to the drag ring ---
+        if let mesh = buildRingMesh(
+            radius: radius, thickness: ringThickness, segments: ringSegments,
+            basisU: SIMD3<Float>(1, 0, 0),
+            basisV: SIMD3<Float>(0, 1, 0),
+            normal: SIMD3<Float>(0, 0, -1)
+        ) {
+            var mat = UnlitMaterial()
+            mat.color = .init(tint: .white)
+            mat.faceCulling = .none
+            let ring = ModelEntity(mesh: mesh, materials: [mat])
+            ring.name = "turnRing"
+            rootEntity.addChild(ring)
+            turnRingEntity = ring
+        }
+
+        // --- Turn ball (cyan) traveling along the turn ring ---
+        let ballMesh = MeshResource.generateSphere(radius: turnBallRadius)
+        var ballMat = UnlitMaterial()
+        ballMat.color = .init(tint: .cyan)
+        let ball = ModelEntity(mesh: ballMesh, materials: [ballMat])
+        ball.name = "turnBall"
+        rootEntity.addChild(ball)
+        turnBallEntity = ball
+    }
+
+    // MARK: - Turn Ball
+
+    /// Positions the ball on the XY-plane turn ring. Neutral is top (+Y).
+    /// Positive turn → ball travels CW (from the user's view) toward +X.
+    /// Negative turn → ball travels CCW toward −X. Saturation = ±90° (sides).
+    private func updateTurnBall(normalizedTurnAngle: Double) {
+        let signed = max(-1, min(1, Float(normalizedTurnAngle)))
+        let ballTheta = turnNeutralTheta - turnMaxAngularTravel * signed
+        let pos = SIMD3<Float>(radius * cos(ballTheta), radius * sin(ballTheta), 0)
+        turnBallEntity?.position = pos
     }
 
     // MARK: - Mesh Generation
 
-    /// Flat annulus in the local XZ plane, centered at origin.
-    /// Built from two concentric vertex rings stitched with quads.
-    private func buildRingMesh(radius: Float, thickness: Float, segments: Int) -> MeshResource? {
+    /// Flat annulus around the local origin in the plane spanned by `basisU` × `basisV`.
+    /// `basisU` and `basisV` should be orthonormal; `normal` is used for the vertex normals.
+    private func buildRingMesh(
+        radius: Float, thickness: Float, segments: Int,
+        basisU: SIMD3<Float>, basisV: SIMD3<Float>, normal: SIMD3<Float>
+    ) -> MeshResource? {
         guard segments >= 3 else { return nil }
 
         let inner = max(radius - thickness / 2, 0.0001)
@@ -122,10 +178,10 @@ final class DragGestureVisualizer {
             let theta = step * Float(idx)
             let cosT = cos(theta)
             let sinT = sin(theta)
-            positions.append(SIMD3<Float>(inner * cosT, 0, inner * sinT))
-            positions.append(SIMD3<Float>(outer * cosT, 0, outer * sinT))
-            normals.append(SIMD3<Float>(0, 1, 0))
-            normals.append(SIMD3<Float>(0, 1, 0))
+            positions.append(inner * cosT * basisU + inner * sinT * basisV)
+            positions.append(outer * cosT * basisU + outer * sinT * basisV)
+            normals.append(normal)
+            normals.append(normal)
         }
 
         for idx in 0..<segments {
@@ -139,7 +195,7 @@ final class DragGestureVisualizer {
             indices.append(contentsOf: [index0, index3, index2])
         }
 
-        var descriptor = MeshDescriptor(name: "dragRing")
+        var descriptor = MeshDescriptor(name: "ring")
         descriptor.positions = MeshBuffers.Positions(positions)
         descriptor.normals = MeshBuffers.Normals(normals)
         descriptor.primitives = .triangles(indices)

@@ -18,7 +18,7 @@ struct TeleoperationView: View {
     @State private var handSkeletonProvider = HandSkeletonProvider()
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
-    @State private var turnVisualizer = TurnGestureVisualizer()
+    @State private var dragVisualizer = DragGestureVisualizer()
 
     // MARK: - Throttling for velocity sending
 
@@ -30,8 +30,7 @@ struct TeleoperationView: View {
 
     var body: some View {
         RealityView { content in
-            // Add gesture visualizer root to the scene.
-            content.add(turnVisualizer.rootEntity)
+            content.add(dragVisualizer.rootEntity)
 
             // Start hand tracking when gesture-based is selected.
             if interactionConfig.selectedInteraction == .gestureBased {
@@ -52,21 +51,21 @@ struct TeleoperationView: View {
             return
         }
 
-        // Run the turn gesture processor.
+        // Run both gesture processors. The first-pinch-wins lock in each
+        // converges on the same hand so drag and turn share an active hand.
         turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
+        GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
 
-        // Update visualization.
         if gestureInputState.isActive,
-           let refDir = turnProcessor.currentReferenceDirection,
-           let curDir = turnProcessor.currentFingerDirection {
-            turnVisualizer.update(with: TurnVisualizerState(
-                origin: turnProcessor.axisOrigin,
-                axis: turnProcessor.axisDirection,
-                referenceDir: refDir,
-                currentDir: curDir
+           let dragOrigin = GestureInputViewModel.shared.dragOrigin,
+           let cursor = GestureInputViewModel.shared.cursorPoint {
+            dragVisualizer.update(with: DragVisualizerState(
+                origin: dragOrigin,
+                cursor: cursor,
+                normalizedTurnAngle: gestureInputState.normalizedTurnAngle
             ))
         } else {
-            turnVisualizer.hide()
+            dragVisualizer.hide()
         }
 
         if previouslyActive && !gestureInputState.isActive {
