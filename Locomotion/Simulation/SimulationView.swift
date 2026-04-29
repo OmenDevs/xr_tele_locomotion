@@ -81,18 +81,10 @@ struct SimulationView: View {
     func simulationTick(deltaTime: TimeInterval) {
         if interactionConfig.selectedInteraction == .gestureBased {
             turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
-            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: InputViewModel.shared)
-
-
-        switch interactionConfig.selectedInteraction {
-        case .gestureBased:
-            // Run the turn gesture processor.
-            turnProcessor.update(skeletonData: skeletonData, state: InputViewModel)
-
             GestureInputViewModel.shared.update(
                 skeletonData: skeletonData,
                 headTransform: devicePoseProvider.currentDeviceTransform(),
-                state: InputViewModel
+                state: InputViewModel.shared
             )
 
             if InputViewModel.shared.isActive,
@@ -102,7 +94,7 @@ struct SimulationView: View {
                     origin: dragOrigin,
                     cursor: cursor,
                     yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
-                    normalizedTurnAngle: InputViewModel.normalizedTurnAngle
+                    normalizedTurnAngle: InputViewModel.shared.angularVelocity
                 ))
             } else {
                 dragVisualizer.hide()
