@@ -12,7 +12,7 @@ import RealityKitContent
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
-    @State private var robotSimulator = RobotSimulatorViewModel()
+    @State private var POVSimulator = POVSimulatorViewModel()
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
@@ -29,14 +29,11 @@ struct SimulationView: View {
 
     var body: some View {
         RealityView { content in
-            guard let robot = try? await Entity(named: "Mech_Drone", in: realityKitContentBundle) else { return }
-            robot.name = "robot"
-            robotSimulator.robotY = -1.0
-            robot.position = SIMD3<Float>(0, 1, -1)
-            for animation in robot.availableAnimations {
-                robot.playAnimation(animation.repeat())
-            }
-            content.add(robot)
+
+            guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle) else { return }
+            scenarioEntity.name = "scenarioEntity"
+            content.add(scenarioEntity)
+
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
                 break
@@ -53,17 +50,18 @@ struct SimulationView: View {
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
                 simulationTick(deltaTime: deltaTime)
+                guard let scenarioEntity = event.scene.findEntity(named: "scenarioEntity") else { return }
+                let userPose = Transform(
+                    rotation: simd_quatf(
+                        angle: Float(POVSimulator.scenarioHeading),
+                        axis: SIMD3<Float>(0, 1, 0)),
+                    translation: SIMD3<Float>(
+                        Float(POVSimulator.scenarioX),
+                        0,
+                        -Float(POVSimulator.scenarioY))
+                )
+                scenarioEntity.transform = Transform(matrix: userPose.matrix.inverse)
 
-                guard let robot = event.scene.findEntity(named: "robot") else { return }
-                                robot.position = SIMD3<Float>(
-                                    Float(robotSimulator.robotX),
-                                    1,
-                                    Float(robotSimulator.robotY)
-                                )
-                                robot.orientation = simd_quatf(
-                                    angle: Float(-robotSimulator.robotHeading),
-                                    axis: SIMD3<Float>(0, 1, 0)
-                                )
                 switch interactionConfig.selectedInteraction {
                 case .joystick2D:
                     break
@@ -116,11 +114,11 @@ struct SimulationView: View {
             normalizedVelocityX: velocityX,
             normalizedVelocityY: velocityY,
             normalizedAngularVelocity: angularVelocity)
-        robotSimulator.updateInputs(
+        POVSimulator.updateScenario(
             normalizedVelocityX: velocityX,
-            normalizedVelocityY: -velocityY,
-            normalizedAngularVelocity: angularVelocity)
-        robotSimulator.update(deltaTime: deltaTime)
+            normalizedVelocityY: velocityY,
+            normalizedAngularVelocity: -angularVelocity,
+            deltaTime: deltaTime)
     }
 }
 
