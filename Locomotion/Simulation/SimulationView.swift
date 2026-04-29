@@ -16,6 +16,7 @@ struct SimulationView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
+    @State private var devicePoseProvider = DevicePoseProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
     // MARK: - Gesture-based interaction
@@ -47,6 +48,7 @@ struct SimulationView: View {
                 content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+                Task { await devicePoseProvider.start() }
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -81,13 +83,26 @@ struct SimulationView: View {
             turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
             GestureInputViewModel.shared.update(skeletonData: skeletonData, state: InputViewModel.shared)
 
+
+        switch interactionConfig.selectedInteraction {
+        case .gestureBased:
+            // Run the turn gesture processor.
+            turnProcessor.update(skeletonData: skeletonData, state: InputViewModel)
+
+            GestureInputViewModel.shared.update(
+                skeletonData: skeletonData,
+                headTransform: devicePoseProvider.currentDeviceTransform(),
+                state: InputViewModel
+            )
+
             if InputViewModel.shared.isActive,
                let dragOrigin = GestureInputViewModel.shared.dragOrigin,
                let cursor = GestureInputViewModel.shared.cursorPoint {
                 dragVisualizer.update(with: DragVisualizerState(
                     origin: dragOrigin,
                     cursor: cursor,
-                    normalizedTurnAngle: InputViewModel.shared.angularVelocity
+                    yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
+                    normalizedTurnAngle: InputViewModel.normalizedTurnAngle
                 ))
             } else {
                 dragVisualizer.hide()
