@@ -29,10 +29,24 @@ struct SimulationView: View {
 
     var body: some View {
         RealityView { content in
+            let rootEntity = Entity()
+            content.add(rootEntity)
+
+            let portalContentRoot = Entity()
+            portalContentRoot.components.set(WorldComponent())
+            rootEntity.addChild(portalContentRoot)
+
+            let portalEntity = ModelEntity(
+                mesh: .generatePlane(width: 1.0, height: 0.6, cornerRadius: 0.03),
+                materials: [PortalMaterial()]
+            )
+            portalEntity.position = SIMD3<Float>(0, 1, -1)
+            portalEntity.components.set(PortalComponent(target: portalContentRoot))
+            rootEntity.addChild(portalEntity)
 
             guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle) else { return }
             scenarioEntity.name = "scenarioEntity"
-            content.add(scenarioEntity)
+            portalContentRoot.addChild(scenarioEntity)
 
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
