@@ -23,8 +23,6 @@ struct SimulationView: View {
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var turnVisualizer = TurnGestureVisualizer()
-    @State private var pinchInput = PinchInputViewModel.shared
-
     var recording: RecordingViewModel
 
     var body: some View {
@@ -41,9 +39,7 @@ struct SimulationView: View {
             case .joystick2D:
                 break
             case .joystick3D:
-                handSkeletonProvider.skeletonData = skeletonData
-                pinchInput.skeletonData = skeletonData
-                Task { await handSkeletonProvider.start() }
+                break
             case .gestureBased:
                 // Add gesture visualizer root to the scene.
                 content.add(turnVisualizer.rootEntity)
@@ -65,17 +61,10 @@ struct SimulationView: View {
                                     angle: Float(-robotSimulator.robotHeading),
                                     axis: SIMD3<Float>(0, 1, 0)
                                 )
-                switch interactionConfig.selectedInteraction {
-                case .joystick2D:
-                    break
-                case .joystick3D:
-                    pinchInput.update()
-                case .gestureBased:
-                    break
-                }
             }
 
         }
+        .overlay { interactionOverlay }
     }
 
     func simulationTick(deltaTime: TimeInterval) {
@@ -122,6 +111,15 @@ struct SimulationView: View {
             normalizedVelocityY: -velocityY,
             normalizedAngularVelocity: angularVelocity)
         robotSimulator.update(deltaTime: deltaTime)
+    }
+}
+
+extension SimulationView {
+    @ViewBuilder
+    var interactionOverlay: some View {
+        if interactionConfig.selectedInteraction == .joystick3D {
+            Joystick3DView()
+        }
     }
 }
 
