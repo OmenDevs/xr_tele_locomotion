@@ -12,6 +12,9 @@ import simd
 struct DragVisualizerState {
     let origin: SIMD3<Float>
     let cursor: SIMD3<Float>
+    /// Yaw (radians, +Y axis) of the user-local frame captured at pinch start.
+    /// The visualizer rotates so its front mark points along the user's forward.
+    let yaw: Float
     let normalizedTurnAngle: Double
 }
 
@@ -56,9 +59,14 @@ final class DragGestureVisualizer {
         }
         rootEntity.isEnabled = true
         rootEntity.position = state.origin
+        rootEntity.orientation = simd_quatf(angle: state.yaw, axis: SIMD3<Float>(0, 1, 0))
 
-        let offset = state.cursor - state.origin
-        cursorEntity?.position = SIMD3<Float>(offset.x, 0, offset.z)
+        // Cursor offset is in world space; convert into the visualizer's local
+        // (yaw-rotated) frame so it tracks against the rotated ring.
+        let worldOffset = state.cursor - state.origin
+        let inverse = simd_quatf(angle: -state.yaw, axis: SIMD3<Float>(0, 1, 0))
+        let localOffset = inverse.act(worldOffset)
+        cursorEntity?.position = SIMD3<Float>(localOffset.x, 0, localOffset.z)
 
         let signed = Float(state.normalizedTurnAngle).clamped(to: -1...1)
         let theta = turnNeutralTheta - turnMaxAngularTravel * signed

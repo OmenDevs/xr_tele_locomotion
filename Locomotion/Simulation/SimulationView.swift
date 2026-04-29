@@ -16,6 +16,7 @@ struct SimulationView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
+    @State private var devicePoseProvider = DevicePoseProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
     // MARK: - Gesture-based interaction
@@ -48,6 +49,7 @@ struct SimulationView: View {
                 content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+                Task { await devicePoseProvider.start() }
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -87,7 +89,11 @@ struct SimulationView: View {
             // Run the turn gesture processor.
             turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
 
-            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
+            GestureInputViewModel.shared.update(
+                skeletonData: skeletonData,
+                headTransform: devicePoseProvider.currentDeviceTransform(),
+                state: gestureInputState
+            )
 
             if gestureInputState.isActive,
                let dragOrigin = GestureInputViewModel.shared.dragOrigin,
@@ -95,6 +101,7 @@ struct SimulationView: View {
                 dragVisualizer.update(with: DragVisualizerState(
                     origin: dragOrigin,
                     cursor: cursor,
+                    yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
                     normalizedTurnAngle: gestureInputState.normalizedTurnAngle
                 ))
             } else {

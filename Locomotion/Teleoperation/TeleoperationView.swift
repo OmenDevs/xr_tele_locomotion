@@ -17,6 +17,7 @@ struct TeleoperationView: View {
     // MARK: - Gesture-based interaction
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
+    @State private var devicePoseProvider = DevicePoseProvider()
     @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var dragVisualizer = DragGestureVisualizer()
@@ -37,6 +38,7 @@ struct TeleoperationView: View {
             if interactionConfig.selectedInteraction == .gestureBased {
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+                Task { await devicePoseProvider.start() }
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -55,7 +57,11 @@ struct TeleoperationView: View {
         // Run both gesture processors. The first-pinch-wins lock in each
         // converges on the same hand so drag and turn share an active hand.
         turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
-        GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
+        GestureInputViewModel.shared.update(
+            skeletonData: skeletonData,
+            headTransform: devicePoseProvider.currentDeviceTransform(),
+            state: gestureInputState
+        )
 
         if gestureInputState.isActive,
            let dragOrigin = GestureInputViewModel.shared.dragOrigin,
@@ -63,6 +69,7 @@ struct TeleoperationView: View {
             dragVisualizer.update(with: DragVisualizerState(
                 origin: dragOrigin,
                 cursor: cursor,
+                yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
                 normalizedTurnAngle: gestureInputState.normalizedTurnAngle
             ))
         } else {
