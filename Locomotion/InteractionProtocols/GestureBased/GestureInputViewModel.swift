@@ -96,8 +96,6 @@ class GestureInputViewModel {
         // Reproject clamped planar back to world XZ (planar.y = -delta.z).
         let worldDelta = SIMD3<Float>(clampedPlanar.x, 0, -clampedPlanar.y)
         cursorPoint = ref + worldDelta
-
-        print(String(format: "drag vel: %+.3f x  %+.3f y", normalized.x, normalized.y))
     }
 
     private func release(state: GestureInputState) {

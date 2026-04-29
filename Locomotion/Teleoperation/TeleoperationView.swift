@@ -10,6 +10,7 @@ import RealityKit
 
 struct TeleoperationView: View {
     @State private var frameSubscription: EventSubscription?
+    @Environment(RobotWebRTCClient.self) private var client
     @Environment(InteractionConfig.self) private var interactionConfig
     @Environment(HandSkeletonData.self) private var skeletonData
 
@@ -70,6 +71,7 @@ struct TeleoperationView: View {
 
         if previouslyActive && !gestureInputState.isActive {
             previouslyActive = false
+            client.sendVelocity(velocityX: 0, velocityY: 0, omega: 0)
             return
         }
         previouslyActive = gestureInputState.isActive
@@ -80,13 +82,11 @@ struct TeleoperationView: View {
         guard lastSendTime >= sendInterval else { return }
         lastSendTime = 0
 
-        let velX = gestureInputState.velocityX
-        let velY = gestureInputState.velocityY
-        let omega = gestureInputState.angularVelocity
-
-        print("🤖 Gesture → vx: \(String(format: "%.2f", velX)),"
-              + " vy: \(String(format: "%.2f", velY)),"
-              + " ω: \(String(format: "%.2f", omega))")
+        client.sendVelocity(
+            velocityX: gestureInputState.velocityX,
+            velocityY: gestureInputState.velocityY,
+            omega: gestureInputState.angularVelocity
+        )
     }
 }
 
