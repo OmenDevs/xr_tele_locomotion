@@ -49,13 +49,13 @@ struct Joystick3DView: View {
                 let maxOffset: Float = 0.04
                 if let stick = PinchInputViewModel.shared.joystickHandle,
                    let rest = PinchInputViewModel.shared.joystickRestPosition {
-                    let offsetX = Float(InputViewModel.shared.leftStickX) * maxOffset
-                    let offsetY = Float(-InputViewModel.shared.leftStickY) * maxOffset
+                    let offsetX = Float(InputViewModel.shared.velocityX) * maxOffset
+                    let offsetY = Float(-InputViewModel.shared.velocityY) * maxOffset
                     stick.position = mix(stick.position, rest + SIMD3<Float>(offsetX, -offsetY, 0), t: 0.2)
                 }
                 if let lever = PinchInputViewModel.shared.leverHandle,
                    let rest = PinchInputViewModel.shared.leverRestPosition {
-                    let offsetX = Float(InputViewModel.shared.rightStickX) * maxOffset
+                    let offsetX = Float(InputViewModel.shared.angularVelocity) * maxOffset
                     lever.position = mix(lever.position, rest + SIMD3<Float>(offsetX, 0, 0), t: 0.2)
                 }
             }

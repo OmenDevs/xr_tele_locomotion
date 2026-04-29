@@ -16,13 +16,14 @@ struct SimulationView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
+    @State private var devicePoseProvider = DevicePoseProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
     // MARK: - Gesture-based interaction
 
-    @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
-    @State private var turnVisualizer = TurnGestureVisualizer()
+    @State private var dragVisualizer = DragGestureVisualizer()
+
     var recording: RecordingViewModel
 
     var body: some View {
@@ -41,10 +42,10 @@ struct SimulationView: View {
             case .joystick3D:
                 break
             case .gestureBased:
-                // Add gesture visualizer root to the scene.
-                content.add(turnVisualizer.rootEntity)
+                content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+                Task { await devicePoseProvider.start() }
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -68,48 +69,37 @@ struct SimulationView: View {
     }
 
     func simulationTick(deltaTime: TimeInterval) {
-        let velocityX: Double
-        let velocityY: Double
-        let angularVelocity: Double
+        if interactionConfig.selectedInteraction == .gestureBased {
+            turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
+            GestureInputViewModel.shared.update(
+                skeletonData: skeletonData,
+                headTransform: devicePoseProvider.currentDeviceTransform(),
+                state: InputViewModel.shared
+            )
 
-        switch interactionConfig.selectedInteraction {
-        case .gestureBased:
-            // Run the turn gesture processor.
-            turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
-
-            // Update visualization.
-            if gestureInputState.isActive,
-               let refDir = turnProcessor.currentReferenceDirection,
-               let curDir = turnProcessor.currentFingerDirection {
-                turnVisualizer.update(with: TurnVisualizerState(
-                    origin: turnProcessor.axisOrigin,
-                    axis: turnProcessor.axisDirection,
-                    referenceDir: refDir,
-                    currentDir: curDir
+            if InputViewModel.shared.isActive,
+               let dragOrigin = GestureInputViewModel.shared.dragOrigin,
+               let cursor = GestureInputViewModel.shared.cursorPoint {
+                dragVisualizer.update(with: DragVisualizerState(
+                    origin: dragOrigin,
+                    cursor: cursor,
+                    yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
+                    normalizedTurnAngle: InputViewModel.shared.angularVelocity
                 ))
             } else {
-                turnVisualizer.hide()
+                dragVisualizer.hide()
             }
-
-            velocityX = gestureInputState.velocityX
-            velocityY = gestureInputState.velocityY
-            angularVelocity = gestureInputState.angularVelocity
-
-        case .joystick2D, .joystick3D:
-            velocityX = InputViewModel.shared.velocityX
-            velocityY = InputViewModel.shared.velocityY
-            angularVelocity = InputViewModel.shared.angularVelocity
         }
 
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: velocityY,
-            normalizedAngularVelocity: angularVelocity)
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
         robotSimulator.updateInputs(
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: -velocityY,
-            normalizedAngularVelocity: angularVelocity)
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: -InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
         robotSimulator.update(deltaTime: deltaTime)
     }
 }
