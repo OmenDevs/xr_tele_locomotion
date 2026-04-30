@@ -12,7 +12,7 @@ import RealityKitContent
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
-    @State private var POVSimulator = POVSimulatorViewModel()
+    @State private var povSimulator = POVSimulatorViewModel()
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
@@ -65,25 +65,14 @@ struct SimulationView: View {
                 guard let scenarioEntity = event.scene.findEntity(named: "scenarioEntity") else { return }
                 let userPose = Transform(
                     rotation: simd_quatf(
-                        angle: Float(POVSimulator.scenarioHeading),
+                        angle: Float(povSimulator.scenarioHeading),
                         axis: SIMD3<Float>(0, 1, 0)),
                     translation: SIMD3<Float>(
-                        Float(POVSimulator.scenarioX),
+                        Float(povSimulator.scenarioX),
                         0,
-                        -Float(POVSimulator.scenarioY))
+                        -Float(povSimulator.scenarioY))
                 )
                 scenarioEntity.transform = Transform(matrix: userPose.matrix.inverse)
-
-                guard let robot = event.scene.findEntity(named: "robot") else { return }
-                                robot.position = SIMD3<Float>(
-                                    Float(robotSimulator.robotX),
-                                    1,
-                                    Float(robotSimulator.robotY)
-                                )
-                                robot.orientation = simd_quatf(
-                                    angle: Float(-robotSimulator.robotHeading),
-                                    axis: SIMD3<Float>(0, 1, 0)
-                                )
             }
 
         }
@@ -118,11 +107,11 @@ struct SimulationView: View {
             normalizedVelocityX: InputViewModel.shared.velocityX,
             normalizedVelocityY: InputViewModel.shared.velocityY,
             normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
-        robotSimulator.updateInputs(
+        povSimulator.updateScenario(
             normalizedVelocityX: InputViewModel.shared.velocityX,
-            normalizedVelocityY: -InputViewModel.shared.velocityY,
-            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
-        robotSimulator.update(deltaTime: deltaTime)
+            normalizedVelocityY: InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: -InputViewModel.shared.angularVelocity,
+            deltaTime: deltaTime)
     }
 }
 
