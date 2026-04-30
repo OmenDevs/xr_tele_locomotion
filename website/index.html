@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LOCOMOTION ✱ ROBOT TELEOPERATION FOR APPLE VISION PRO</title>
+    <meta
+      name="description"
+      content="Open-source visionOS app for real-time robot teleoperation. Streams RealSense color, depth and infrared over WebRTC."
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="LOCOMOTION ✱ ROBOTS UNCAGED" />
+    <meta
+      property="og:description"
+      content="Open-source visionOS app for real-time robot teleoperation over WebRTC."
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Locomotion home">
+        <span class="brand-mark" aria-hidden="true">✱</span>
+        <span class="brand-name">LOCOMOTION</span>
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        <a href="#what">OVERVIEW</a>
+        <a href="#protocols">CONTROL</a>
+        <a href="#how">HOW</a>
+        <a href="#start">START</a>
+        <a class="topnav-pill" href="https://github.com/Arte-Omen/Locomotion" target="_blank" rel="noopener">
+          GITHUB <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- ============== HERO ============== -->
+      <section class="hero">
+        <div class="hero-eyebrow">
+          <span>[ ARTE-OMEN ]</span>
+          <span aria-hidden="true">✱</span>
+          <span>MMXXVI</span>
+          <span aria-hidden="true">✱</span>
+          <span>OPEN SOURCE</span>
+          <span aria-hidden="true">✱</span>
+          <span>VISIONOS</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="line">DRIVE</span>
+          <span class="line green">ROBOTS.</span>
+          <span class="line">FROM INSIDE</span>
+          <span class="line pink under">THE SCENE.</span>
+        </h1>
+
+        <p class="hero-sub">
+          An open-source visionOS app that streams a robot's RealSense camera to your headset over
+          WebRTC — color, depth, infrared — and lets you drive it with the input that fits the
+          task. Joystick. Gesture. Hands. Head.
+        </p>
+
+        <div class="cta-row">
+          <button
+            class="btn btn-block btn-disabled"
+            disabled
+            aria-disabled="true"
+            title="Coming soon to the App Store"
+          >
+            <span class="btn-tag">★</span>
+            <span class="btn-label">APP STORE</span>
+            <span class="btn-sub">COMING SOON</span>
+          </button>
+          <a
+            class="btn btn-block btn-pink"
+            href="https://github.com/Arte-Omen/Locomotion"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="btn-tag">↗</span>
+            <span class="btn-label">GITHUB</span>
+            <span class="btn-sub">ARTE-OMEN / LOCOMOTION</span>
+          </a>
+        </div>
+
+        <div class="sticker" aria-hidden="true">
+          <span>NEW</span>
+          <span>v0.1</span>
+          <span>2026</span>
+        </div>
+
+        <div class="hero-wedge" aria-hidden="true"></div>
+        <div class="hero-corner" aria-hidden="true">
+          <span>01 / 06</span>
+          <span>HERO</span>
+        </div>
+      </section>
+
+      <!-- ============== MARQUEE ============== -->
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱</span>
+          <span>✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱</span>
+        </div>
+      </div>
+
+      <!-- ============== 02 / OVERVIEW ============== -->
+      <section id="what" class="poster poster-white">
+        <p class="kicker">[ 02 / OVERVIEW ]</p>
+        <h2 class="billboard">
+          A SPATIAL <br />
+          COCKPIT FOR <br />
+          <span class="under-pink">ANY ROBOT</span> <br />
+          WITH A CAMERA.
+        </h2>
+        <div class="cols">
+          <p class="lead">
+            Mount an Intel RealSense D435i on a robot. Run the small Python server. Put on your
+            Vision Pro. Locomotion gives you a low-latency video feed in immersive space and turns
+            your headset into a control surface — with a simulation mode for when the hardware
+            isn't on your desk.
+          </p>
+          <ul class="bullets">
+            <li>
+              <span class="b-num">01</span>
+              <span><strong>REAL-TIME VIDEO</strong> over WebRTC. Color, colorized depth, or infrared.</span>
+            </li>
+            <li>
+              <span class="b-num">02</span>
+              <span><strong>FIVE INPUT PROTOCOLS</strong>, switchable from the landing screen.</span>
+            </li>
+            <li>
+              <span class="b-num">03</span>
+              <span><strong>SIMULATION MODE</strong> for testing motion without the robot.</span>
+            </li>
+            <li>
+              <span class="b-num">04</span>
+              <span><strong>OPEN SOURCE.</strong> MIT-licensed. Fork it. Extend it.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============== 03 / CONTROL ============== -->
+      <section id="protocols" class="poster poster-black">
+        <p class="kicker kicker-on-black">[ 03 / CONTROL ]</p>
+        <h2 class="billboard billboard-on-black">
+          PICK YOUR <span class="green">INPUT.</span> <br />
+          <span class="pink">SWAP IT</span> LIVE.
+        </h2>
+
+        <div class="protocol-grid">
+          <article class="protocol p-green">
+            <p class="big-num">01</p>
+            <h3>JOYSTICK 2D</h3>
+            <p>
+              A familiar planar joystick window. Drive on the ground plane with linear and angular
+              velocity. The default for quick demos and bring-up.
+            </p>
+          </article>
+          <article class="protocol p-black">
+            <p class="big-num">02</p>
+            <h3>JOYSTICK 3D</h3>
+            <p>
+              A spatial joystick that lives inside the immersive scene. Push it through 3D space
+              to command motion in three axes.
+            </p>
+          </article>
+          <article class="protocol p-pink">
+            <p class="big-num">03</p>
+            <h3>GESTURE</h3>
+            <p>
+              Hand pose drives the robot. Pinches, drags, and orientation map straight to velocity
+              commands sent over the data channel.
+            </p>
+          </article>
+          <article class="protocol p-pink">
+            <p class="big-num">04</p>
+            <h3>HAND TRACKING</h3>
+            <p>
+              Full skeletal hand input for finer-grained control — designed for tasks where hand
+              shape carries meaning, not just position.
+            </p>
+          </article>
+          <article class="protocol p-black">
+            <p class="big-num">05</p>
+            <h3>DEVICE TRACKING</h3>
+            <p>
+              Your head is the controller. Headset position and orientation drive the robot,
+              freeing your hands entirely.
+            </p>
+          </article>
+          <article class="protocol p-green p-dashed">
+            <p class="big-num">06</p>
+            <h3>BRING<br />YOUR OWN</h3>
+            <p>
+              Each protocol is a swappable module. Add one by conforming to the input view-model
+              contract and registering it in the landing picker.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============== 04 / HOW IT WORKS ============== -->
+      <section id="how" class="poster poster-green">
+        <p class="kicker kicker-on-green">[ 04 / HOW IT WORKS ]</p>
+        <h2 class="billboard billboard-on-green">
+          THREE PIECES. <br />
+          ONE WIRE.
+        </h2>
+
+        <div class="stages">
+          <div class="stage stage-1">
+            <p class="stage-num">01</p>
+            <h3>ROBOT</h3>
+            <p>
+              A Python server reads from the RealSense D435i, encodes the selected stream, and
+              opens a WebRTC peer connection. Falls back to a regular webcam if no RealSense is
+              attached.
+            </p>
+          </div>
+          <p class="stage-arrow" aria-hidden="true">→</p>
+          <div class="stage stage-2">
+            <p class="stage-num">02</p>
+            <h3>WIRE</h3>
+            <p>
+              Video flows one way. Commands flow the other. A bidirectional data channel carries
+              control input and stream-switch messages — <code>stream:color</code>,
+              <code>stream:depth</code>, <code>stream:infrared</code>.
+            </p>
+          </div>
+          <p class="stage-arrow" aria-hidden="true">→</p>
+          <div class="stage stage-3">
+            <p class="stage-num">03</p>
+            <h3>HEADSET</h3>
+            <p>
+              The visionOS client renders the remote track in an immersive scene, captures input
+              from the chosen protocol, and pushes velocity commands back to the robot in real
+              time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== 05 / SIMULATION ============== -->
+      <section class="poster poster-magenta">
+        <p class="kicker kicker-on-pink">[ 05 / SIMULATION ]</p>
+        <div class="sim-split">
+          <h2 class="billboard billboard-on-pink">
+            NO ROBOT? <br />
+            NO <span class="under-black">PROBLEM.</span>
+          </h2>
+          <div class="sim-text">
+            <p class="lead lead-on-pink">
+              Locomotion ships with a simulation mode that runs the same input pipeline against a
+              virtual robot in an immersive scene. Tune a control protocol, validate a gesture, or
+              demo the system — no hardware required.
+            </p>
+            <ul class="sim-list">
+              <li><span>LANDING</span><span>PICK INTERACTION</span></li>
+              <li><span>MODE</span><span>SIM · ROBOT CONTROL</span></li>
+              <li><span>SCENE</span><span>IMMERSIVE SPACE</span></li>
+              <li><span>INPUT</span><span>2D · 3D · GESTURE · HAND · HEAD</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== 06 / GET STARTED ============== -->
+      <section id="start" class="poster poster-white">
+        <p class="kicker">[ 06 / GET STARTED ]</p>
+        <h2 class="billboard">
+          TWO HALVES. <br />
+          <span class="under-green">BOTH SMALL.</span>
+        </h2>
+
+        <div class="halves">
+          <article class="half half-green">
+            <p class="big-num">01</p>
+            <h3>THE APP</h3>
+            <p>
+              The Vision Pro client will be on the App Store at launch. Until then, build from
+              source with Xcode against <code>main</code>.
+            </p>
+            <div class="card-actions">
+              <button class="btn btn-row btn-disabled" disabled aria-disabled="true">
+                APP STORE / SOON
+              </button>
+              <a
+                class="btn btn-row btn-outline"
+                href="https://github.com/Arte-Omen/Locomotion"
+                target="_blank"
+                rel="noopener"
+              >
+                CLONE THE REPO ↗
+              </a>
+            </div>
+          </article>
+          <article class="half half-pink">
+            <p class="big-num">02</p>
+            <h3>THE SERVER</h3>
+            <p>
+              Plug in a RealSense D435i, install the Python deps, and run
+              <code>python3 Server/app.py</code>. The server prints a network URL — paste it into
+              the app and connect.
+            </p>
+            <div class="card-actions">
+              <a
+                class="btn btn-row btn-outline"
+                href="https://github.com/Arte-Omen/Locomotion/blob/main/Server/README.md"
+                target="_blank"
+                rel="noopener"
+              >
+                SERVER SETUP GUIDE ↗
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============== 07 / FORK IT ============== -->
+      <section class="poster poster-black poster-final">
+        <p class="kicker kicker-on-black">[ 07 / OPEN SOURCE ]</p>
+        <h2 class="billboard billboard-on-black billboard-huge">
+          FORK IT. <br />
+          <span class="green">SHIP IT.</span> <br />
+          <span class="pink">OWN IT.</span>
+        </h2>
+        <p class="final-sub">
+          Locomotion is MIT-licensed. Built in the open by Arte-Omen. Issues, PRs and forks for
+          new robots, cameras, and control protocols — all welcome.
+        </p>
+        <div class="cta-row cta-center">
+          <a
+            class="btn btn-block btn-green"
+            href="https://github.com/Arte-Omen/Locomotion"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="btn-tag">★</span>
+            <span class="btn-label">STAR ON GITHUB</span>
+            <span class="btn-sub">ARTE-OMEN / LOCOMOTION</span>
+          </a>
+          <button class="btn btn-block btn-disabled" disabled aria-disabled="true">
+            <span class="btn-tag">★</span>
+            <span class="btn-label">APP STORE</span>
+            <span class="btn-sub">COMING SOON</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-row">
+        <span class="footer-mark">✱ LOCOMOTION</span>
+        <span>© <span id="year">2026</span> ARTE-OMEN · MIT LICENSE</span>
+        <div class="footer-links">
+          <a href="https://github.com/Arte-Omen/Locomotion" target="_blank" rel="noopener">GITHUB ↗</a>
+          <a
+            href="https://github.com/Arte-Omen/Locomotion/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener"
+            >LICENSE ↗</a
+          >
+          <a
+            href="https://github.com/Arte-Omen/Locomotion/blob/main/Server/README.md"
+            target="_blank"
+            rel="noopener"
+            >SERVER ↗</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
