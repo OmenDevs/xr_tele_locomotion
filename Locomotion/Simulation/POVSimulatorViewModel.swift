@@ -1,5 +1,5 @@
 //
-//  RobotSimulatorViewModel.swift
+//  POVSimulatorViewModel.swift
 //  Locomotion
 //
 //  Created by Julio Enrique Sanchez Guajardo on 27/03/26.
