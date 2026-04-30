@@ -16,14 +16,13 @@ struct SimulationView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
+    @State private var devicePoseProvider = DevicePoseProvider()
     @Environment(HandSkeletonData.self) private var skeletonData
 
     // MARK: - Gesture-based interaction
 
-    @State private var gestureInputState = GestureInputState()
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var dragVisualizer = DragGestureVisualizer()
-    @State private var pinchInput = PinchInputViewModel.shared
 
     var recording: RecordingViewModel
 
@@ -52,13 +51,12 @@ struct SimulationView: View {
             case .joystick2D:
                 break
             case .joystick3D:
-                handSkeletonProvider.skeletonData = skeletonData
-                pinchInput.skeletonData = skeletonData
-                Task { await handSkeletonProvider.start() }
+                break
             case .gestureBased:
                 content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
                 Task { await handSkeletonProvider.start() }
+                Task { await devicePoseProvider.start() }
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
@@ -76,63 +74,64 @@ struct SimulationView: View {
                 )
                 scenarioEntity.transform = Transform(matrix: userPose.matrix.inverse)
 
-                switch interactionConfig.selectedInteraction {
-                case .joystick2D:
-                    break
-                case .joystick3D:
-                    pinchInput.update()
-                case .gestureBased:
-                    break
-                }
+                guard let robot = event.scene.findEntity(named: "robot") else { return }
+                                robot.position = SIMD3<Float>(
+                                    Float(robotSimulator.robotX),
+                                    1,
+                                    Float(robotSimulator.robotY)
+                                )
+                                robot.orientation = simd_quatf(
+                                    angle: Float(-robotSimulator.robotHeading),
+                                    axis: SIMD3<Float>(0, 1, 0)
+                                )
             }
 
         }
+        .overlay { interactionOverlay }
     }
 
     func simulationTick(deltaTime: TimeInterval) {
-        let velocityX: Double
-        let velocityY: Double
-        let angularVelocity: Double
+        if interactionConfig.selectedInteraction == .gestureBased {
+            turnProcessor.update(skeletonData: skeletonData, state: InputViewModel.shared)
+            GestureInputViewModel.shared.update(
+                skeletonData: skeletonData,
+                headTransform: devicePoseProvider.currentDeviceTransform(),
+                state: InputViewModel.shared
+            )
 
-        switch interactionConfig.selectedInteraction {
-        case .gestureBased:
-            // Run the turn gesture processor.
-            turnProcessor.update(skeletonData: skeletonData, state: gestureInputState)
-
-            GestureInputViewModel.shared.update(skeletonData: skeletonData, state: gestureInputState)
-
-            if gestureInputState.isActive,
+            if InputViewModel.shared.isActive,
                let dragOrigin = GestureInputViewModel.shared.dragOrigin,
                let cursor = GestureInputViewModel.shared.cursorPoint {
                 dragVisualizer.update(with: DragVisualizerState(
                     origin: dragOrigin,
                     cursor: cursor,
-                    normalizedTurnAngle: gestureInputState.normalizedTurnAngle
+                    yaw: GestureInputViewModel.shared.frozenYaw ?? 0,
+                    normalizedTurnAngle: InputViewModel.shared.angularVelocity
                 ))
             } else {
                 dragVisualizer.hide()
             }
-
-            velocityX = gestureInputState.velocityX
-            velocityY = gestureInputState.velocityY
-            angularVelocity = gestureInputState.angularVelocity
-
-        case .joystick2D, .joystick3D:
-            velocityX = InputViewModel.shared.velocityX
-            velocityY = InputViewModel.shared.velocityY
-            angularVelocity = InputViewModel.shared.angularVelocity
         }
 
         recording.addTelemetryEntry(
             deltaTime: deltaTime,
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: velocityY,
-            normalizedAngularVelocity: angularVelocity)
-        POVSimulator.updateScenario(
-            normalizedVelocityX: velocityX,
-            normalizedVelocityY: velocityY,
-            normalizedAngularVelocity: -angularVelocity,
-            deltaTime: deltaTime)
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
+        robotSimulator.updateInputs(
+            normalizedVelocityX: InputViewModel.shared.velocityX,
+            normalizedVelocityY: -InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
+        robotSimulator.update(deltaTime: deltaTime)
+    }
+}
+
+extension SimulationView {
+    @ViewBuilder
+    var interactionOverlay: some View {
+        if interactionConfig.selectedInteraction == .joystick3D {
+            Joystick3DView()
+        }
     }
 }
 

@@ -8,36 +8,35 @@
 import SwiftUI
 import Observation
 
-/// Observable source of truth for joystick input → normalized velocities.
-///
-/// Produce `velocityX`, `velocityY`, `angularVelocity` from joystick input.
+enum ActiveHand {
+    case none, left, right
+}
+
+/// Observable source of truth for input → normalized velocities.
+/// Shared by joystick (2D/3D) and gesture-based interaction protocols.
 @Observable @MainActor
 final class InputViewModel {
 
     static let shared = InputViewModel()
 
-    // MARK: - Joystick raw inputs  (-1 … +1)
+    // MARK: - Gesture activation (gesture-based protocol only)
 
-    var leftStickX: Double = 0.0   // lateral
-    var leftStickY: Double = 0.0   // forward / backward
-    var rightStickX: Double = 0.0   // angular rotation
+    var isActive: Bool = false
+    var activeHand: ActiveHand = .none
 
-    // MARK: - Normalized output velocities
+    // MARK: - Normalized output velocities (-1…+1)
 
-    /// Linear velocity along X axis (m/s).
-    var velocityX: Double { leftStickX }
-
-    /// Linear velocity along Y axis (m/s).
-    var velocityY: Double { leftStickY }
-
-    /// Angular velocity ω (rad/s).
-    var angularVelocity: Double { rightStickX }
+    var velocityX: Double = 0.0
+    var velocityY: Double = 0.0
+    var angularVelocity: Double = 0.0
 
     // MARK: - Reset
 
     func reset() {
-        leftStickX = 0
-        leftStickY = 0
-        rightStickX = 0
+        isActive = false
+        activeHand = .none
+        velocityX = 0.0
+        velocityY = 0.0
+        angularVelocity = 0.0
     }
 }
