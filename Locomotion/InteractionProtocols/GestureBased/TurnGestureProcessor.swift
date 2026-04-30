@@ -48,7 +48,7 @@ final class TurnGestureProcessor {
     // MARK: - Public API
 
     /// Call once per frame.
-    func update(skeletonData: HandSkeletonData, state: GestureInputState) {
+    func update(skeletonData: HandSkeletonData, state: InputViewModel) {
         let isActive = resolveActiveHand(skeletonData: skeletonData)
 
         if !isActive {
@@ -64,7 +64,7 @@ final class TurnGestureProcessor {
     }
 
     /// Resets all gesture state.
-    func resetAll(state: GestureInputState) {
+    func resetAll(state: InputViewModel) {
         resetState(state: state)
     }
 
@@ -92,7 +92,7 @@ final class TurnGestureProcessor {
 
     // MARK: - Turn Angle Computation
 
-    private func computeTurnAngle(joints: TurnJointPositions, state: GestureInputState) {
+    private func computeTurnAngle(joints: TurnJointPositions, state: InputViewModel) {
         let axis = simd_normalize(joints.thumbTip - joints.thumbKnuckle)
         let axisLen = simd_length(joints.thumbTip - joints.thumbKnuckle)
         guard axisLen > 0.001 else { return }
@@ -114,7 +114,7 @@ final class TurnGestureProcessor {
             currentReferenceDirection = currentDir
             smoothedAngle = 0
             rawAngle = 0
-            state.normalizedTurnAngle = 0
+            state.angularVelocity = 0
             return
         }
 
@@ -137,17 +137,17 @@ final class TurnGestureProcessor {
         rawAngle = smoothedAngle
 
         guard abs(smoothedAngle) >= Self.deadzone else {
-            state.normalizedTurnAngle = 0.0
+            state.angularVelocity = 0.0
             return
         }
 
         let clampedAngle = simd_clamp(smoothedAngle, -Self.maxAngle, Self.maxAngle)
-        state.normalizedTurnAngle = Double(clampedAngle / Self.maxAngle)
+        state.angularVelocity = Double(clampedAngle / Self.maxAngle)
     }
 
     // MARK: - Reset
 
-    private func resetState(state: GestureInputState) {
+    private func resetState(state: InputViewModel) {
         referenceDirection = nil
         currentReferenceDirection = nil
         currentFingerDirection = nil
