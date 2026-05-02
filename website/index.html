@@ -11,7 +11,7 @@
     <meta name="theme-color" content="#0a0a0a" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="LOCOMOTION ✱ ROBOTS UNCAGED" />
+    <meta property="og:title" content="LOCOMOTION ✱ ROBOT TELEOPERATION" />
     <meta
       property="og:description"
       content="Open-source visionOS app for real-time robot teleoperation over WebRTC."
@@ -29,6 +29,7 @@
         <a href="#what">OVERVIEW</a>
         <a href="#protocols">CONTROL</a>
         <a href="#how">HOW</a>
+        <a href="#research">RESEARCH</a>
         <a href="#start">START</a>
         <a href="#team">TEAM</a>
         <a class="topnav-pill" href="https://github.com/Arte-Omen/Locomotion" target="_blank" rel="noopener">
@@ -41,7 +42,7 @@
       <!-- ============== HERO ============== -->
       <section class="hero">
         <div class="hero-eyebrow">
-          <span>[ ARTE-OMEN ]</span>
+          <span>[ OMEN ]</span>
           <span aria-hidden="true">✱</span>
           <span>MMXXVI</span>
           <span aria-hidden="true">✱</span>
@@ -51,16 +52,17 @@
         </div>
 
         <h1 class="hero-title">
-          <span class="line">DRIVE</span>
-          <span class="line green">ROBOTS.</span>
-          <span class="line">FROM INSIDE</span>
-          <span class="line pink under">THE SCENE.</span>
+          <span class="line">FIRST-PERSON</span>
+          <span class="line green">TELEOPERATION</span>
+          <span class="line">FOR APPLE</span>
+          <span class="line pink under">VISION PRO.</span>
         </h1>
 
         <p class="hero-sub">
-          An open-source visionOS app that streams a robot's RealSense camera to your headset over
-          WebRTC — color, depth, infrared — and lets you drive it with the input that fits the
-          task. Joystick. Gesture. Hands. Head.
+          An open-source visionOS client and Python streaming server. WebRTC video from an Intel
+          RealSense D435i to Apple Vision Pro, with a bidirectional data channel for control. Two
+          interaction protocols — 3D-Joystick and Custom-Gesture — compared in a within-subjects
+          user study.
         </p>
 
         <div class="cta-row">
@@ -82,14 +84,8 @@
           >
             <span class="btn-tag">↗</span>
             <span class="btn-label">GITHUB</span>
-            <span class="btn-sub">ARTE-OMEN / LOCOMOTION</span>
+            <span class="btn-sub">OMEN / LOCOMOTION</span>
           </a>
-        </div>
-
-        <div class="sticker" aria-hidden="true">
-          <span>NEW</span>
-          <span>v0.1</span>
-          <span>2026</span>
         </div>
 
         <div class="hero-wedge" aria-hidden="true"></div>
@@ -102,8 +98,8 @@
       <!-- ============== MARQUEE ============== -->
       <div class="marquee" aria-hidden="true">
         <div class="marquee-track">
-          <span>✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱</span>
-          <span>✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱ ROBOTS UNCAGED ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ ARTE-OMEN ✱ MMXXVI ✱</span>
+          <span>✱ ROBOT TELEOPERATION ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ OMEN ✱ MMXXVI ✱ ROBOT TELEOPERATION ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ OMEN ✱ MMXXVI ✱</span>
+          <span>✱ ROBOT TELEOPERATION ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ OMEN ✱ MMXXVI ✱ ROBOT TELEOPERATION ✱ VISIONOS ✱ WEBRTC ✱ REALSENSE D435I ✱ OPEN SOURCE ✱ MIT LICENSE ✱ OMEN ✱ MMXXVI ✱</span>
         </div>
       </div>
 
@@ -112,25 +108,25 @@
         <p class="kicker">[ 02 / OVERVIEW ]</p>
         <h2 class="billboard">
           A SPATIAL <br />
-          COCKPIT FOR <br />
-          <span class="under-pink">ANY ROBOT</span> <br />
-          WITH A CAMERA.
+          <span class="under-pink">TELEOPERATION</span> <br />
+          COCKPIT.
         </h2>
         <div class="cols">
           <p class="lead">
-            Mount an Intel RealSense D435i on a robot. Run the small Python server. Put on your
-            Vision Pro. Locomotion gives you a low-latency video feed in immersive space and turns
-            your headset into a control surface — with a simulation mode for when the hardware
-            isn't on your desk.
+            An Intel RealSense D435i mounted on the robot streams color, depth, and infrared via
+            a Python WebRTC server. The visionOS client renders the remote track in an immersive
+            scene and transmits velocity commands back over a bidirectional data channel. A
+            simulation mode runs the same input pipeline against a virtual robot for development
+            without hardware.
           </p>
           <ul class="bullets">
             <li>
               <span class="b-num">01</span>
-              <span><strong>REAL-TIME VIDEO</strong> over WebRTC. Color, colorized depth, or infrared.</span>
+              <span><strong>REAL-TIME VIDEO</strong> over WebRTC.</span>
             </li>
             <li>
               <span class="b-num">02</span>
-              <span><strong>FIVE INPUT PROTOCOLS</strong>, switchable from the landing screen.</span>
+              <span><strong>TWO INPUT PROTOCOLS</strong>, switchable from the landing screen.</span>
             </li>
             <li>
               <span class="b-num">03</span>
@@ -138,7 +134,7 @@
             </li>
             <li>
               <span class="b-num">04</span>
-              <span><strong>OPEN SOURCE.</strong> MIT-licensed. Fork it. Extend it.</span>
+              <span><strong>MIT-LICENSED.</strong> Implementation and study materials open.</span>
             </li>
           </ul>
         </div>
@@ -148,53 +144,29 @@
       <section id="protocols" class="poster poster-black">
         <p class="kicker kicker-on-black">[ 03 / CONTROL ]</p>
         <h2 class="billboard billboard-on-black">
-          PICK YOUR <span class="green">INPUT.</span> <br />
-          <span class="pink">SWAP IT</span> LIVE.
+          TWO <span class="green">PROTOCOLS.</span> <br />
+          ONE <span class="pink">STUDY.</span>
         </h2>
 
         <div class="protocol-grid">
           <article class="protocol p-green">
             <p class="big-num">01</p>
-            <h3>JOYSTICK 2D</h3>
-            <p>
-              A familiar planar joystick window. Drive on the ground plane with linear and angular
-              velocity. The default for quick demos and bring-up.
-            </p>
-          </article>
-          <article class="protocol p-black">
-            <p class="big-num">02</p>
-            <h3>JOYSTICK 3D</h3>
+            <h3>3D-JOYSTICK</h3>
             <p>
               A spatial joystick that lives inside the immersive scene. Push it through 3D space
               to command motion in three axes.
             </p>
           </article>
           <article class="protocol p-pink">
-            <p class="big-num">03</p>
-            <h3>GESTURE</h3>
+            <p class="big-num">02</p>
+            <h3>CUSTOM-GESTURE</h3>
             <p>
               Hand pose drives the robot. Pinches, drags, and orientation map straight to velocity
               commands sent over the data channel.
             </p>
           </article>
-          <article class="protocol p-pink">
-            <p class="big-num">04</p>
-            <h3>HAND TRACKING</h3>
-            <p>
-              Full skeletal hand input for finer-grained control — designed for tasks where hand
-              shape carries meaning, not just position.
-            </p>
-          </article>
-          <article class="protocol p-black">
-            <p class="big-num">05</p>
-            <h3>DEVICE TRACKING</h3>
-            <p>
-              Your head is the controller. Headset position and orientation drive the robot,
-              freeing your hands entirely.
-            </p>
-          </article>
-          <article class="protocol p-green p-dashed">
-            <p class="big-num">06</p>
+          <article class="protocol p-black p-dashed">
+            <p class="big-num">03</p>
             <h3>BRING<br />YOUR OWN</h3>
             <p>
               Each protocol is a swappable module. Add one by conforming to the input view-model
@@ -227,9 +199,7 @@
             <p class="stage-num">02</p>
             <h3>WIRE</h3>
             <p>
-              Video flows one way. Commands flow the other. A bidirectional data channel carries
-              control input and stream-switch messages — <code>stream:color</code>,
-              <code>stream:depth</code>, <code>stream:infrared</code>.
+              Video flows one way. Commands flow the other.
             </p>
           </div>
           <p class="stage-arrow" aria-hidden="true">→</p>
@@ -250,28 +220,221 @@
         <p class="kicker kicker-on-pink">[ 05 / SIMULATION ]</p>
         <div class="sim-split">
           <h2 class="billboard billboard-on-pink">
-            NO ROBOT? <br />
-            NO <span class="under-black">PROBLEM.</span>
+            RUN THE LOOP <br />
+            WITHOUT THE <span class="under-black">ROBOT.</span>
           </h2>
           <div class="sim-text">
             <p class="lead lead-on-pink">
-              Locomotion ships with a simulation mode that runs the same input pipeline against a
-              virtual robot in an immersive scene. Tune a control protocol, validate a gesture, or
-              demo the system — no hardware required.
+              A simulation mode runs the same input pipeline against a virtual robot in an
+              immersive scene. Useful for protocol development, gesture validation, and pilot
+              tests when the robot isn't available.
             </p>
             <ul class="sim-list">
               <li><span>LANDING</span><span>PICK INTERACTION</span></li>
               <li><span>MODE</span><span>SIM · ROBOT CONTROL</span></li>
               <li><span>SCENE</span><span>IMMERSIVE SPACE</span></li>
-              <li><span>INPUT</span><span>2D · 3D · GESTURE · HAND · HEAD</span></li>
+              <li><span>INPUT</span><span>3D-JOYSTICK · CUSTOM-GESTURE</span></li>
             </ul>
           </div>
         </div>
       </section>
 
-      <!-- ============== 06 / GET STARTED ============== -->
+      <!-- ============== 06 / RESEARCH ============== -->
+      <section id="research" class="poster poster-white">
+        <p class="kicker">[ 06 / RESEARCH ]</p>
+        <h2 class="billboard">
+          PROTOCOLS <br />
+          <span class="under-pink">ON TRIAL.</span>
+        </h2>
+        <p class="lead research-lead">
+          Two protocols. One fixed course. A stopwatch. Locomotion is built around a
+          within-subjects user study that pits 3D-Joystick against Custom-Gesture on the same
+          navigation task — measuring completion time, errors, workload, awareness, sickness, and
+          preference for every participant.
+        </p>
+
+        <h3 class="research-sub">[ THE MATCHUP ]</h3>
+        <div class="vs">
+          <article class="vs-card vs-j">
+            <p class="vs-tag">PROTOCOL J</p>
+            <h3 class="vs-name">3D-JOYSTICK</h3>
+            <p class="vs-desc">
+              Virtual joystick handles in the immersive scene. Push, pull, twist.
+            </p>
+          </article>
+          <p class="vs-arrow" aria-hidden="true">VS</p>
+          <article class="vs-card vs-g">
+            <p class="vs-tag">PROTOCOL G</p>
+            <h3 class="vs-name">CUSTOM-GESTURE</h3>
+            <p class="vs-desc">
+              Middle-finger pinch translation, custom rotation gesture. Hands free of UI.
+            </p>
+          </article>
+        </div>
+
+        <h3 class="research-sub">[ WHAT WE MEASURE ]</h3>
+        <div class="metric-grid">
+          <article class="metric metric-primary">
+            <p class="m-num">01</p>
+            <h4>COMPLETION TIME</h4>
+            <p>From "Go" to crossing the finish line. Seconds, 0.1s precision.</p>
+          </article>
+          <article class="metric metric-primary">
+            <p class="m-num">02</p>
+            <h4>NAVIGATION ERRORS</h4>
+            <p>Count of times the robot leaves the marked tape line.</p>
+          </article>
+          <article class="metric">
+            <p class="m-num">03</p>
+            <h4>NASA-TLX</h4>
+            <p>Cognitive workload across six dimensions, 0–100.</p>
+          </article>
+          <article class="metric">
+            <p class="m-num">04</p>
+            <h4>SART</h4>
+            <p>Situation Awareness Rating Technique, 0–100.</p>
+          </article>
+          <article class="metric">
+            <p class="m-num">05</p>
+            <h4>SUS</h4>
+            <p>System Usability Scale, 0–100.</p>
+          </article>
+          <article class="metric">
+            <p class="m-num">06</p>
+            <h4>SSQ</h4>
+            <p>Simulator Sickness Questionnaire, 0–235.</p>
+          </article>
+          <article class="metric metric-pref">
+            <p class="m-num">07</p>
+            <h4>FORCED-CHOICE PREFERENCE</h4>
+            <p>"Which protocol did you prefer?" — binary J or G.</p>
+          </article>
+        </div>
+
+        <h3 class="research-sub">[ HOW WE KEEP IT HONEST ]</h3>
+        <ul class="method-list">
+          <li>
+            <span class="method-tag">WITHIN-SUBJECTS</span>
+            <span>Every participant runs both protocols. Personal differences cancel out.</span>
+          </li>
+          <li>
+            <span class="method-tag">COUNTERBALANCED</span>
+            <span>Half do J→G, half do G→J. Order can't sneak into the result.</span>
+          </li>
+          <li>
+            <span class="method-tag">3 TRIALS / PROTOCOL</span>
+            <span>Median completion time, summed errors. Single-trial flukes get smoothed.</span>
+          </li>
+          <li>
+            <span class="method-tag">FROZEN COMMIT</span>
+            <span>Both protocols pinned to one git commit for the whole study. No mid-flight patches.</span>
+          </li>
+        </ul>
+
+        <!-- ☆☆☆ PLACEHOLDER RESULTS — fabricated for design preview. Replace with real study data. ☆☆☆ -->
+        <h3 class="research-sub">[ THE RESULT ]</h3>
+        <p class="lead research-result-lead">
+          N = 15 participants. Both protocols frozen at one commit. Primary tests via paired
+          t-test; Wilcoxon as backup where normality failed; binomial test on preference.
+        </p>
+
+        <div class="result-stats">
+          <article class="rstat rstat-pink">
+            <p class="rstat-num">73%</p>
+            <p class="rstat-label">CHOSE <strong>GESTURE</strong></p>
+            <p class="rstat-meta">11 OF 15 · BINOMIAL p = .059</p>
+          </article>
+          <article class="rstat rstat-green">
+            <p class="rstat-num">−16%</p>
+            <p class="rstat-label"><strong>FASTER</strong> WITH G</p>
+            <p class="rstat-meta">42.3s → 35.7s · d = .65</p>
+          </article>
+          <article class="rstat rstat-black">
+            <p class="rstat-num">1</p>
+            <p class="rstat-label">METRIC WON BY <strong>J</strong></p>
+            <p class="rstat-meta">SIMULATOR SICKNESS · p = .034</p>
+          </article>
+        </div>
+
+        <div class="results-table">
+          <div class="rt-head">
+            <span>METRIC</span>
+            <span>J</span>
+            <span>G</span>
+            <span>Δ</span>
+            <span>WINNER</span>
+            <span>p</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">Completion time (s)</span>
+            <span>42.3</span>
+            <span>35.7</span>
+            <span class="rt-delta">−6.6</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p rt-sig">.018</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">Navigation errors</span>
+            <span>4.2</span>
+            <span>2.1</span>
+            <span class="rt-delta">−2.1</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p rt-sig">.022</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">NASA-TLX <em>(workload, ↓ better)</em></span>
+            <span>58</span>
+            <span>51</span>
+            <span class="rt-delta">−7</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p rt-sig">.041</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">SART <em>(awareness, ↑ better)</em></span>
+            <span>68</span>
+            <span>76</span>
+            <span class="rt-delta">+8</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p rt-sig">.029</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">SUS <em>(usability, ↑ better)</em></span>
+            <span>72</span>
+            <span>81</span>
+            <span class="rt-delta">+9</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p rt-sig">.012</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">SSQ <em>(sickness, ↓ better)</em></span>
+            <span>38</span>
+            <span>51</span>
+            <span class="rt-delta">+13</span>
+            <span><span class="rt-badge rt-j">J</span></span>
+            <span class="rt-p rt-sig">.034</span>
+          </div>
+          <div class="rt-row">
+            <span class="rt-name">Forced-choice preference</span>
+            <span>4</span>
+            <span>11</span>
+            <span class="rt-delta">+7</span>
+            <span><span class="rt-badge rt-g">G</span></span>
+            <span class="rt-p">.059</span>
+          </div>
+        </div>
+
+        <p class="result-tldr">
+          <strong>SUMMARY —</strong> Custom-Gesture significantly outperforms 3D-Joystick on
+          completion time, navigation errors, workload, awareness, usability, and preference.
+          3D-Joystick yields lower simulator sickness scores. Recommendation:
+          <em>adopt Custom-Gesture as the default; monitor SSQ in extended sessions.</em>
+        </p>
+        <!-- ☆☆☆ END PLACEHOLDER RESULTS ☆☆☆ -->
+      </section>
+
+      <!-- ============== 07 / GET STARTED ============== -->
       <section id="start" class="poster poster-white">
-        <p class="kicker">[ 06 / GET STARTED ]</p>
+        <p class="kicker">[ 07 / GET STARTED ]</p>
         <h2 class="billboard">
           TWO HALVES. <br />
           <span class="under-green">BOTH SMALL.</span>
@@ -321,16 +484,15 @@
         </div>
       </section>
 
-      <!-- ============== 07 / TEAM ============== -->
+      <!-- ============== 08 / TEAM ============== -->
       <section id="team" class="poster poster-white">
-        <p class="kicker">[ 07 / TEAM ]</p>
+        <p class="kicker">[ 08 / TEAM ]</p>
         <h2 class="billboard">
-          MEET THE <br />
-          <span class="under-pink">CREW.</span>
+          THE <br />
+          <span class="under-pink">TEAM.</span>
         </h2>
         <p class="lead team-lead">
-          Six humans behind the headset. Built between Milan and the rest of the world, between
-          robots and rendering pipelines.
+          Six contributors across design and development. Based out of Napoli.
         </p>
 
         <div class="team-grid">
@@ -456,17 +618,17 @@
         </div>
       </section>
 
-      <!-- ============== 08 / FORK IT ============== -->
+      <!-- ============== 09 / FORK IT ============== -->
       <section class="poster poster-black poster-final">
-        <p class="kicker kicker-on-black">[ 08 / OPEN SOURCE ]</p>
+        <p class="kicker kicker-on-black">[ 09 / OPEN SOURCE ]</p>
         <h2 class="billboard billboard-on-black billboard-huge">
-          FORK IT. <br />
-          <span class="green">SHIP IT.</span> <br />
-          <span class="pink">OWN IT.</span>
+          OPEN. <br />
+          <span class="green">MEASURED.</span> <br />
+          <span class="pink">REPRODUCIBLE.</span>
         </h2>
         <p class="final-sub">
-          Locomotion is MIT-licensed. Built in the open by Arte-Omen. Issues, PRs and forks for
-          new robots, cameras, and control protocols — all welcome.
+          MIT-licensed. Implementation, study materials, and analysis open in the repository.
+          Issues, PRs, and forks for new robots, cameras, and protocols welcome.
         </p>
         <div class="cta-row cta-center">
           <a
@@ -477,7 +639,7 @@
           >
             <span class="btn-tag">★</span>
             <span class="btn-label">STAR ON GITHUB</span>
-            <span class="btn-sub">ARTE-OMEN / LOCOMOTION</span>
+            <span class="btn-sub">OMEN / LOCOMOTION</span>
           </a>
           <button class="btn btn-block btn-disabled" disabled aria-disabled="true">
             <span class="btn-tag">★</span>
@@ -491,7 +653,7 @@
     <footer class="footer">
       <div class="footer-row">
         <span class="footer-mark">✱ LOCOMOTION</span>
-        <span>© <span id="year">2026</span> ARTE-OMEN · MIT LICENSE</span>
+        <span>© <span id="year">2026</span> OMEN · MIT LICENSE</span>
         <div class="footer-links">
           <a href="https://github.com/Arte-Omen/Locomotion" target="_blank" rel="noopener">GITHUB ↗</a>
           <a
