@@ -67,6 +67,7 @@ struct CameraView: View {
             }
         }
         .task {
+            client.serverURL = interactionConfig.serverAddress
             client.connect()
             openWindow(id: "controls")
         }

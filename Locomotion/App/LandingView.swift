@@ -23,6 +23,16 @@ struct LandingView: View {
                            .tag(interaction)
                    }
                }
+
+        // Server address input for connecting to the robot
+        TextField("Server address (e.g. https://192.168.1.10:8000/offer)", text: $interactionConfig.serverAddress)
+            .textFieldStyle(.roundedBorder)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .frame(width: 500)
+            .glassBackgroundEffect()
+            .padding()
+
         HStack {
             Button("Start RobotControl") {
                 Task {
@@ -30,6 +40,8 @@ struct LandingView: View {
                     await openRobotControl()
                 }
             }
+            .disabled(interactionConfig.serverAddress.isEmpty)
+
             Button("Start Simulation") {
                 Task {
                     await dismissImmersiveSpace()
