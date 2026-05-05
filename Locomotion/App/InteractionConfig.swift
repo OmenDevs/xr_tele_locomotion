@@ -4,7 +4,9 @@
 //
 //  Created by Julio Enrique Sanchez Guajardo on 09/04/26.
 //
+
 import Foundation
+
 @Observable
 class InteractionConfig {
     var selectedInteraction: InteractionProtocol = .joystick2D

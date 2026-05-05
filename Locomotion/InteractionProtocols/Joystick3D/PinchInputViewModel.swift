@@ -79,7 +79,6 @@ class PinchInputViewModel {
         InputViewModel.shared.velocityX = Double(velocityX)
         InputViewModel.shared.velocityY = Double(velocityY)
 
-        print(String(format: "left vel: %+.3f x  %+.3f y", velocityX, velocityY))
     }
 
     private func updateRight(_ skeleton: HandSkeletonData) {
@@ -112,7 +111,6 @@ class PinchInputViewModel {
 
         InputViewModel.shared.angularVelocity = Double(angularVelocity)
 
-        print(String(format: "right vel: %+.3f angular", angularVelocity))
     }
 }
 
