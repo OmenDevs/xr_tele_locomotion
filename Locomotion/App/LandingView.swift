@@ -17,21 +17,22 @@ struct LandingView: View {
 
     var body: some View {
         @Bindable var interactionConfig = interactionConfig
-        Picker("Interaction", selection: $interactionConfig.selectedInteraction) {
-            ForEach(InteractionProtocol.allCases) { interaction in
-                       Text(interaction.rawValue)
-                           .tag(interaction)
-                   }
-               }
 
         // Server address input for connecting to the robot
-        TextField("Server address (e.g. https://192.168.1.10:8000/offer)", text: $interactionConfig.serverAddress)
-            .textFieldStyle(.roundedBorder)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .frame(width: 500)
-            .glassBackgroundEffect()
-            .padding()
+        TextField("Server address (e.g. https:" + "//192.168.1.10:8000/offer)", text: $interactionConfig.serverAddress)
+                    .textFieldStyle(.roundedBorder)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .frame(width: 500)
+                    .glassBackgroundEffect()
+                    .padding()
+
+        Picker("Interaction", selection: $interactionConfig.selectedInteraction) {
+            ForEach(InteractionProtocol.allCases) { interaction in
+                Text(interaction.rawValue)
+                    .tag(interaction)
+            }
+        }.padding(.bottom)
 
         HStack {
             Button("Start RobotControl") {

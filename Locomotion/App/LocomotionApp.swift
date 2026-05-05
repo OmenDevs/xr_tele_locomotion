@@ -20,7 +20,7 @@ struct LocomotionApp: App {
             LandingView()
                 .environment(interactionConfig)
         }
-        .windowStyle(.plain)
+        .defaultSize(width: 600, height: 300)
 
         WindowGroup(id: "camera") {
             CameraView()
