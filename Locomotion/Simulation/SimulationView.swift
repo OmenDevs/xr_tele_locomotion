@@ -12,7 +12,7 @@ import RealityKitContent
 struct SimulationView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
-    @State private var robotSimulator = RobotSimulatorViewModel()
+    @State private var povSimulator = POVSimulatorViewModel()
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
@@ -23,27 +23,35 @@ struct SimulationView: View {
 
     @State private var turnProcessor = TurnGestureProcessor()
     @State private var dragVisualizer = DragGestureVisualizer()
-    @State private var pinchInput = PinchInputViewModel.shared
 
     var recording: RecordingViewModel
 
     var body: some View {
         RealityView { content in
-            guard let robot = try? await Entity(named: "Mech_Drone", in: realityKitContentBundle) else { return }
-            robot.name = "robot"
-            robotSimulator.robotY = -1.0
-            robot.position = SIMD3<Float>(0, 1, -1)
-            for animation in robot.availableAnimations {
-                robot.playAnimation(animation.repeat())
-            }
-            content.add(robot)
+            let rootEntity = Entity()
+            content.add(rootEntity)
+
+            let portalContentRoot = Entity()
+            portalContentRoot.components.set(WorldComponent())
+            rootEntity.addChild(portalContentRoot)
+
+            let portalEntity = ModelEntity(
+                mesh: .generatePlane(width: 1.0, height: 0.6, cornerRadius: 0.03),
+                materials: [PortalMaterial()]
+            )
+            portalEntity.position = SIMD3<Float>(0, 1, -1)
+            portalEntity.components.set(PortalComponent(target: portalContentRoot))
+            rootEntity.addChild(portalEntity)
+
+            guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle) else { return }
+            scenarioEntity.name = "scenarioEntity"
+            portalContentRoot.addChild(scenarioEntity)
+
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
                 break
             case .joystick3D:
-                handSkeletonProvider.skeletonData = skeletonData
-                pinchInput.skeletonData = skeletonData
-                Task { await handSkeletonProvider.start() }
+                break
             case .gestureBased:
                 content.add(dragVisualizer.rootEntity)
                 handSkeletonProvider.skeletonData = skeletonData
@@ -54,28 +62,21 @@ struct SimulationView: View {
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                 let deltaTime = event.deltaTime
                 simulationTick(deltaTime: deltaTime)
-
-                guard let robot = event.scene.findEntity(named: "robot") else { return }
-                                robot.position = SIMD3<Float>(
-                                    Float(robotSimulator.robotX),
-                                    1,
-                                    Float(robotSimulator.robotY)
-                                )
-                                robot.orientation = simd_quatf(
-                                    angle: Float(-robotSimulator.robotHeading),
-                                    axis: SIMD3<Float>(0, 1, 0)
-                                )
-                switch interactionConfig.selectedInteraction {
-                case .joystick2D:
-                    break
-                case .joystick3D:
-                    pinchInput.update()
-                case .gestureBased:
-                    break
-                }
+                guard let scenarioEntity = event.scene.findEntity(named: "scenarioEntity") else { return }
+                let userPose = Transform(
+                    rotation: simd_quatf(
+                        angle: Float(povSimulator.scenarioHeading),
+                        axis: SIMD3<Float>(0, 1, 0)),
+                    translation: SIMD3<Float>(
+                        Float(povSimulator.scenarioX),
+                        0,
+                        -Float(povSimulator.scenarioY))
+                )
+                scenarioEntity.transform = Transform(matrix: userPose.matrix.inverse)
             }
 
         }
+        .overlay { interactionOverlay }
     }
 
     func simulationTick(deltaTime: TimeInterval) {
@@ -106,11 +107,20 @@ struct SimulationView: View {
             normalizedVelocityX: InputViewModel.shared.velocityX,
             normalizedVelocityY: InputViewModel.shared.velocityY,
             normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
-        robotSimulator.updateInputs(
+        povSimulator.updateScenario(
             normalizedVelocityX: InputViewModel.shared.velocityX,
-            normalizedVelocityY: -InputViewModel.shared.velocityY,
-            normalizedAngularVelocity: InputViewModel.shared.angularVelocity)
-        robotSimulator.update(deltaTime: deltaTime)
+            normalizedVelocityY: InputViewModel.shared.velocityY,
+            normalizedAngularVelocity: -InputViewModel.shared.angularVelocity,
+            deltaTime: deltaTime)
+    }
+}
+
+extension SimulationView {
+    @ViewBuilder
+    var interactionOverlay: some View {
+        if interactionConfig.selectedInteraction == .joystick3D {
+            Joystick3DView()
+        }
     }
 }
 
