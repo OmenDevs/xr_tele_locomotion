@@ -47,11 +47,6 @@ struct LocomotionApp: App {
         }
         .windowStyle(.plain)
 
-        WindowGroup(id: "log") {
-            LogView(recording: recording)
-        }
-        .windowStyle(.plain)
-
         WindowGroup(id: "joystick") {
             ControlPanelView(client: client)
                 .environment(input)
