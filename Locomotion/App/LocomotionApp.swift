@@ -18,9 +18,10 @@ struct LocomotionApp: App {
     var body: some Scene {
         WindowGroup(id: "landing") {
             LandingView()
+                .environment(client)
                 .environment(interactionConfig)
         }
-        .windowStyle(.plain)
+        .defaultSize(width: 600, height: 300)
 
         WindowGroup(id: "camera") {
             CameraView()
