@@ -8,8 +8,6 @@ import Foundation
 @Observable
 class InteractionConfig {
     var selectedInteraction: InteractionProtocol = .joystick2D
-    /// The server IP address entered by the user (e.g., "https://192.168.1.10:8000/offer")
-    var serverAddress: String = ""
 }
 
 enum InteractionProtocol: String, CaseIterable, Identifiable {

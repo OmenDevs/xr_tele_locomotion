@@ -12,14 +12,16 @@ struct LandingView: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(InteractionConfig.self) private var interactionConfig
+    @Environment(RobotWebRTCClient.self) private var client
 
     @State private var immersiveSpaceIsShown = false
 
     var body: some View {
         @Bindable var interactionConfig = interactionConfig
+        @Bindable var client = client
 
         // Server address input for connecting to the robot
-        TextField("Server address (e.g. https:" + "//192.168.1.10:8000/offer)", text: $interactionConfig.serverAddress)
+        TextField("Server address (e.g. https:" + "//192.168.1.10:8000/offer)", text: $client.serverURL)
                     .textFieldStyle(.roundedBorder)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -41,7 +43,7 @@ struct LandingView: View {
                     await openRobotControl()
                 }
             }
-            .disabled(interactionConfig.serverAddress.isEmpty)
+            .disabled(client.serverURL.isEmpty)
 
             Button("Start Simulation") {
                 Task {

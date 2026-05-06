@@ -18,6 +18,7 @@ struct LocomotionApp: App {
     var body: some Scene {
         WindowGroup(id: "landing") {
             LandingView()
+                .environment(client)
                 .environment(interactionConfig)
         }
         .defaultSize(width: 600, height: 300)
