@@ -119,15 +119,6 @@ struct ControlPanelView: View {
 
     // MARK: - Helpers
 
-    private func panelBackground(color: Color) -> some View {
-        RoundedRectangle(cornerRadius: 14)
-            .fill(color.opacity(0.06))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(color.opacity(0.18), lineWidth: 0.5)
-            )
-    }
-
     /// Called when any joystick value changes.
     /// Sends 5 commands in 1 second while held; sends one final zero on release.
     private func onJoystickChanged() {
