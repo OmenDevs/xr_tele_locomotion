@@ -80,7 +80,7 @@ struct TeleoperationView: View {
 
         if previouslyActive && !InputViewModel.shared.isActive {
             previouslyActive = false
-            client.sendVelocity(velocityX: 0, velocityY: 0, omega: 0)
+            client.sendVelocity(velocityX: 0, velocityY: 0, angularVelocity: 0)
             return
         }
         previouslyActive = InputViewModel.shared.isActive
@@ -94,7 +94,7 @@ struct TeleoperationView: View {
         client.sendVelocity(
             velocityX: InputViewModel.shared.velocityX,
             velocityY: InputViewModel.shared.velocityY,
-            omega: InputViewModel.shared.angularVelocity
+            angularVelocity: InputViewModel.shared.angularVelocity
         )
     }
 }

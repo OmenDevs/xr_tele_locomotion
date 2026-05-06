@@ -154,7 +154,7 @@ struct ControlPanelView: View {
         client?.sendVelocity(
             velocityX: input.velocityX,
             velocityY: input.velocityY,
-            omega: input.angularVelocity
+            angularVelocity: input.angularVelocity
         )
     }
 }
