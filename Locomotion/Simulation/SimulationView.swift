@@ -47,6 +47,16 @@ struct SimulationView: View {
             scenarioEntity.name = "scenarioEntity"
             portalContentRoot.addChild(scenarioEntity)
 
+            let lightEntity = Entity()
+            var pointLight = PointLightComponent()
+            pointLight.color = .white
+            pointLight.intensity = 8000
+            pointLight.attenuationRadius = 10.0
+
+            lightEntity.components.set(pointLight)
+            lightEntity.position = SIMD3<Float>(0, 2, 0)
+            portalContentRoot.addChild(lightEntity)
+
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
                 break
