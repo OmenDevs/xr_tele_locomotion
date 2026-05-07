@@ -31,11 +31,14 @@ if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # Config from .env
-SERVER_HOST   = os.getenv("SERVER_HOST", "0.0.0.0")
-SERVER_PORT   = int(os.getenv("SERVER_PORT", "8000"))
-CAMERA_SOURCE = os.getenv("CAMERA_SOURCE", "0")
-CERT_FILE     = os.getenv("CERT_FILE", os.path.join(ROOT, "cert.pem"))
-KEY_FILE      = os.getenv("KEY_FILE", os.path.join(ROOT, "key.pem"))
+SERVER_HOST        = os.getenv("SERVER_HOST", "0.0.0.0")
+SERVER_PORT        = int(os.getenv("SERVER_PORT", "8000"))
+CAMERA_SOURCE      = os.getenv("CAMERA_SOURCE", "0")
+CAMERA_FRAMERATE   = os.getenv("CAMERA_FRAMERATE", "30")
+CAMERA_RESOLUTION  = os.getenv("CAMERA_RESOLUTION", "1280x720")
+ENABLE_RECORDING   = os.getenv("ENABLE_RECORDING", "false").lower() == "true"
+CERT_FILE          = os.getenv("CERT_FILE", os.path.join(ROOT, "cert.pem"))
+KEY_FILE           = os.getenv("KEY_FILE", os.path.join(ROOT, "key.pem"))
 
 # Active peer connections dictionary for managing multiple clients.
 active_connections = {}
@@ -55,14 +58,14 @@ def get_camera_track():
         player = MediaPlayer(
             f"{CAMERA_SOURCE}:none",
             format="avfoundation",
-            options={"framerate": "30", "video_size": "1280x720"},
+            options={"framerate": CAMERA_FRAMERATE, "video_size": CAMERA_RESOLUTION},
         )
     else:
         # Linux (robot): v4l2
         player = MediaPlayer(
             f"/dev/video{CAMERA_SOURCE}",
             format="v4l2",
-            options={"framerate": "30", "video_size": "1280x720"},
+            options={"framerate": CAMERA_FRAMERATE, "video_size": CAMERA_RESOLUTION},
         )
     console.log(f"🎥 Camera track created from source: {CAMERA_SOURCE}")
     return player.video
@@ -91,8 +94,7 @@ async def offer(request):
     pc_id = f"pc_{id(pc)}"
     active_connections[pc_id] = pc
 
-    #MediaRecorder for recording video.
-    pc.recorder = MediaRecorder(f"{OUTPUT_DIR}/{pc_id}.mp4", format='mp4')
+    pc.recorder = MediaRecorder(f"{OUTPUT_DIR}/{pc_id}.mp4", format='mp4') if ENABLE_RECORDING else None
 
     console.log(f"🔗 New connection: {pc_id}")
 
@@ -102,18 +104,19 @@ async def offer(request):
         video_track = get_camera_track()
         pc.addTrack(video_track)
         video_track_active = True
-        pc.recorder.addTrack(video_track)
+        if pc.recorder:
+            pc.recorder.addTrack(video_track)
         console.log("📹 Camera track added")
 
-        #This event is triggered when the video track ends.
         @video_track.on("ended")
         async def on_video_ended():
             nonlocal video_track_active
             video_track_active = False
-            console.log("🔴 Video track ended")  
-            await pc.recorder.stop()
-            pc.recorder = None
-            console.log(f"🎥 Recording saved: {OUTPUT_DIR}/{pc_id}.mp4")
+            console.log("🔴 Video track ended")
+            if pc.recorder:
+                await pc.recorder.stop()
+                pc.recorder = None
+                console.log(f"🎥 Recording saved: {OUTPUT_DIR}/{pc_id}.mp4")
     except Exception as e:
         console.log(f"❌ Could not open camera: {e}")
         # Fallback: test pattern so connection can still be verified
@@ -183,7 +186,7 @@ async def offer(request):
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
     console.log(f"✅ SDP answer sent to {pc_id}")
-    if video_track_active:
+    if video_track_active and pc.recorder:
         await pc.recorder.start()
         console.log(f"🎥 Recording started for {pc_id}")
 
@@ -256,7 +259,8 @@ if __name__ == "__main__":
     console.log(f"🏠 Local:    https://localhost:{SERVER_PORT}")
     console.log(f"🌐 Network:  https://{private_ip}:{SERVER_PORT}")
     console.log("=" * 55)
-    console.log(f"📹 Camera source: {CAMERA_SOURCE}")
+    console.log(f"📹 Camera source: {CAMERA_SOURCE}  |  {CAMERA_RESOLUTION} @ {CAMERA_FRAMERATE}fps")
+    console.log(f"🎥 Recording: {'enabled' if ENABLE_RECORDING else 'disabled'}")
     console.log("📱 Use the Network URL in your Vision Pro app")
     console.log("=" * 55)
 
