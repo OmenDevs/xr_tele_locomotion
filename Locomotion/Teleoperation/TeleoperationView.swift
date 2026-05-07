@@ -27,9 +27,6 @@ struct TeleoperationView: View {
     @State private var lastSendTime: TimeInterval = 0
     private let sendInterval: TimeInterval = 0.2
 
-    // Track previous values to send final zero on release.
-    @State private var previouslyActive: Bool = false
-
     var body: some View {
         RealityView { content in
             content.add(dragVisualizer.rootEntity)
@@ -77,15 +74,6 @@ struct TeleoperationView: View {
         } else {
             dragVisualizer.hide()
         }
-
-        if previouslyActive && !InputViewModel.shared.isActive {
-            previouslyActive = false
-            client.sendVelocity(velocityX: 0, velocityY: 0, angularVelocity: 0)
-            return
-        }
-        previouslyActive = InputViewModel.shared.isActive
-
-        guard InputViewModel.shared.isActive else { return }
 
         lastSendTime += deltaTime
         guard lastSendTime >= sendInterval else { return }
