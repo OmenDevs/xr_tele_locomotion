@@ -139,9 +139,6 @@ class GestureInputViewModel {
             return
         }
 
-        // Circular clamp for cursor visualization.
-        let clampedPlanar: SIMD2<Float> = radius > dragScale ? (planar / radius) * dragScale : planar
-
         // Remap [deadzone, dragScale] → [0, 1] so velocity starts from 0.
         let remappedRadius = (min(radius, dragScale) - Self.deadzone) / (dragScale - Self.deadzone)
         let direction = planar / radius
@@ -149,8 +146,9 @@ class GestureInputViewModel {
         state.velocityX = Double(normalized.x)
         state.velocityY = Double(normalized.y)
 
-        // Reproject clamped planar back into world space using the frozen basis.
-        let worldDelta = clampedPlanar.x * frameRight + clampedPlanar.y * frameForward
+        // Cursor uses remapped position so it starts from center at the deadzone
+        // boundary — no jump, consistent with how the turn ball behaves.
+        let worldDelta = normalized.x * dragScale * frameRight + normalized.y * dragScale * frameForward
         cursorPoint = ref + worldDelta
     }
 
