@@ -121,7 +121,9 @@ final class TurnGestureProcessor {
         }
 
         let clampedAngle = simd_clamp(smoothedAngle, -Self.maxAngle, Self.maxAngle)
-        state.angularVelocity = Double(clampedAngle / Self.maxAngle)
+        let sign: Float = clampedAngle >= 0 ? 1.0 : -1.0
+        let remapped = (abs(clampedAngle) - Self.deadzone) / (Self.maxAngle - Self.deadzone)
+        state.angularVelocity = Double(sign * remapped)
     }
 
     // MARK: - Reset

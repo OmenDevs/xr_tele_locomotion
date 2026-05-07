@@ -61,7 +61,26 @@ cd Server
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
 ```
 
-### 4. Run the server
+### 4. Configure the environment
+
+Copy the example file and edit as needed:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Default | Description |
+|---|---|---|
+| `SERVER_HOST` | `0.0.0.0` | Bind address. Set to the robot's Ethernet IP when testing over cable |
+| `SERVER_PORT` | `8000` | Port the server listens on |
+| `CAMERA_SOURCE` | `0` | Camera device index |
+| `CAMERA_FRAMERATE` | `30` | Stream frame rate |
+| `CAMERA_RESOLUTION` | `1280x720` | Stream resolution |
+| `ENABLE_RECORDING` | `false` | Set to `true` to save sessions to `recordings/` |
+
+---
+
+### 5. Run the server
 
 ```bash
 sudo python3 Server/app.py   # macOS
