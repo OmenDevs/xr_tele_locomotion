@@ -45,6 +45,7 @@ struct SimulationView: View {
 
             guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle) else { return }
             scenarioEntity.name = "scenarioEntity"
+            makeUnlit(scenarioEntity)
             portalContentRoot.addChild(scenarioEntity)
 
             switch interactionConfig.selectedInteraction {
@@ -112,6 +113,21 @@ struct SimulationView: View {
             normalizedVelocityY: InputViewModel.shared.velocityY,
             normalizedAngularVelocity: -InputViewModel.shared.angularVelocity,
             deltaTime: deltaTime)
+    }
+    @MainActor
+    private func makeUnlit(_ entity: Entity) {
+        if let model = entity as? ModelEntity, var component = model.model {
+            component.materials = component.materials.map { mat in
+                guard let pbr = mat as? PhysicallyBasedMaterial else { return mat }
+                var unlit = UnlitMaterial()
+                unlit.color = .init(tint: pbr.baseColor.tint, texture: pbr.baseColor.texture)
+                return unlit
+            }
+            model.model = component
+        }
+        for child in entity.children {
+            makeUnlit(child)
+        }
     }
 }
 
