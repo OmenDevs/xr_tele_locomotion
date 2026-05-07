@@ -7,6 +7,7 @@ class GestureInputViewModel {
     static let shared = GestureInputViewModel()
 
     let dragScale: Float = 0.16
+    static let deadzone: Float = 0.01   // 1 cm
 
     private var lockedHand: ActiveHand = .none
     private var referencePoint: SIMD3<Float>?
@@ -130,18 +131,21 @@ class GestureInputViewModel {
                                   simd_dot(delta, frameForward))
         let radius = simd_length(planar)
 
-        // Circular clamp: saturate at radius `dragScale`.
-        let normalized: SIMD2<Float>
-        let clampedPlanar: SIMD2<Float>
-        if radius > dragScale {
-            let unit = planar / radius
-            normalized = unit
-            clampedPlanar = unit * dragScale
-        } else {
-            normalized = planar / dragScale
-            clampedPlanar = planar
+        // Deadzone: sphere stays pinned at origin, no commands sent.
+        guard radius >= Self.deadzone else {
+            state.velocityX = 0
+            state.velocityY = 0
+            cursorPoint = ref
+            return
         }
 
+        // Circular clamp for cursor visualization.
+        let clampedPlanar: SIMD2<Float> = radius > dragScale ? (planar / radius) * dragScale : planar
+
+        // Remap [deadzone, dragScale] → [0, 1] so velocity starts from 0.
+        let remappedRadius = (min(radius, dragScale) - Self.deadzone) / (dragScale - Self.deadzone)
+        let direction = planar / radius
+        let normalized = direction * remappedRadius
         state.velocityX = Double(normalized.x)
         state.velocityY = Double(normalized.y)
 
