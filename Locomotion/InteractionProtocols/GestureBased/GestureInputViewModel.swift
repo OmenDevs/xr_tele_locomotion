@@ -82,12 +82,6 @@ class GestureInputViewModel {
         dragOrigin = mid
         cursorPoint = mid
         captureFrame(headTransform: headTransform)
-        let yawDeg = (frozenYaw ?? 0) * 180 / .pi
-        let headStatus = headTransform == nil ? "no head" : "head ok"
-        print(String(format: "%@ pinch: ACTIVE  fwd=(%.2f, %.2f, %.2f)  yaw=%+.1f°  [%@]",
-                     hand == .left ? "left" : "right",
-                     frameForward.x, frameForward.y, frameForward.z,
-                     yawDeg, headStatus))
     }
 
     /// Capture a yaw-only basis on the XZ plane from the head pose.

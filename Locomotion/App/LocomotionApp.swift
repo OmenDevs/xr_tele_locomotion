@@ -30,12 +30,6 @@ struct LocomotionApp: App {
         }
         .defaultSize(width: 1280, height: 720)
 
-        WindowGroup(id: "controls") {
-            PanelView()
-                .environment(client)
-        }
-        .defaultSize(width: 250, height: 280)
-
         ImmersiveSpace(id: "teleoperation") {
             TeleoperationView()
                 .environment(client)
@@ -51,11 +45,6 @@ struct LocomotionApp: App {
 
         WindowGroup(id: "dashboard") {
             DashboardView(recording: recording)
-        }
-        .windowStyle(.plain)
-
-        WindowGroup(id: "log") {
-            LogView(recording: recording)
         }
         .windowStyle(.plain)
 

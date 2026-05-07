@@ -89,7 +89,7 @@ Once the connection is up:
   signaling exchange.
 
 Use ``RobotWebRTCClient/sendCommand(_:)`` for arbitrary UTF-8 string payloads, or
-``RobotWebRTCClient/sendVelocity(velocityX:velocityY:omega:)`` to send joystick values
+``RobotWebRTCClient/sendVelocity(velocityX:velocityY:angularVelocity:)`` to send joystick values
 in the `{"vx": …, "vy": …, "omega": …}` format the robot expects. Sends are silently
 dropped while the channel is not `.open`.
 
@@ -129,5 +129,5 @@ clears all observable state, returning the client to its initial condition and a
 - ``RobotWebRTCClient/remoteVideoTrack``
 - ``RobotWebRTCClient/dataChannel``
 - ``RobotWebRTCClient/sendCommand(_:)``
-- ``RobotWebRTCClient/sendVelocity(velocityX:velocityY:omega:)``
+- ``RobotWebRTCClient/sendVelocity(velocityX:velocityY:angularVelocity:)``
 - ``RobotWebRTCClient/lastServerMessage``

@@ -53,8 +53,7 @@ struct LandingView: View {
             }
         }
     }
-    // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
-    // Inmersive protocolos need to be added inside TeleoperationView(). For more information: Julio
+
     private func openRobotControl() async {
         openWindow(id: "camera")
         if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
@@ -70,8 +69,7 @@ struct LandingView: View {
             }
         }
     }
-    // NOTE: don't add new interaction protocols thought here, only if are WindowsGroups,
-    // Inmersive protocolos need to be added inside simulationView(). For more information: Julio
+
     private func openSimulation() async {
         if immersiveSpaceIsShown {
             await dismissImmersiveSpace()
@@ -86,8 +84,4 @@ struct LandingView: View {
             openWindow(id: "joystick")
         }
     }
-}
-
-#Preview {
-    LandingView()
 }
