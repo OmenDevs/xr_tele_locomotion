@@ -32,19 +32,6 @@ final class TurnGestureProcessor {
     private var smoothedAngle: Float = 0.0
     private var lockedHand: ActiveHand = .none
 
-    // MARK: - Visualization Data
-
-    /// Pre-deadzone signed angle in radians.
-    private(set) var rawAngle: Float = 0.0
-    /// Axis origin (thumbTip world position).
-    private(set) var axisOrigin: SIMD3<Float> = .zero
-    /// Rotation axis direction.
-    private(set) var axisDirection: SIMD3<Float> = .init(0, 1, 0)
-    /// Reference direction in the disk plane, captured on activation.
-    private(set) var currentReferenceDirection: SIMD3<Float>?
-    /// Current finger projection direction in the disk plane.
-    private(set) var currentFingerDirection: SIMD3<Float>?
-
     // MARK: - Public API
 
     /// Call once per frame.
@@ -97,9 +84,6 @@ final class TurnGestureProcessor {
         let axisLen = simd_length(joints.thumbTip - joints.thumbKnuckle)
         guard axisLen > 0.001 else { return }
 
-        axisOrigin = joints.thumbTip
-        axisDirection = axis
-
         let toKnuckle = joints.indexKnuckle - joints.thumbTip
         let projOnAxis = simd_dot(toKnuckle, axis) * axis
         let projOnPlane = toKnuckle - projOnAxis
@@ -107,13 +91,10 @@ final class TurnGestureProcessor {
         guard simd_length(projOnPlane) > 0.001 else { return }
 
         let currentDir = simd_normalize(projOnPlane)
-        currentFingerDirection = currentDir
 
         if referenceDirection == nil {
             referenceDirection = currentDir
-            currentReferenceDirection = currentDir
             smoothedAngle = 0
-            rawAngle = 0
             state.angularVelocity = 0
             return
         }
@@ -125,7 +106,6 @@ final class TurnGestureProcessor {
         let refOnCurrentPlane = storedRef - simd_dot(storedRef, axis) * axis
         guard simd_length(refOnCurrentPlane) > 0.001 else { return }
         let refDir = simd_normalize(refOnCurrentPlane)
-        currentReferenceDirection = refDir
 
         let dotVal = simd_clamp(simd_dot(refDir, currentDir), -1.0, 1.0)
         let crossVal = simd_cross(refDir, currentDir)
@@ -134,7 +114,6 @@ final class TurnGestureProcessor {
 
         // Exponential smoothing to suppress tracking noise.
         smoothedAngle = Self.smoothingAlpha * angle + (1.0 - Self.smoothingAlpha) * smoothedAngle
-        rawAngle = smoothedAngle
 
         guard abs(smoothedAngle) >= Self.deadzone else {
             state.angularVelocity = 0.0
@@ -151,13 +130,8 @@ final class TurnGestureProcessor {
 
     private func resetState(state: InputViewModel) {
         referenceDirection = nil
-        currentReferenceDirection = nil
-        currentFingerDirection = nil
         smoothedAngle = 0
-        rawAngle = 0
         lockedHand = .none
-        axisOrigin = .zero
-        axisDirection = .init(0, 1, 0)
         state.reset()
     }
 
