@@ -9,13 +9,24 @@ struct Joystick3DView: View {
 
     var body: some View {
         RealityView { content in
-            handSkeletonProvider.skeletonData = skeletonData
-            PinchInputViewModel.shared.skeletonData = skeletonData
-            Task { await handSkeletonProvider.start() }
+            //handSkeletonProvider.skeletonData = skeletonData
+            //PinchInputViewModel.shared.skeletonData = skeletonData
+            //Task { await handSkeletonProvider.start() }
 
             if let deck = try? await Entity(named: "joystick3d", in: realityKitContentBundle) {
                 deck.position = SIMD3<Float>(0, 0.7, -0.5)
                 content.add(deck)
+                let bounds = deck.visualBounds(relativeTo: deck)
+                let extents = bounds.extents + SIMD3<Float>(0.1, 0.1, 0.1)
+                let shape = ShapeResource.generateBox(size: extents)
+                ManipulationComponent.configureEntity(
+                    deck,
+                    allowedInputTypes: .direct,
+                    collisionShapes: [shape])
+                if var manipulation = deck.components[ManipulationComponent.self] {
+                    manipulation.releaseBehavior = .stay
+                    deck.components.set(manipulation)
+                }
                 PinchInputViewModel.shared.deck = deck.findEntity(named: "Dock")
 
                 if let head = deck.findEntity(named: "Joystick_Head"),
