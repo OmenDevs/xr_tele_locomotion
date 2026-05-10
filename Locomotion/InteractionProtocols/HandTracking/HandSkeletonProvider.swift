@@ -10,6 +10,8 @@ final class HandSkeletonProvider {
     private let handTrackingProvider = HandTrackingProvider()
     var skeletonData: HandSkeletonData?
 
+    /// Starts ARKit hand tracking and continuously writes joint transforms
+    /// and pinch state into ``skeletonData`` as anchor updates arrive.
     func start() async {
         do {
             try await arkitSession.run([handTrackingProvider])
@@ -83,7 +85,7 @@ final class HandSkeletonProvider {
         return anchorTransform * joint.anchorFromJointTransform
     }
 
-    // This two take care of is pinching
+    /// Pinch heuristic: thumb-tip and middle-finger-tip within 2 cm.
     private func detectPinch(skeleton: HandSkeleton) -> Bool {
         let middleTip     = localPosition(of: skeleton.joint(.middleFingerTip))
         let thumbTip = localPosition(of: skeleton.joint(.thumbTip))

@@ -1,6 +1,12 @@
 import Foundation
 import simd
 
+/// Converts a one-handed pinch-and-drag into normalized linear velocity
+/// (`velocityX`, `velocityY`) on ``InputViewModel``.
+///
+/// The gesture locks to whichever hand pinches first and
+/// captures a yaw-only basis from the head pose, so the input frame stays
+/// fixed even if the user turns their head while dragging.
 @Observable
 class GestureInputViewModel {
 
