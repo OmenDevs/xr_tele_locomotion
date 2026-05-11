@@ -16,14 +16,14 @@ struct Joystick3DView: View {
             Task { await handSkeletonProvider.start() }
 
             if let deck = try? await Entity(named: "joystick3d", in: realityKitContentBundle) {
-                deck.position = SIMD3<Float>(0, 0.7, -0.5)
+                deck.position = SIMD3<Float>(0, 0.7, -1.0)
                 content.add(deck)
                 let bounds = deck.visualBounds(relativeTo: deck)
-                let extents = bounds.extents + SIMD3<Float>(0.1, 0.1, 0.1)
+                let extents = bounds.extents + SIMD3<Float>(0.4, 0.2, 0.4)
                 let shape = ShapeResource.generateBox(size: extents)
                 ManipulationComponent.configureEntity(
                     deck,
-                    allowedInputTypes: .direct,
+                    allowedInputTypes: .all,
                     collisionShapes: [shape])
                 if var manipulation = deck.components[ManipulationComponent.self] {
                     manipulation.releaseBehavior = .stay
@@ -32,7 +32,7 @@ struct Joystick3DView: View {
                 }
                 deckBaseOrientation = deck.orientation(relativeTo: nil)
                 manipulationSubscriptions.append(
-                    content.subscribe(to: ManipulationEvents.DidUpdateTransform.self, on: deck) { event in
+                    content.subscribe(to: ManipulationEvents.WillEnd.self, on: deck) { event in
                         let current = event.entity.orientation(relativeTo: nil)
                         let delta = current * deckBaseOrientation.inverse
                         let yaw = atan2(
