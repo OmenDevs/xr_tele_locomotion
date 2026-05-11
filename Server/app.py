@@ -188,6 +188,7 @@ async def offer(request):
             try:
                 cmd = json.loads(message)
                 if all(k in cmd for k in ("vx", "vy", "omega")):
+                    console.log(f"📩 Command: {json.dumps(cmd)}")
                     dds_writer.write(VelocityCommand(
                         vx=float(cmd["vx"]),
                         vy=float(cmd["vy"]),

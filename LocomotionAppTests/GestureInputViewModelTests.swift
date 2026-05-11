@@ -9,6 +9,7 @@ import Testing
 import simd
 @testable import LocomotionApp
 
+@MainActor
 struct GestureInputViewModelTests {
 
     private let tolerance: Double = 1e-5
