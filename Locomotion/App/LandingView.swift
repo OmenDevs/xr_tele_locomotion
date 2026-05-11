@@ -79,6 +79,7 @@ struct LandingView: View {
         case .opened: immersiveSpaceIsShown = true
         default: break
         }
+        openWindow(id: "portal")
         openWindow(id: "dashboard")
         if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
             openWindow(id: "joystick")
