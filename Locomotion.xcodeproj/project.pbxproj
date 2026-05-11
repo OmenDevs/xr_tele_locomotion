@@ -11,8 +11,19 @@
 		FC99215C2F504606008AE079 /* LiveKitWebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = FC99215B2F504606008AE079 /* LiveKitWebRTC */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		FC4A77A92FB1178D00C5F81D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FCF41E682F45BE9C006293B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FCF41E6F2F45BE9C006293B5;
+			remoteInfo = Locomotion;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		FC05A3412F9B872500B12FF7 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
+		FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocomotionAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCF41E702F45BE9C006293B5 /* LocomotionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocomotionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -27,6 +38,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LocomotionAppTests;
+			sourceTree = "<group>";
+		};
 		FCF41E722F45BE9C006293B5 /* Locomotion */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -38,6 +54,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FC4A77A22FB1178D00C5F81D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FCF41E6D2F45BE9C006293B5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -63,6 +86,7 @@
 			children = (
 				FCF41E722F45BE9C006293B5 /* Locomotion */,
 				FC05A3422F9B873D00B12FF7 /* Packages */,
+				FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */,
 				FCF41E712F45BE9C006293B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				FCF41E702F45BE9C006293B5 /* LocomotionApp.app */,
+				FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,6 +103,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		FC4A77A42FB1178D00C5F81D /* LocomotionAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionAppTests" */;
+			buildPhases = (
+				FC4A77A12FB1178D00C5F81D /* Sources */,
+				FC4A77A22FB1178D00C5F81D /* Frameworks */,
+				FC4A77A32FB1178D00C5F81D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FC4A77AA2FB1178D00C5F81D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */,
+			);
+			name = LocomotionAppTests;
+			packageProductDependencies = (
+			);
+			productName = LocomotionAppTests;
+			productReference = FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		FCF41E6F2F45BE9C006293B5 /* Locomotion */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FCF41E7B2F45BE9D006293B5 /* Build configuration list for PBXNativeTarget "Locomotion" */;
@@ -110,9 +158,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
+				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					FC4A77A42FB1178D00C5F81D = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = FCF41E6F2F45BE9C006293B5;
+					};
 					FCF41E6F2F45BE9C006293B5 = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -137,11 +189,19 @@
 			projectRoot = "";
 			targets = (
 				FCF41E6F2F45BE9C006293B5 /* Locomotion */,
+				FC4A77A42FB1178D00C5F81D /* LocomotionAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FC4A77A32FB1178D00C5F81D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FCF41E6E2F45BE9C006293B5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,6 +212,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FC4A77A12FB1178D00C5F81D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FCF41E6C2F45BE9C006293B5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -162,6 +229,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		FC4A77AA2FB1178D00C5F81D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FCF41E6F2F45BE9C006293B5 /* Locomotion */;
+			targetProxy = FC4A77A92FB1178D00C5F81D /* PBXContainerItemProxy */;
+		};
 		FCF41F382F45E3C9006293B5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = FCF41F372F45E3C9006293B5 /* SwiftLintBuildToolPlugin */;
@@ -169,6 +241,53 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		FC4A77AC2FB1178D00C5F81D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp.LocomotionAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocomotionApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LocomotionApp";
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		FC4A77AD2FB1178D00C5F81D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp.LocomotionAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocomotionApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LocomotionApp";
+				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
 		FCF41E792F45BE9D006293B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -294,7 +413,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -348,7 +467,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -398,6 +517,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC4A77AC2FB1178D00C5F81D /* Debug */,
+				FC4A77AD2FB1178D00C5F81D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FCF41E6B2F45BE9C006293B5 /* Build configuration list for PBXProject "Locomotion" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
