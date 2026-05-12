@@ -23,7 +23,7 @@ struct PortalWindowView: View {
                 content.add(portalContentRoot)
 
                 let plane = ModelEntity(
-                    mesh: .generatePlane(width: 3.55, height: 2, cornerRadius: 0.05),
+                    mesh: .generatePlane(width: 3.55, height: 2),
                     materials: [PortalMaterial()]
                 )
                 plane.components.set(PortalComponent(target: portalContentRoot))
@@ -65,7 +65,7 @@ struct PortalWindowView: View {
                 windowSize = newSize
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+//        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .uniformWindowResize()
     }
 
