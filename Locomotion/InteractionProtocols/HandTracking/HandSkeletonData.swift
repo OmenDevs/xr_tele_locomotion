@@ -5,6 +5,8 @@
 
 import ARKit
 
+/// Shared snapshot of the latest hand-tracking state.
+/// All joint matrices are in ARKit world space (`originFromAnchor * anchorFromJoint`).
 @Observable
 class HandSkeletonData {
 

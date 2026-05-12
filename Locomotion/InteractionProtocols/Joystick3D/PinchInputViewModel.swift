@@ -2,6 +2,9 @@ import Foundation
 import simd
 import RealityKit
 
+/// Maps a pinch-and-drag (left hand → linear, right hand → angular) into
+/// normalized velocities on ``InputViewModel``, with hand movement expressed
+/// in the deck's local frame.
 @Observable
 class PinchInputViewModel {
 

@@ -2,6 +2,9 @@ import SwiftUI
 import RealityKit
 import RealityKitContent
 
+/// 3D joystick deck: pinch-drags the left hand to translate the joystick stick
+/// and the right hand to translate the lever, both as visual feedback for the
+/// velocities computed by ``PinchInputViewModel``.
 struct Joystick3DView: View {
     @State private var frameSubscription: EventSubscription?
     @State private var handSkeletonProvider = HandSkeletonProvider()
