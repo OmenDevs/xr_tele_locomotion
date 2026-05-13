@@ -4,6 +4,7 @@ import RealityKitContent
 
 struct Joystick3DView: View {
     @State private var frameSubscription: EventSubscription?
+    @State private var manipulationSubscription: EventSubscription?
     @State private var handSkeletonProvider = HandSkeletonProvider()
     // Reads the headset's world position so the deck can face the user.
     @State private var devicePoseProvider = DevicePoseProvider()
@@ -38,6 +39,15 @@ struct Joystick3DView: View {
                     manipulation.releaseBehavior = .stay
            manipulation.dynamics.scalingBehavior = .none
                     deck.components.set(manipulation)
+                }
+
+                // Re-orient to face the user only while dragging, not every frame.
+                manipulationSubscription = content.subscribe(
+                    to: ManipulationEvents.DidUpdateTransform.self, on: deck
+                ) { [self] _ in
+                    if let deviceTransform = devicePoseProvider.currentDeviceTransform() {
+                        faceDeviceYOnly(entity: deck, deviceTransform: deviceTransform)
+                    }
                 }
 
                 PinchInputViewModel.shared.deck = deck.findEntity(named: "Dock")
