@@ -1,8 +1,17 @@
+
+<div align="center">
+
 # Locomotion
 
+**Teleoperate a humanoid robot from Apple Vision Pro using hand gestures and WebRTC.**
+
+[![License](https://img.shields.io/github/license/Arte-Omen/Locomotion)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-visionOS-blue)](https://developer.apple.com/visionos/)
+[![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)](https://swift.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 [![License](https://img.shields.io/github/license/Arte-Omen/Locomotion)](LICENSE)
 
-> An open-source telepresence project using Apple Vision Pro that delivers first-person robot embodiment, allowing users to see through the robot’s camera while manually controlling its locomotion.
+</div>
 
 Locomotion pairs a **visionOS app** with a **Python WebRTC server** so an operator wearing a Vision Pro can see what the robot sees and control the locomotion in real time. The visionOS app renders the robot's camera feed, captures operator intent through custom hand gestures. A built-in simulation mode runs the same input stack against a virtual scene, so users can practice the gestures.
 
