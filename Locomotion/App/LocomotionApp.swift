@@ -14,6 +14,7 @@ struct LocomotionApp: App {
     @State private var recording = RecordingViewModel()
     @State private var interactionConfig = InteractionConfig()
     @State private var skeletonData = HandSkeletonData()
+    @State private var povSimulator = POVSimulatorViewModel()
 
     var body: some Scene {
         WindowGroup(id: "landing") {
@@ -41,7 +42,15 @@ struct LocomotionApp: App {
             SimulationView(recording: recording)
                 .environment(interactionConfig)
                 .environment(skeletonData)
+                .environment(povSimulator)
         }
+
+        WindowGroup(id: "portal") {
+            PortalWindowView()
+                .environment(povSimulator)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 1280, height: 720)
 
         WindowGroup(id: "dashboard") {
             DashboardView(recording: recording)

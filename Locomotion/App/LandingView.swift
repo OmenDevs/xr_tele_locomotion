@@ -71,6 +71,7 @@ struct LandingView: View {
 
     private func openSimulation() async {
         openWindow(id: "dashboard")
+        openWindow(id: "portal")
         if immersiveSpaceIsShown {
             await dismissImmersiveSpace()
             immersiveSpaceIsShown = false

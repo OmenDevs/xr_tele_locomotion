@@ -10,9 +10,8 @@ import RealityKit
 import RealityKitContent
 
 struct SimulationView: View {
-    @Environment(\.openWindow) private var openWindow
     @State private var frameSubscription: EventSubscription?
-    @State private var povSimulator = POVSimulatorViewModel()
+    @Environment(POVSimulatorViewModel.self) private var povSimulator
     @Environment(InteractionConfig.self) private var interactionConfig
 
     @State private var handSkeletonProvider = HandSkeletonProvider()
@@ -28,26 +27,6 @@ struct SimulationView: View {
 
     var body: some View {
         RealityView { content in
-            let rootEntity = Entity()
-            content.add(rootEntity)
-
-            let portalContentRoot = Entity()
-            portalContentRoot.components.set(WorldComponent())
-            rootEntity.addChild(portalContentRoot)
-
-            let portalEntity = ModelEntity(
-                mesh: .generatePlane(width: 1.0, height: 0.6, cornerRadius: 0.03),
-                materials: [PortalMaterial()]
-            )
-            portalEntity.position = SIMD3<Float>(0, 1, -1)
-            portalEntity.components.set(PortalComponent(target: portalContentRoot))
-            rootEntity.addChild(portalEntity)
-
-            guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle) else { return }
-            scenarioEntity.name = "scenarioEntity"
-            makeUnlit(scenarioEntity)
-            portalContentRoot.addChild(scenarioEntity)
-
             switch interactionConfig.selectedInteraction {
             case .joystick2D:
                 break
@@ -61,21 +40,8 @@ struct SimulationView: View {
             }
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
-                let deltaTime = event.deltaTime
-                simulationTick(deltaTime: deltaTime)
-                guard let scenarioEntity = event.scene.findEntity(named: "scenarioEntity") else { return }
-                let userPose = Transform(
-                    rotation: simd_quatf(
-                        angle: Float(povSimulator.scenarioHeading),
-                        axis: SIMD3<Float>(0, 1, 0)),
-                    translation: SIMD3<Float>(
-                        Float(povSimulator.scenarioX),
-                        0,
-                        -Float(povSimulator.scenarioY))
-                )
-                scenarioEntity.transform = Transform(matrix: userPose.matrix.inverse)
+                simulationTick(deltaTime: event.deltaTime)
             }
-
         }
         .overlay { interactionOverlay }
     }
