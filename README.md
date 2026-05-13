@@ -5,7 +5,6 @@
 
 **Teleoperate a humanoid robot from Apple Vision Pro using hand gestures and WebRTC.**
 
-[![License](https://img.shields.io/github/license/Arte-Omen/Locomotion)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-visionOS-blue)](https://developer.apple.com/visionos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)](https://swift.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
