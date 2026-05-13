@@ -56,21 +56,21 @@ struct LandingView: View {
 
     private func openRobotControl() async {
         openWindow(id: "camera")
-        if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
+        if immersiveSpaceIsShown {
+            await dismissImmersiveSpace()
+            immersiveSpaceIsShown = false
+        }
+        switch await openImmersiveSpace(id: "teleoperation") {
+        case .opened: immersiveSpaceIsShown = true
+        default: break
+        }
+        if interactionConfig.selectedInteraction == .joystick2D {
             openWindow(id: "joystick")
-        } else {
-            if immersiveSpaceIsShown {
-                await dismissImmersiveSpace()
-                immersiveSpaceIsShown = false
-            }
-            switch await openImmersiveSpace(id: "teleoperation") {
-            case .opened: immersiveSpaceIsShown = true
-            default: break
-            }
         }
     }
 
     private func openSimulation() async {
+        openWindow(id: "dashboard")
         if immersiveSpaceIsShown {
             await dismissImmersiveSpace()
             immersiveSpaceIsShown = false

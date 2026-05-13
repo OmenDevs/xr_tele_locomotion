@@ -80,6 +80,24 @@ struct SimulationView: View {
             normalizedAngularVelocity: -InputViewModel.shared.angularVelocity,
             deltaTime: deltaTime)
     }
+    /// Recursively replaces every ``PhysicallyBasedMaterial`` on `entity` and
+    /// its descendants with an ``UnlitMaterial`` carrying the same base color
+    /// and texture, so the scene renders without lighting inside the portal.
+    @MainActor
+    private func makeUnlit(_ entity: Entity) {
+        if let model = entity as? ModelEntity, var component = model.model {
+            component.materials = component.materials.map { mat in
+                guard let pbr = mat as? PhysicallyBasedMaterial else { return mat }
+                var unlit = UnlitMaterial()
+                unlit.color = .init(tint: pbr.baseColor.tint, texture: pbr.baseColor.texture)
+                return unlit
+            }
+            model.model = component
+        }
+        for child in entity.children {
+            makeUnlit(child)
+        }
+    }
 }
 
 extension SimulationView {

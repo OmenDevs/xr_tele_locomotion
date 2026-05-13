@@ -49,7 +49,9 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ```bash
 cd Locomotion/Server
-pip3 install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ### 3. Generate SSL certificates
@@ -83,23 +85,27 @@ cp .env.example .env
 ### 5. Run the server
 
 ```bash
-sudo python3 Server/app.py   # macOS
-python3 Server/app.py        # Ubuntu (after udev rules)
+sudo python Server/app.py   # macOS
+python Server/app.py        # Ubuntu (after udev rules)
 ```
 
-The server prints its local and network URLs on startup. Use the **Network URL** in the iOS app.
+The server prints its local and network URLs on startup. Use the **Network URL** in the visionOS app.
 
 ---
 
-## Stream Switching
+## Browser test client
 
-The client can switch streams in real time over the WebRTC data channel:
+The server hosts a minimal web browser. After running the server go to your local host or search your ip address(for example `https://192.168.1.10:8000/`) from the browser. You'll get a *Start connection* button that opens the same WebRTC session the visionOS app uses, plus a text channel for sending messages.
 
-| Command | Stream |
-|---|---|
-| `stream:color` | RGB color (default) |
-| `stream:depth` | Colorized depth map |
-| `stream:infrared` | Infrared (grayscale) |
+Useful for:
+
+- Verifying the camera pipeline and signaling are working **without a Vision Pro or visionOS SDK**.
+- Smoke-testing a new server build before pairing it with the app.
+- Debugging the data channel: messages typed in the chat box are echoed by the server.
+
+The browser will warn about the self-signed certificate — accept it once to proceed.
+
+> Note: The browser client also does send velocity commands if json format followed. 
 
 ---
 
@@ -116,4 +122,5 @@ If the RealSense camera is not connected, the server automatically falls back to
 | `app.py` | WebRTC signaling server, HTTP routes, startup |
 | `realsense_track.py` | RealSense camera pipeline and stream switching |
 | `viewer.py` | Local debug tool — preview streams without WebRTC |
+| `static/` | Browser test client
 | `requirements.txt` | Python dependencies |

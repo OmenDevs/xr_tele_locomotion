@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// Integrates normalized joystick/gesture inputs into a 2D world pose
+/// (`scenarioX`, `scenarioY`, `scenarioHeading`) by scaling them with
+/// `maxLinearSpeed` / `maxAngularSpeed` and stepping by `deltaTime`.
 @Observable
 class POVSimulatorViewModel {
 
@@ -56,6 +59,7 @@ class POVSimulatorViewModel {
         let localVY = normalizedVelocityY * maxLinearSpeed
         angularVelocity = normalizedAngularVelocity * maxAngularSpeed
 
+        // Rotate body-frame velocity into the world frame by scenarioHeading.
         velocityX = localVX * cos(scenarioHeading) - localVY * sin(scenarioHeading)
         velocityY = localVX * sin(scenarioHeading) + localVY * cos(scenarioHeading)
 
