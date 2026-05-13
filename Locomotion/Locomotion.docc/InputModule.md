@@ -4,17 +4,12 @@ Translate user actions into a normalized motion command for the robot locomotion
 
 ## Overview
 
-The Input module turns whatever the operator does, touching a 2D joystick,
-grabbing a 3D joystick handle, or pinching a hand in mid-air, into a single,
-uniform output: a normalized `(velocityX, velocityY, angularVelocity)` triplet
-in the range `-1…+1`. Downstream consumers (``RobotWebRTCClient`` for live
-teleoperation and ``POVSimulatorViewModel`` for the offline scenario) read
-that triplet without caring which interaction protocol produced it.
-
-The shared output lives on a single `@Observable` source of truth,
-``InputViewModel``. Each interaction protocol owns its own driver type that
-writes into that view model, so swapping protocols is a matter of swapping
-which driver is running.
+The Input module produces a normalized (velocityX, velocityY,
+angularVelocity) triplet in the range -1…+1 from operator input
+from both interaction protocols. Downstream consumers, `RobotWebRTCClient`
+for live teleoperation and `POVSimulatorViewModel` for the offline scenario,
+consume this triplet without depending on the specific interaction
+protocol that generated it.
 
 ### The three interaction protocols
 

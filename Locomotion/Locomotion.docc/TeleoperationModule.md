@@ -36,7 +36,7 @@ channel labelled `commands`. The Swift names and the wire keys differ on
 purpose: `velocityX/Y` and `angularVelocity` read naturally in Swift,
 while `vx/vy/omega` matches the format the robot server expects.
 
-A final zero is sent on release, so the robot stops the moment the
+A zero-velocity command is sent on release, so the robot stops the moment the
 operator lets go even if the next periodic send has not fired.
 
 ### Camera window
