@@ -71,6 +71,7 @@ struct LandingView: View {
 
     private func openSimulation() async {
         openWindow(id: "dashboard")
+        openWindow(id: "portal")
         if immersiveSpaceIsShown {
             await dismissImmersiveSpace()
             immersiveSpaceIsShown = false
@@ -79,9 +80,7 @@ struct LandingView: View {
         case .opened: immersiveSpaceIsShown = true
         default: break
         }
-        openWindow(id: "portal")
-        openWindow(id: "dashboard")
-        if interactionConfig.selectedInteraction == InteractionProtocol.joystick2D {
+        if interactionConfig.selectedInteraction == .joystick2D {
             openWindow(id: "joystick")
         }
     }
