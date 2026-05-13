@@ -13,6 +13,8 @@
 
 </div>
 
+> An open-source telepresence project using Apple Vision Pro that delivers first-person robot embodiment, allowing users to see through the robot’s camera while manually controlling its locomotion.
+
 Locomotion pairs a **visionOS app** with a **Python WebRTC server** so an operator wearing a Vision Pro can see what the robot sees and control the locomotion in real time. The visionOS app renders the robot's camera feed, captures operator intent through custom hand gestures. A built-in simulation mode runs the same input stack against a virtual scene, so users can practice the gestures.
 
 ## Features
