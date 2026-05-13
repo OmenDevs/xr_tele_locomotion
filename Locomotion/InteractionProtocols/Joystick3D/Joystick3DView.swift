@@ -8,7 +8,7 @@ struct Joystick3DView: View {
     @State private var handSkeletonProvider = HandSkeletonProvider()
     // Reads the headset's world position so the deck can face the user.
     @State private var devicePoseProvider = DevicePoseProvider()
-    // Retained so faceDeviceYOnly can update the deck's orientation every frame.
+    // Retained so the manipulation subscription can reference the deck entity.
     @State private var deckEntity: Entity?
     // The USDZ's baked-in root rotation — composed with our Y-only yaw so the
     // model stays upright instead of being overwritten flat.
@@ -79,11 +79,6 @@ struct Joystick3DView: View {
 
             frameSubscription = content.subscribe(to: SceneEvents.Update.self) { _ in
                 PinchInputViewModel.shared.update()
-
-                if let deck = deckEntity,
-                   let deviceTransform = devicePoseProvider.currentDeviceTransform() {
-                    faceDeviceYOnly(entity: deck, deviceTransform: deviceTransform)
-                }
 
                 let maxOffset: Float = 0.04
                 if let stick = PinchInputViewModel.shared.joystickHandle,
