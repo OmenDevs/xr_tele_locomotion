@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LandingView: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(InteractionConfig.self) private var interactionConfig
@@ -19,39 +20,66 @@ struct LandingView: View {
     var body: some View {
         @Bindable var interactionConfig = interactionConfig
         @Bindable var client = client
-
-        // Server address input for connecting to the robot
-        TextField("Server address (e.g. https:" + "//192.168.1.10:8000/offer)", text: $client.serverURL)
-                    .textFieldStyle(.roundedBorder)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .frame(width: 500)
-                    .glassBackgroundEffect()
-                    .padding()
-
-        Picker("Interaction", selection: $interactionConfig.selectedInteraction) {
-            ForEach(InteractionProtocol.allCases) { interaction in
-                Text(interaction.rawValue)
-                    .tag(interaction)
+        VStack(spacing: 32) {
+            Text("What would you like to do?")
+                .font(.system(size: 43, weight: .bold))
+                .foregroundStyle(.white)
+                .padding(.top, 48)
+            HStack(spacing: 24) {
+                Button {
+                    Task {
+                        await dismissImmersiveSpace()
+                        await openSimulation()
+                    }
+                } label: {
+                    ZStack(alignment: .bottomLeading) {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.regularMaterial)
+                            .frame(width: 400, height: 320)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Simulator")
+                                .font(.title2.bold())
+                                .foregroundStyle(.white)
+                            Text("Test the interaction protocol in a simulation environment")
+                                .font(.body)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        .padding(24)
+                    }
+                }
+                .buttonStyle(.plain)
+                Button {
+                    Task {
+                        await dismissImmersiveSpace()
+                        await openRobotControl()
+                    }
+                } label: {
+                    ZStack(alignment: .bottomLeading) {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.regularMaterial)
+                            .frame(width: 400, height: 320)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Connect the Robot")
+                                .font(.title2.bold())
+                                .foregroundStyle(.white)
+                            Text("Connect your robot to control its locomotion")
+                                .font(.body)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        .padding(24)
+                    }
+                }
+                .buttonStyle(.plain)
             }
-        }.padding(.bottom)
-
-        HStack {
-            Button("Start RobotControl") {
-                Task {
-                    await dismissImmersiveSpace()
-                    await openRobotControl()
+            Picker("Interaction", selection: $interactionConfig.selectedInteraction) {
+                ForEach(InteractionProtocol.allCases) { interaction in
+                    Text(interaction.rawValue).tag(interaction)
                 }
             }
-            .disabled(client.serverURL.isEmpty)
-
-            Button("Start Simulation") {
-                Task {
-                    await dismissImmersiveSpace()
-                    await openSimulation()
-                }
-            }
+            .pickerStyle(.segmented)
+            .frame(width: 480)
         }
+        .padding(.horizontal, 60)
     }
 
     private func openRobotControl() async {
@@ -67,6 +95,7 @@ struct LandingView: View {
         if interactionConfig.selectedInteraction == .joystick2D {
             openWindow(id: "joystick")
         }
+        dismissWindow(id: "landing")
     }
 
     private func openSimulation() async {
@@ -83,5 +112,6 @@ struct LandingView: View {
         if interactionConfig.selectedInteraction == .joystick2D {
             openWindow(id: "joystick")
         }
+        dismissWindow(id: "landing")
     }
 }
