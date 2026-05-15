@@ -54,11 +54,7 @@ struct CameraView: View {
                 client.connect()
             }
             Button("Cancel", role: .cancel) {
-                Task {
-                    await dismissImmersiveSpace()
-                    openWindow(id: "landing")
-                    dismissWindow(id: "camera")
-                }
+                dismissWindow(id: "camera")
             }
         } message: {
             Text("Insert the IP Address to connect to the Robot")
@@ -84,18 +80,19 @@ struct CameraView: View {
         }
         .confirmationDialog("Exit", isPresented: $showingExitConfirm) {
             Button("Yes", role: .destructive) {
-                Task {
-                    await dismissImmersiveSpace()
-                    openWindow(id: "landing")
-                    dismissWindow(id: "camera")
-                }
+                dismissWindow(id: "camera")
             }
-            Button("No", role: .cancel) {}
+            Button("No") { showingExitConfirm = false }
         } message: {
             Text("Do you want to exit this view?")
         }
         .uniformWindowResize()
-        .onDisappear { client.disconnect() }
+        .onDisappear {
+            client.disconnect()
+            dismissWindow(id: "joystick")
+            openWindow(id: "landing")
+            Task { await dismissImmersiveSpace() }
+        }
         } // NavigationStack
     }
 }

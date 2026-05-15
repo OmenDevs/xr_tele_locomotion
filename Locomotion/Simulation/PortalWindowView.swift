@@ -21,29 +21,33 @@ struct PortalWindowView: View {
     @State private var showExitConfirm: Bool = false
 
     var body: some View {
-        portalContent
-            .uniformWindowResize()
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Exit") { showExitConfirm = true }
-                }
+        ZStack(alignment: .top) {
+            portalContent
+
+            HStack {
+                Button("Exit") { showExitConfirm = true }
+                Spacer()
             }
-            .confirmationDialog("Exit", isPresented: $showExitConfirm) {
-                Button("Yes", role: .destructive) {
-                    Task { await exitToLanding() }
-                }
-                Button("No", role: .cancel) {}
-            } message: {
-                Text("Do you want to exit this view?")
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(.regularMaterial)
+            .offset(z: 10)
+        }
+        .confirmationDialog("Exit", isPresented: $showExitConfirm) {
+            Button("Yes", role: .destructive) {
+                exitToLanding()
             }
-            .onDisappear {
-                Task {
-                    await dismissImmersiveSpace()
-                    dismissWindow(id: "joystick")
-                    dismissWindow(id: "dashboard")
-                    openWindow(id: "landing")
-                }
-            }
+            Button("No") { showExitConfirm = false }
+        } message: {
+            Text("Do you want to exit this view?")
+        }
+        .onDisappear {
+            dismissWindow(id: "joystick")
+            dismissWindow(id: "dashboard")
+            openWindow(id: "landing")
+            Task { await dismissImmersiveSpace() }
+        }
+        .uniformWindowResize()
     }
 
     private var portalContent: some View {
@@ -99,7 +103,7 @@ struct PortalWindowView: View {
 //        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
 
-    private func exitToLanding() async {
+    private func exitToLanding() {
         dismissWindow(id: "portal")
     }
 
