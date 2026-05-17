@@ -35,7 +35,6 @@ struct LandingView: View {
                     ZStack(alignment: .bottomLeading) {
                         RoundedRectangle(cornerRadius: 20)
                             .fill(.regularMaterial)
-                            .frame(width: 400, height: 320)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Simulator")
                                 .font(.title2.bold())
@@ -46,6 +45,7 @@ struct LandingView: View {
                         }
                         .padding(24)
                     }
+                    .frame(width: 400, height: 320)
                     .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 20))
                     .hoverEffect()
                 }
@@ -60,7 +60,6 @@ struct LandingView: View {
                     ZStack(alignment: .bottomLeading) {
                         RoundedRectangle(cornerRadius: 20)
                             .fill(.regularMaterial)
-                            .frame(width: 400, height: 320)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Connect the Robot")
                                 .font(.title2.bold())
@@ -71,6 +70,7 @@ struct LandingView: View {
                         }
                         .padding(24)
                     }
+                    .frame(width: 400, height: 320)
                     .contentShape(.hoverEffect, .rect(cornerRadius: 20))
                     .hoverEffect()
                 }
