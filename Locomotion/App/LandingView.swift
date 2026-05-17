@@ -46,8 +46,11 @@ struct LandingView: View {
                         }
                         .padding(24)
                     }
+                    .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 20))
+                    .hoverEffect()
                 }
                 .buttonStyle(.plain)
+
                 Button {
                     Task {
                         await dismissImmersiveSpace()
@@ -68,6 +71,8 @@ struct LandingView: View {
                         }
                         .padding(24)
                     }
+                    .contentShape(.hoverEffect, .rect(cornerRadius: 20))
+                    .hoverEffect()
                 }
                 .buttonStyle(.plain)
             }
