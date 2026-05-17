@@ -69,5 +69,8 @@ struct LocomotionApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 620, height: 400)
+        .defaultWindowPlacement { _, context in
+            return WindowPlacement(.utilityPanel)
+        }
     }
 }
