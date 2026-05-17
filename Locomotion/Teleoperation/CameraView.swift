@@ -23,9 +23,9 @@ struct CameraView: View {
     @State private var showingIPAlert: Bool = true
     @State private var showingErrorAlert: Bool = false
     @State private var showingExitConfirm: Bool = false
-    @State private var ipAddress: String = ""
 
     var body: some View {
+        @Bindable var client = client
         NavigationStack {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -46,10 +46,10 @@ struct CameraView: View {
                 .padding(32)
             }
         }
+        /// IP connection alert
         .alert("IP Address", isPresented: $showingIPAlert) {
-            TextField("e.g. https://192.168.1.10:8000/offer", text: $ipAddress)
+            TextField("e.g. https:" + "//192.168.1.10:8000/offer)", text: $client.serverURL)
             Button("Connect") {
-                client.serverURL = ipAddress
                 phase = .connecting
                 client.connect()
             }
@@ -59,6 +59,7 @@ struct CameraView: View {
         } message: {
             Text("Insert the IP Address to connect to the Robot")
         }
+
         .alert("Connection Failed", isPresented: $showingErrorAlert) {
             Button("Cancel", role: .cancel) {
                 phase = .enteringIP
@@ -67,6 +68,7 @@ struct CameraView: View {
         } message: {
             Text(client.connectionState)
         }
+
         .onChange(of: client.connectionState) { _, newState in
             let isError = newState.contains("Failed") || newState.contains("Invalid") || newState.contains("error")
             if phase == .connecting && isError {
@@ -93,6 +95,6 @@ struct CameraView: View {
             openWindow(id: "landing")
             Task { await dismissImmersiveSpace() }
         }
-        } // NavigationStack
+        }
     }
 }
