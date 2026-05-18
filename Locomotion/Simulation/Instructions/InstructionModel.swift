@@ -10,5 +10,5 @@ import Foundation
 struct Instruction: Identifiable {
     let id = UUID()
     let text: String
-    let gift: String?
+    let video: String?
 }

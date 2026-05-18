@@ -67,6 +67,9 @@ struct PortalWindowView: View {
         }
 //        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .uniformWindowResize()
+        .ornament(attachmentAnchor: .scene(.leading)) {
+            InstructionsView()
+        }
     }
 
     @MainActor
