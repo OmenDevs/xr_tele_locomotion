@@ -10,11 +10,13 @@ import AVKit
 
 struct InstructionsView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
+    private var input = InputViewModel.shared
+    private let completionThreshold: Double = 0.9
     private var instructions: [Instruction] {
         switch interactionConfig.selectedInteraction {
         case .joystick2D: return Instructions.joytick3D
         case .joystick3D: return Instructions.joytick3D
-        case .gestureBased: return Instructions.astrolavium
+        case .gestureBased: return Instructions.astrolabium
         }
     }
     var totalInstructions: Int { instructions.count }
@@ -68,6 +70,34 @@ struct InstructionsView: View {
             }
             Spacer(minLength: spacerVertical)
         }
+        .onChange(of: input.velocityX) { _, _ in checkCompletion() }
+        .onChange(of: input.velocityY) { _, _ in checkCompletion() }
+        .onChange(of: input.angularVelocity) { _, _ in checkCompletion() }
+        .onChange(of: input.isActive) { _, _ in checkCompletion() }
+    }
+
+    private func checkCompletion() {
+        guard currentIndex < instructions.count else { return }
+        let threshold = completionThreshold
+        let satisfied: Bool
+        switch instructions[currentIndex].completion {
+        case .pinch:
+            satisfied = input.isActive
+                || input.velocityX != 0
+                || input.velocityY != 0
+                || input.angularVelocity != 0
+        case .moveForward:
+            satisfied = input.velocityY >= threshold
+        case .moveBackward:
+            satisfied = input.velocityY <= -threshold
+        case .moveSideways:
+            satisfied = abs(input.velocityX) >= threshold
+        case .rotateRight:
+            satisfied = input.angularVelocity <= -threshold
+        case .rotateLeft:
+            satisfied = input.angularVelocity >= threshold
+        }
+        if satisfied { nextIndex() }
     }
 
     private func nextIndex() {
