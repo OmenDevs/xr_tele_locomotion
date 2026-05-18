@@ -105,6 +105,10 @@ struct PortalWindowView: View {
 
     private func exitToLanding() {
         dismissWindow(id: "portal")
+        .uniformWindowResize()
+        .ornament(attachmentAnchor: .scene(.leading)) {
+            InstructionsView()
+        }
     }
 
     @MainActor
