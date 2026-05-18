@@ -30,7 +30,6 @@ struct PortalWindowView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(.regularMaterial)
             .offset(z: 10)
         }
         .confirmationDialog("Exit", isPresented: $showExitConfirm) {
