@@ -34,6 +34,7 @@ struct DashboardView: View {
                 color: .blue)
         }
         .padding()
+        .glassBackgroundEffect()
     }
 }
 

@@ -56,6 +56,12 @@ struct LocomotionApp: App {
             DashboardView(recording: recording)
         }
         .windowStyle(.plain)
+        .defaultWindowPlacement { _, context in
+            if let mainWindow = context.windows.first {
+                return WindowPlacement(.leading(mainWindow))
+            }
+            return WindowPlacement(.none)
+        }
 
         WindowGroup(id: "joystick") {
             ControlPanelView(client: client)
@@ -63,6 +69,8 @@ struct LocomotionApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 620, height: 400)
-
+        .defaultWindowPlacement { _, _ in
+            return WindowPlacement(.utilityPanel)
+        }
     }
 }
