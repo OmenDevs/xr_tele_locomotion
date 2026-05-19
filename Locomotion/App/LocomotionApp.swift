@@ -48,6 +48,7 @@ struct LocomotionApp: App {
         WindowGroup(id: "portal") {
             PortalWindowView()
                 .environment(povSimulator)
+                .environment(interactionConfig)
         }
         .windowStyle(.plain)
         .defaultSize(width: 1280, height: 720)

@@ -99,11 +99,15 @@ struct PortalWindowView: View {
                 windowSize = newSize
             }
         }
-//        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .uniformWindowResize()
+        .ornament(attachmentAnchor: .scene(.leading)) {
+            InstructionsView()
+        }
     }
 
     private func exitToLanding() {
         dismissWindow(id: "portal")
+
     }
 
     @MainActor
