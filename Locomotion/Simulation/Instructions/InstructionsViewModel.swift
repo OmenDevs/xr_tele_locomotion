@@ -28,11 +28,11 @@ struct Instructions {
         Instruction(
             text: "Rotating your wrist makes the robot rotate. While pinching, try rotating your wrist to the right",
             video: nil,
-            completion: .rotateRight),
-        Instruction(
-            text: "While pinching, try rotating your wrist to the left",
-            video: nil,
             completion: .rotateLeft),
+        Instruction(
+            text: "While pinching, try rotating your wrist to the right",
+            video: nil,
+            completion: .rotateRight),
         Instruction(
             text: "You have completed all the instructions!",
             video: nil,
