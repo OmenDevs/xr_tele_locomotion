@@ -21,6 +21,7 @@ struct InstructionsView: View {
     }
     var totalInstructions: Int { instructions.count }
     @State private var currentIndex: Int = 0
+    @State private var isForward: Bool = true
     var isFirst: Bool { currentIndex == 0 }
     var isLast: Bool { currentIndex == totalInstructions - 1 }
 
@@ -52,16 +53,23 @@ struct InstructionsView: View {
                             }
                             .padding()
                             Spacer()
-                            if let videoName = instructions[currentIndex].video,
-                               let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") {
-                                VideoPlayer(player: loopingPlayer(url))
-                                    .frame(height: 200)
-                                    .disabled(true)
+                            VStack {
+                                if let videoName = instructions[currentIndex].video,
+                                   let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") {
+                                    VideoPlayer(player: loopingPlayer(url))
+                                        .frame(height: 200)
+                                        .disabled(true)
+                                }
+                                Text(instructions[currentIndex].text)
+                                    .fontWeight(.medium)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
                             }
-                            Text(instructions[currentIndex].text)
-                                .fontWeight(.medium)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
+                            .id(currentIndex)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: isForward ? .trailing : .leading)),
+                                removal: .opacity.combined(with: .move(edge: isForward ? .leading : .trailing))
+                            ))
                             Spacer()
                         }
                         .padding()
@@ -101,14 +109,18 @@ struct InstructionsView: View {
     }
 
     private func nextIndex() {
-        guard currentIndex < totalInstructions - 1
-
-        else { return }
-        currentIndex += 1
+        guard currentIndex < totalInstructions - 1 else { return }
+        isForward = true
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            currentIndex += 1
+        }
     }
     private func previousIndex() {
         guard currentIndex > 0 else { return }
-        currentIndex -= 1
+        isForward = false
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            currentIndex -= 1
+        }
     }
 
     private func loopingPlayer(_ url: URL) -> AVPlayer {
