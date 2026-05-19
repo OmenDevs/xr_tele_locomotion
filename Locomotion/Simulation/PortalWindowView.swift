@@ -11,11 +11,45 @@ import RealityKitContent
 
 struct PortalWindowView: View {
     @Environment(POVSimulatorViewModel.self) private var povSimulator
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+
     @State private var frameSubscription: EventSubscription?
     @State private var portalPlaneEntity: ModelEntity?
     @State private var windowSize: CGSize = CGSize(width: 1280, height: 720)
+    @State private var showExitConfirm: Bool = false
 
     var body: some View {
+        ZStack(alignment: .top) {
+            portalContent
+
+            HStack {
+                Button("Exit") { showExitConfirm = true }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .offset(z: 10)
+        }
+        .confirmationDialog("Exit", isPresented: $showExitConfirm) {
+            Button("Yes", role: .destructive) {
+                exitToLanding()
+            }
+            Button("No") { showExitConfirm = false }
+        } message: {
+            Text("Do you want to exit this view?")
+        }
+        .onDisappear {
+            dismissWindow(id: "joystick")
+            dismissWindow(id: "dashboard")
+            openWindow(id: "landing")
+            Task { await dismissImmersiveSpace() }
+        }
+        .uniformWindowResize()
+    }
+
+    private var portalContent: some View {
         GeometryReader { geo in
             RealityView { content in
                 let portalContentRoot = Entity()
@@ -66,7 +100,10 @@ struct PortalWindowView: View {
             }
         }
 //        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .uniformWindowResize()
+    }
+
+    private func exitToLanding() {
+        dismissWindow(id: "portal")
     }
 
     @MainActor

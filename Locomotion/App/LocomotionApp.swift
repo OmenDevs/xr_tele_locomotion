@@ -22,7 +22,7 @@ struct LocomotionApp: App {
                 .environment(client)
                 .environment(interactionConfig)
         }
-        .defaultSize(width: 600, height: 300)
+        .defaultSize(width: 1000, height: 700)
 
         WindowGroup(id: "camera") {
             CameraView()
