@@ -61,7 +61,7 @@ struct InstructionsView: View {
                                         .disabled(true)
                                 }
                                 Text(instructions[currentIndex].text)
-                                    .fontWeight(.medium)
+                                    .fontWeight(.bold)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
                             }
