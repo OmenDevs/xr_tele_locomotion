@@ -7,8 +7,6 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-_CET = ZoneInfo("Europe/Rome")
-
 from dotenv import load_dotenv
 
 # Load environment variables from the .env
@@ -60,8 +58,11 @@ CAMERA_SOURCE      = os.getenv("CAMERA_SOURCE", "0")
 CAMERA_FRAMERATE   = os.getenv("CAMERA_FRAMERATE", "30")
 CAMERA_RESOLUTION  = os.getenv("CAMERA_RESOLUTION", "1280x720")
 ENABLE_RECORDING   = os.getenv("ENABLE_RECORDING", "false").lower() == "true"
+ENABLE_COMMAND_LOG = os.getenv("ENABLE_COMMAND_LOG", "true").lower() == "true"
 CERT_FILE          = os.getenv("CERT_FILE", os.path.join(ROOT, "cert.pem"))
 KEY_FILE           = os.getenv("KEY_FILE", os.path.join(ROOT, "key.pem"))
+
+_CET = ZoneInfo("Europe/Rome")
 
 # Active peer connections dictionary for managing multiple clients.
 active_connections = {}
@@ -158,9 +159,12 @@ async def offer(request):
     session_name = datetime.now(_CET).strftime('session %Y-%m-%d at %H.%M.%S')
     pc.recorder = MediaRecorder(f"{OUTPUT_DIR}/{session_name}.mp4", format='mp4') if ENABLE_RECORDING else None
 
-    log_path = os.path.join(OUTPUT_DIR, f"{session_name}.txt")
-    pc.command_log = open(log_path, 'w', buffering=1)
-    pc.command_log.write("timestamp,vx,vy,omega\n")
+    if ENABLE_COMMAND_LOG:
+        log_path = os.path.join(OUTPUT_DIR, f"{session_name}.txt")
+        pc.command_log = open(log_path, 'w', buffering=1)
+        pc.command_log.write("timestamp,vx,vy,omega\n")
+    else:
+        pc.command_log = None
 
     console.log(f"🔗 New connection: {pc_id} → {session_name}")
 
@@ -213,8 +217,9 @@ async def offer(request):
                         vy=float(cmd["vy"]),
                         omega=float(cmd["omega"]),
                     ))
-                    ts = datetime.now(_CET).strftime('%Y-%m-%dT%H:%M:%S')
-                    pc.command_log.write(f"{ts},{cmd['vx']},{cmd['vy']},{cmd['omega']}\n")
+                    if pc.command_log:
+                        ts = datetime.now(_CET).strftime('%Y-%m-%dT%H:%M:%S')
+                        pc.command_log.write(f"{ts},{cmd['vx']},{cmd['vy']},{cmd['omega']}\n")
                     return
                 console.log(f"📩 Unrecognized JSON format: {cmd}")
             except json.JSONDecodeError:
@@ -336,6 +341,7 @@ if __name__ == "__main__":
     console.log("=" * 55)
     console.log(f"📹 Camera source: {CAMERA_SOURCE}  |  {CAMERA_RESOLUTION} @ {CAMERA_FRAMERATE}fps")
     console.log(f"🎥 Recording: {'enabled' if ENABLE_RECORDING else 'disabled'}")
+    console.log(f"📝 Command log: {'enabled' if ENABLE_COMMAND_LOG else 'disabled'}")
     console.log("📱 Use the Network URL in your Vision Pro app")
     console.log("=" * 55)
 
