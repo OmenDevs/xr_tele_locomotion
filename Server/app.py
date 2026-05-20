@@ -218,7 +218,7 @@ async def offer(request):
                         omega=float(cmd["omega"]),
                     ))
                     if pc.command_log:
-                        ts = datetime.now(_CET).strftime('%Y-%m-%dT%H:%M:%S')
+                        ts = datetime.now(_CET).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
                         pc.command_log.write(f"{ts},{cmd['vx']},{cmd['vy']},{cmd['omega']}\n")
                     return
                 console.log(f"📩 Unrecognized JSON format: {cmd}")
