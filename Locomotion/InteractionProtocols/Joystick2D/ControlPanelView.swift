@@ -49,9 +49,17 @@ struct ControlPanelView: View {
         }
         .padding(20)
         .glassBackgroundEffect()
-        .onChange(of: input.velocityX) { onJoystickChanged() }
-        .onChange(of: input.velocityY) { onJoystickChanged() }
-        .onChange(of: input.angularVelocity) { onJoystickChanged() }
+        .onAppear {
+            sendTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+                Task { @MainActor in
+                    sendVelocity()
+                }
+            }
+        }
+        .onDisappear {
+            sendTimer?.invalidate()
+            sendTimer = nil
+        }
     }
 
     // MARK: - HUD bar
@@ -118,28 +126,6 @@ struct ControlPanelView: View {
     }
 
     // MARK: - Helpers
-
-    /// Called when any joystick value changes.
-    /// Sends 5 commands in 1 second while held; sends one final zero on release.
-    private func onJoystickChanged() {
-        let isActive = input.velocityX != 0
-            || input.velocityY != 0
-            || input.angularVelocity != 0
-
-        if isActive {
-            guard sendTimer == nil else { return }
-            sendVelocity()
-            sendTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
-                Task { @MainActor in
-                    sendVelocity()
-                }
-            }
-        } else {
-            sendTimer?.invalidate()
-            sendTimer = nil
-            sendVelocity()
-        }
-    }
 
     private func sendVelocity() {
         client?.sendVelocity(
