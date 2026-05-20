@@ -27,8 +27,8 @@ class POVSimulatorViewModel {
     private var velocityY: Double = 0.0       // m/s
     private var angularVelocity: Double = 0.0 // rad/s
 
-    let maxLinearSpeed: Double  = 5.0   // m/s
-    let maxAngularSpeed: Double = 0.5   // rad/s
+    let maxLinearSpeed: Double  = 2.5   // m/s
+    let maxAngularSpeed: Double = 0.3   // rad/s
 
     func updateScenario(normalizedVelocityX: Double,
                         normalizedVelocityY: Double,
