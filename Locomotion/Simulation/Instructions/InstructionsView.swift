@@ -70,6 +70,19 @@ struct InstructionsView: View {
                                 insertion: .opacity.combined(with: .move(edge: isForward ? .trailing : .leading)),
                                 removal: .opacity.combined(with: .move(edge: isForward ? .leading : .trailing))
                             ))
+                            if isLast {
+                                Button {
+                                    replay()
+                                } label: {
+                                    Label("Replay", systemImage: "arrow.counterclockwise")
+                                }
+                                .padding(.top, 12)
+                                .id(currentIndex)
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: isForward ? .trailing : .leading)),
+                                    removal: .opacity.combined(with: .move(edge: isForward ? .leading : .trailing))
+                                ))
+                            }
                             Spacer()
                         }
                         .padding()
@@ -120,6 +133,13 @@ struct InstructionsView: View {
         isForward = false
         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
             currentIndex -= 1
+        }
+    }
+    private func replay() {
+        guard currentIndex != 0 else { return }
+        isForward = false
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            currentIndex = 0
         }
     }
 
