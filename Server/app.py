@@ -14,7 +14,7 @@ load_dotenv(override=True)
 
 # Force CycloneDDS to Domain 0 on the chosen interface (default wlan0 for the linux;
 # override with en0 when running on macOS).
-_dds_iface = os.getenv("CYCLONEDDS_NETWORK_INTERFACE", "en0")
+_dds_iface = os.getenv("CYCLONEDDS_NETWORK_INTERFACE", "wlan0")
 os.environ["CYCLONEDDS_URI"] = (
     f'<CycloneDDS><Domain id="0"><General>'
     f'<NetworkInterfaceAddress>{_dds_iface}</NetworkInterfaceAddress>'
