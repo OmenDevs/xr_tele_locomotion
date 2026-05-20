@@ -46,23 +46,23 @@ struct Instructions {
             completion: .pinch),
         Instruction(
             text: "Keep pinching with your left hand and move it forward",
-            video: nil,
+            video: "Joystick_Forward",
             completion: .moveForward),
         Instruction(
             text: "Now pull your left hand back to move backward",
-            video: nil,
+            video: "Joystick_Backward",
             completion: .moveBackward),
         Instruction(
             text: "Move your left hand sideways to go left or right",
-            video: nil,
+            video: "Joystick_Left_And_Right",
             completion: .moveSideways),
         Instruction(
             text: "Pinch with your right hand and move it to the left",
-            video: nil,
+            video: "Lever_Left",
             completion: .rotateRight),
         Instruction(
             text: "Pinch with your right hand and move it to the right",
-            video: nil,
+            video: "Lever_Right",
             completion: .rotateLeft),
         Instruction(
             text: "You have completed all the instructions!",
