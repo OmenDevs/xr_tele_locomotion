@@ -24,6 +24,7 @@ struct InstructionsView: View {
     @State private var isForward: Bool = true
     @State private var playerCache: [String: AVPlayer] = [:]
     @State private var looperCache: [String: AVPlayerLooper] = [:]
+    @State private var areVideosLoaded: Bool = false
     var isFirst: Bool { currentIndex == 0 }
     var isLast: Bool { currentIndex == totalInstructions - 1 }
 
@@ -60,11 +61,15 @@ struct InstructionsView: View {
                                     .fontWeight(.bold)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
-                                if let videoName = instructions[currentIndex].video,
-                                   let player = playerCache[videoName] {
-                                    VideoPlayer(player: player)
-                                        .frame(height: 200)
-                                        .disabled(true)
+                                if let videoName = instructions[currentIndex].video {
+                                    if areVideosLoaded, let player = playerCache[videoName] {
+                                        VideoPlayer(player: player)
+                                            .frame(height: 200)
+                                            .disabled(true)
+                                    } else {
+                                        ProgressView()
+                                            .frame(height: 200)
+                                    }
                                 }
                             }
                             .id(currentIndex)
@@ -148,6 +153,7 @@ struct InstructionsView: View {
 
     private func preloadPlayers() {
         let videoNames = Set(instructions.compactMap { $0.video })
+        areVideosLoaded = false
         for name in videoNames {
             guard playerCache[name] == nil,
                   let url = Bundle.main.url(forResource: name, withExtension: "mp4") else { continue }
@@ -158,6 +164,7 @@ struct InstructionsView: View {
             looperCache[name] = looper
             player.play()
         }
+        areVideosLoaded = true
     }
 }
 
