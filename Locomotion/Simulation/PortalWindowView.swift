@@ -64,7 +64,7 @@ struct PortalWindowView: View {
                 content.add(plane)
                 portalPlaneEntity = plane
 
-                guard let scenarioEntity = try? await Entity(named: "Draft_Road", in: realityKitContentBundle)
+                guard let scenarioEntity = try? await Entity(named: "Road", in: realityKitContentBundle)
                 else { return }
 
                 scenarioEntity.transform = Transform(
