@@ -64,11 +64,20 @@ struct PortalWindowView: View {
                 content.add(plane)
                 portalPlaneEntity = plane
 
-                guard let scenarioEntity = try? await Entity(named: "MapMars", in: realityKitContentBundle)
+                guard let scenarioEntity = try? await Entity(named: "Road", in: realityKitContentBundle)
                 else { return }
-                scenarioEntity.name = "scenarioEntity"
+
+                scenarioEntity.transform = Transform(
+                    scale: SIMD3<Float>(repeating: 0.4),
+                    rotation: simd_quatf(angle: -.pi / 2, axis: SIMD3<Float>(1, 0, 0)),
+                    translation: SIMD3<Float>(0, -1.5, 0)
+                )
                 makeUnlit(scenarioEntity)
-                portalContentRoot.addChild(scenarioEntity)
+
+                let scenarioWrapper = Entity()
+                scenarioWrapper.name = "scenarioEntity"
+                scenarioWrapper.addChild(scenarioEntity)
+                portalContentRoot.addChild(scenarioWrapper)
 
                 frameSubscription = content.subscribe(to: SceneEvents.Update.self) { event in
                     guard let entity = event.scene.findEntity(named: "scenarioEntity") else { return }
