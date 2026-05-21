@@ -126,7 +126,9 @@ struct InstructionsView: View {
         case .rotateLeft:
             satisfied = input.angularVelocity >= threshold
         }
-        if satisfied { nextIndex() }
+        if satisfied {
+            Task { @MainActor in nextIndex() }
+        }
     }
 
     private func nextIndex() {
