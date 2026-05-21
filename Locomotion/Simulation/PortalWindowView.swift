@@ -40,12 +40,7 @@ struct PortalWindowView: View {
         } message: {
             Text("Do you want to exit this view?")
         }
-        .onDisappear {
-            dismissWindow(id: "joystick")
-            dismissWindow(id: "dashboard")
-            openWindow(id: "landing")
-            Task { await dismissImmersiveSpace() }
-        }
+        .onDisappear { }
         .uniformWindowResize()
     }
 
@@ -115,8 +110,13 @@ struct PortalWindowView: View {
     }
 
     private func exitToLanding() {
-        dismissWindow(id: "portal")
-
+        dismissWindow(id: "joystick")
+        dismissWindow(id: "dashboard")
+        openWindow(id: "landing")
+        Task {
+            await dismissImmersiveSpace()
+            dismissWindow(id: "portal")
+        }
     }
 
     @MainActor
