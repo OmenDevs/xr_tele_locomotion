@@ -33,19 +33,26 @@ struct LandingView: View {
                     }
                 } label: {
                     ZStack(alignment: .bottomLeading) {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.regularMaterial)
+                        Image("RunSimulationBG")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 400, height: 320)
+                            .offset(x: -40, y: 0)
+                            .clipped()
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Simulator")
                                 .font(.title2.bold())
                                 .foregroundStyle(.white)
                             Text("Test the interaction protocol in a simulation environment")
                                 .font(.body)
-                                .foregroundStyle(.white.opacity(0.7))
+//                                .foregroundStyle(.white.opacity(0.7))
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(24)
+                        .frame(width: 400, alignment: .leading)
                     }
                     .frame(width: 400, height: 320)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 20))
                     .hoverEffect()
                 }
@@ -58,20 +65,25 @@ struct LandingView: View {
                     }
                 } label: {
                     ZStack(alignment: .bottomLeading) {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.regularMaterial)
+                        Image("Robot_Connect_Bg_")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 400, height: 320)
+                            .offset(x: -40, y: 0)
+                            .clipped()
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Connect the Robot")
                                 .font(.title2.bold())
                                 .foregroundStyle(.white)
                             Text("Connect your robot to control its locomotion")
                                 .font(.body)
-                                .foregroundStyle(.white.opacity(0.7))
+//                                .foregroundStyle(.white.opacity(0.7))
                         }
                         .padding(24)
                     }
                     .frame(width: 400, height: 320)
-                    .contentShape(.hoverEffect, .rect(cornerRadius: 20))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 20))
                     .hoverEffect()
                 }
                 .buttonStyle(.plain)
