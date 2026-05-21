@@ -11,27 +11,27 @@ struct Instructions {
     static let astrolabium: [Instruction] = [
         Instruction(
             text: "Try pinching with your middle finger and thumb to access the controls",
-            video: nil,
+            video: "Pinch_Gesture2",
             completion: .pinch),
         Instruction(
             text: "Try to move the robot, drag the ball from the starting point forward",
-            video: nil,
+            video: "Astrolabium_Forward",
             completion: .moveForward),
         Instruction(
             text: "Try to move the robot, drag the ball from the starting point backward",
-            video: nil,
+            video: "Astrolabium_Backward",
             completion: .moveBackward),
         Instruction(
             text: "Try to move the robot, drag the ball from the starting point left or right",
-            video: nil,
+            video: "Astrolabium_Left_and_Right",
             completion: .moveSideways),
         Instruction(
             text: "Rotating your wrist makes the robot rotate. While pinching, try rotating your wrist to the right",
-            video: nil,
+            video: "Astrolabium_Right",
             completion: .rotateLeft),
         Instruction(
             text: "While pinching, try rotating your wrist to the right",
-            video: nil,
+            video: "Astrolabium_Left",
             completion: .rotateRight),
         Instruction(
             text: "You have completed all the instructions!",
@@ -42,7 +42,7 @@ struct Instructions {
     static let joytick3D: [Instruction] = [
         Instruction(
             text: "Pinch your middle finger and thumb with your left hand to take control of the joystick",
-            video: nil,
+            video: "Pinch_Gesture",
             completion: .pinch),
         Instruction(
             text: "Keep pinching with your left hand and move it forward",
