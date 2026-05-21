@@ -28,7 +28,7 @@ struct InstructionsView: View {
     var isFirst: Bool { currentIndex == 0 }
     var isLast: Bool { currentIndex == totalInstructions - 1 }
 
-    private let ornamentSize: CGSize = .init(width: 400, height: 400)
+    private let ornamentSize: CGSize = .init(width: 400, height: 440)
     private let ornamentSpacing: CGFloat = 80
     private var spacerHorizontal: CGFloat = 450
     private var spacerVertical: CGFloat = 250
@@ -60,6 +60,7 @@ struct InstructionsView: View {
                                 Text(instructions[currentIndex].text)
                                     .fontWeight(.bold)
                                     .multilineTextAlignment(.center)
+                                    .lineLimit(4)
                                     .padding(.horizontal)
                                 if let videoName = instructions[currentIndex].video {
                                     if areVideosLoaded, let player = playerCache[videoName] {
@@ -127,7 +128,11 @@ struct InstructionsView: View {
             satisfied = input.angularVelocity >= threshold
         }
         if satisfied {
-            Task { @MainActor in nextIndex() }
+            let indexAtCheck = currentIndex
+            Task { @MainActor in
+                guard currentIndex == indexAtCheck else { return }
+                nextIndex()
+            }
         }
     }
 
