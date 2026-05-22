@@ -9,33 +9,58 @@ import LiveKitWebRTC
 
 extension LKRTCDisplayView {
 
-    /// Processes and renders a video frame.
+    /// Receives an incoming WebRTC frame and schedules a render on the main thread.
     ///
-    /// This method converts the pixel buffer into a `CMSampleBuffer`, adds timing metadata,
-    /// and enqueues it to the `AVSampleBufferDisplayLayer`.
-    ///
-    /// - Parameter frame: The video frame to render.
+    /// Only one render dispatch is ever in-flight at a time. If frames arrive faster
+    /// than the main thread can drain them, intermediate frames are dropped and the
+    /// main thread always picks up the most recent one — preventing queue buildup and
+    /// the growing latency that follows.
     func renderFrame(_ frame: LKRTCVideoFrame?) {
-        guard let frame else { return }
-        guard let pixelBuffer = extractPixelBuffer(from: frame) else { return }
+        guard let frame,
+              let pixelBuffer = extractPixelBuffer(from: frame),
+              let sampleBuffer = makeSampleBuffer(from: pixelBuffer) else { return }
 
-        // Create timing info (required for the display layer to know when to show the frame)
+        renderLock.lock()
+        let needsDispatch = pendingBuffer == nil
+        pendingBuffer = sampleBuffer
+        renderLock.unlock()
+
+        guard needsDispatch else { return }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.drainPendingBuffer()
+        }
+    }
+
+    private func drainPendingBuffer() {
+        renderLock.lock()
+        let buffer = pendingBuffer
+        pendingBuffer = nil
+        renderLock.unlock()
+
+        guard let buffer else { return }
+
+        if sampleBufferLayer.sampleBufferRenderer.status == .failed {
+            sampleBufferLayer.sampleBufferRenderer.flush()
+        }
+        sampleBufferLayer.sampleBufferRenderer.enqueue(buffer)
+    }
+
+    private func makeSampleBuffer(from pixelBuffer: CVPixelBuffer) -> CMSampleBuffer? {
         var timing = CMSampleTimingInfo(
             duration: CMTime(value: 1, timescale: 30),
             presentationTimeStamp: CMClockGetTime(CMClockGetHostTimeClock()),
             decodeTimeStamp: .invalid
         )
 
-        // Create a video format description from the image buffer
         var formatDesc: CMVideoFormatDescription?
         CMVideoFormatDescriptionCreateForImageBuffer(
             allocator: nil,
             imageBuffer: pixelBuffer,
             formatDescriptionOut: &formatDesc
         )
-        guard let formatDesc else { return }
+        guard let formatDesc else { return nil }
 
-        // Create the final Sample Buffer
         var sampleBuffer: CMSampleBuffer?
         CMSampleBufferCreateForImageBuffer(
             allocator: nil,
@@ -47,19 +72,6 @@ extension LKRTCDisplayView {
             sampleTiming: &timing,
             sampleBufferOut: &sampleBuffer
         )
-
-        guard let sampleBuffer else { return }
-
-        // Enqueue the frame to the layer on the main thread
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-
-            // If the renderer enters a failed state (e.g., due to backgrounding), flush it
-            if self.sampleBufferLayer.sampleBufferRenderer.status == .failed {
-                self.sampleBufferLayer.sampleBufferRenderer.flush()
-            }
-
-            self.sampleBufferLayer.sampleBufferRenderer.enqueue(sampleBuffer)
-        }
+        return sampleBuffer
     }
 }
