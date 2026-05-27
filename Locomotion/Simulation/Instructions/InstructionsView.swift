@@ -153,9 +153,7 @@ private struct AnimatedGIFView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.setContentHuggingPriority(.defaultLow, for: .horizontal)
         imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         imageView.image = loadGIF()
         return imageView
@@ -167,19 +165,10 @@ private struct AnimatedGIFView: UIViewRepresentable {
         guard let url = Bundle.main.url(forResource: name, withExtension: "gif"),
               let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
         let count = CGImageSourceGetCount(source)
-        var images: [UIImage] = []
-        var duration: Double = 0
-        for index in 0..<count {
-            guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else { continue }
-            images.append(UIImage(cgImage: cgImage))
-            let props = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: Any]
-            let gifProps = props?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
-            let delay = gifProps?[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double
-                     ?? gifProps?[kCGImagePropertyGIFDelayTime as String] as? Double
-                     ?? 0.1
-            duration += delay
+        let frames = (0..<count).compactMap {
+            CGImageSourceCreateImageAtIndex(source, $0, nil).map { UIImage(cgImage: $0) }
         }
-        return images.count == 1 ? images[0] : UIImage.animatedImage(with: images, duration: duration)
+        return UIImage.animatedImage(with: frames, duration: Double(count) * 0.05)
     }
 }
 
