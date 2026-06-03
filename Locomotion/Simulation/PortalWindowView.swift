@@ -26,17 +26,20 @@ struct PortalWindowView: View {
 
             HStack {
                 Button("Exit") { showExitConfirm = true }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(white: 0.5))
+                    .foregroundStyle(.white)
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .offset(z: 10)
         }
-        .confirmationDialog("Exit", isPresented: $showExitConfirm) {
-            Button("Yes", role: .destructive) {
+        .alert("Exit", isPresented: $showExitConfirm) {
+            Button("Exit", role: .destructive) {
                 exitToLanding()
             }
-            Button("No") { showExitConfirm = false }
+            Button("Cancel", role: .cancel) { showExitConfirm = false }
         } message: {
             Text("Do you want to exit this view?")
         }

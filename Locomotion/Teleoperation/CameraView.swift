@@ -78,13 +78,16 @@ struct CameraView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button("Exit") { showingExitConfirm = true }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(white: 0.5))
+                    .foregroundStyle(.white)
             }
         }
-        .confirmationDialog("Exit", isPresented: $showingExitConfirm) {
-            Button("Yes", role: .destructive) {
+        .alert("Exit", isPresented: $showingExitConfirm) {
+            Button("Exit", role: .destructive) {
                 dismissWindow(id: "camera")
             }
-            Button("No") { showingExitConfirm = false }
+            Button("Cancel", role: .cancel) { showingExitConfirm = false }
         } message: {
             Text("Do you want to exit this view?")
         }
