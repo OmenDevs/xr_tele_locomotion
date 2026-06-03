@@ -24,6 +24,8 @@ extension RobotWebRTCClient {
         ]
         config.sdpSemantics = .unifiedPlan
 
+        config.tcpCandidatePolicy = .disabled
+
         peerConnection = factory.peerConnection(
             with: config,
             constraints: LKRTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil),

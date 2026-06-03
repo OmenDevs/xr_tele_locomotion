@@ -22,10 +22,13 @@ struct InstructionsView: View {
     var totalInstructions: Int { instructions.count }
     @State private var currentIndex: Int = 0
     @State private var isForward: Bool = true
+    @State private var playerCache: [String: AVPlayer] = [:]
+    @State private var looperCache: [String: AVPlayerLooper] = [:]
+    @State private var areVideosLoaded: Bool = false
     var isFirst: Bool { currentIndex == 0 }
     var isLast: Bool { currentIndex == totalInstructions - 1 }
 
-    private let ornamentSize: CGSize = .init(width: 400, height: 400)
+    private let ornamentSize: CGSize = .init(width: 400, height: 440)
     private let ornamentSpacing: CGFloat = 80
     private var spacerHorizontal: CGFloat = 450
     private var spacerVertical: CGFloat = 250
@@ -34,7 +37,7 @@ struct InstructionsView: View {
         VStack {
             HStack {
                 Rectangle()
-                    .foregroundColor(.clear)
+                    .foregroundColor(.black)
                     .glassBackgroundEffect()
                     .frame(
                         width: ornamentSize.width,
@@ -54,16 +57,21 @@ struct InstructionsView: View {
                             .padding()
                             Spacer()
                             VStack {
-                                if let videoName = instructions[currentIndex].video,
-                                   let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") {
-                                    VideoPlayer(player: loopingPlayer(url))
-                                        .frame(height: 200)
-                                        .disabled(true)
-                                }
                                 Text(instructions[currentIndex].text)
                                     .fontWeight(.bold)
                                     .multilineTextAlignment(.center)
+                                    .lineLimit(4)
                                     .padding(.horizontal)
+                                if let videoName = instructions[currentIndex].video {
+                                    if areVideosLoaded, let player = playerCache[videoName] {
+                                        VideoPlayer(player: player)
+                                            .frame(height: 200)
+                                            .disabled(true)
+                                    } else {
+                                        ProgressView()
+                                            .frame(height: 200)
+                                    }
+                                }
                             }
                             .id(currentIndex)
                             .transition(.asymmetric(
@@ -91,6 +99,7 @@ struct InstructionsView: View {
             }
             Spacer(minLength: spacerVertical)
         }
+        .onAppear { preloadPlayers() }
         .onChange(of: input.velocityX) { _, _ in checkCompletion() }
         .onChange(of: input.velocityY) { _, _ in checkCompletion() }
         .onChange(of: input.angularVelocity) { _, _ in checkCompletion() }
@@ -118,7 +127,13 @@ struct InstructionsView: View {
         case .rotateLeft:
             satisfied = input.angularVelocity >= threshold
         }
-        if satisfied { nextIndex() }
+        if satisfied {
+            let indexAtCheck = currentIndex
+            Task { @MainActor in
+                guard currentIndex == indexAtCheck else { return }
+                nextIndex()
+            }
+        }
     }
 
     private func nextIndex() {
@@ -143,18 +158,20 @@ struct InstructionsView: View {
         }
     }
 
-    private func loopingPlayer(_ url: URL) -> AVPlayer {
-        let player = AVPlayer(url: url)
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
-            queue: .main
-        ) { _ in
-            player.seek(to: .zero)
+    private func preloadPlayers() {
+        let videoNames = Set(instructions.compactMap { $0.video })
+        areVideosLoaded = false
+        for name in videoNames {
+            guard playerCache[name] == nil,
+                  let url = Bundle.main.url(forResource: name, withExtension: "mp4") else { continue }
+            let item = AVPlayerItem(url: url)
+            let player = AVQueuePlayer(playerItem: item)
+            let looper = AVPlayerLooper(player: player, templateItem: item)
+            playerCache[name] = player
+            looperCache[name] = looper
             player.play()
         }
-        player.play()
-        return player
+        areVideosLoaded = true
     }
 }
 

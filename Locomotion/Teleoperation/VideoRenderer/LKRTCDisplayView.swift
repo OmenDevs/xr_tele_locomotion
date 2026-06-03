@@ -17,6 +17,11 @@ class LKRTCDisplayView: UIView, LKRTCVideoRenderer {
     /// The underlying layer responsible for displaying compressed or uncompressed video frames.
     let sampleBufferLayer = AVSampleBufferDisplayLayer()
 
+    // Guards pendingBuffer across the WebRTC render thread and main thread.
+    let renderLock = NSLock()
+    // Holds the latest unconsumed frame. nil means no dispatch is in flight.
+    var pendingBuffer: CMSampleBuffer?
+
     /// Initializes the view with a black background and configures the video gravity.
     override init(frame: CGRect) {
         super.init(frame: frame)
