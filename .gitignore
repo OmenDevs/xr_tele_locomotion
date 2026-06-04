@@ -81,3 +81,7 @@ build/
 
 .vscode/
 __pycache__/
+.venv/
+
+# Local environment config (copy from .env.example and edit)
+.env

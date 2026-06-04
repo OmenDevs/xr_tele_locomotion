@@ -49,7 +49,9 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ```bash
 cd Locomotion/Server
-pip3 install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ### 3. Generate SSL certificates
@@ -61,26 +63,49 @@ cd Server
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
 ```
 
-### 4. Run the server
+### 4. Configure the environment
+
+Copy the example file and edit as needed:
 
 ```bash
-sudo python3 Server/app.py   # macOS
-python3 Server/app.py        # Ubuntu (after udev rules)
+cp .env.example .env
 ```
 
-The server prints its local and network URLs on startup. Use the **Network URL** in the iOS app.
+| Variable | Default | Description |
+|---|---|---|
+| `SERVER_HOST` | `0.0.0.0` | Bind address. Set to the robot's Ethernet IP when testing over cable |
+| `SERVER_PORT` | `8000` | Port the server listens on |
+| `CAMERA_SOURCE` | `0` | Camera device index |
+| `CAMERA_FRAMERATE` | `30` | Stream frame rate |
+| `CAMERA_RESOLUTION` | `1280x720` | Stream resolution |
+| `ENABLE_RECORDING` | `false` | Set to `true` to save sessions to `recordings/` |
 
 ---
 
-## Stream Switching
+### 5. Run the server
 
-The client can switch streams in real time over the WebRTC data channel:
+```bash
+sudo python Server/app.py   # macOS
+python Server/app.py        # Ubuntu (after udev rules)
+```
 
-| Command | Stream |
-|---|---|
-| `stream:color` | RGB color (default) |
-| `stream:depth` | Colorized depth map |
-| `stream:infrared` | Infrared (grayscale) |
+The server prints its local and network URLs on startup. Use the **Network URL** in the visionOS app.
+
+---
+
+## Browser test client
+
+The server hosts a minimal web browser. After running the server go to your local host or search your ip address(for example `https://192.168.1.10:8000/`) from the browser. You'll get a *Start connection* button that opens the same WebRTC session the visionOS app uses, plus a text channel for sending messages.
+
+Useful for:
+
+- Verifying the camera pipeline and signaling are working **without a Vision Pro or visionOS SDK**.
+- Smoke-testing a new server build before pairing it with the app.
+- Debugging the data channel: messages typed in the chat box are echoed by the server.
+
+The browser will warn about the self-signed certificate — accept it once to proceed.
+
+> Note: The browser client also does send velocity commands if json format followed. 
 
 ---
 
@@ -97,4 +122,5 @@ If the RealSense camera is not connected, the server automatically falls back to
 | `app.py` | WebRTC signaling server, HTTP routes, startup |
 | `realsense_track.py` | RealSense camera pipeline and stream switching |
 | `viewer.py` | Local debug tool — preview streams without WebRTC |
+| `static/` | Browser test client
 | `requirements.txt` | Python dependencies |

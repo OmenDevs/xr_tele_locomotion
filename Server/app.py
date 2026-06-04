@@ -4,21 +4,42 @@ import os
 import json
 import platform
 import sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+from dotenv import load_dotenv
+
+# Load environment variables from the .env
+load_dotenv(override=True)
+
+# Force CycloneDDS to Domain 0 on the chosen interface (default wlan0 for the linux;
+# override with en0 when running on macOS).
+_dds_iface = os.getenv("CYCLONEDDS_NETWORK_INTERFACE", "wlan0")
+os.environ["CYCLONEDDS_URI"] = (
+    f'<CycloneDDS><Domain id="0"><General>'
+    f'<NetworkInterfaceAddress>{_dds_iface}</NetworkInterfaceAddress>'
+    f'</General></Domain></CycloneDDS>'
+)
 
 from aiohttp import web
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from aiortc.contrib.media import MediaPlayer, MediaRecorder
 from rich.console import Console
-from dotenv import load_dotenv
+
+
+# --- CycloneDDS Imports ---
+from dataclasses import dataclass
+from cyclonedds.domain import DomainParticipant
+from cyclonedds.pub import DataWriter
+from cyclonedds.topic import Topic
+from cyclonedds.idl import IdlStruct
+from cyclonedds.idl.types import float32
 
 try:
     from realsense_track import RealSenseTrack
     REALSENSE_AVAILABLE = True
 except Exception:
     REALSENSE_AVAILABLE = False
-
-# Load environment variables from the .env file
-load_dotenv(override=True)
 
 # Create the web application with aiohttp
 app = web.Application()
@@ -31,14 +52,58 @@ if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # Config from .env
-SERVER_HOST   = os.getenv("SERVER_HOST", "0.0.0.0")
-SERVER_PORT   = int(os.getenv("SERVER_PORT", "8000"))
-CAMERA_SOURCE = os.getenv("CAMERA_SOURCE", "0")
-CERT_FILE     = os.getenv("CERT_FILE", os.path.join(ROOT, "cert.pem"))
-KEY_FILE      = os.getenv("KEY_FILE", os.path.join(ROOT, "key.pem"))
+SERVER_HOST        = os.getenv("SERVER_HOST", "0.0.0.0")
+SERVER_PORT        = int(os.getenv("SERVER_PORT", "8000"))
+CAMERA_SOURCE      = os.getenv("CAMERA_SOURCE", "0")
+CAMERA_FRAMERATE   = os.getenv("CAMERA_FRAMERATE", "30")
+CAMERA_RESOLUTION  = os.getenv("CAMERA_RESOLUTION", "1280x720")
+ENABLE_RECORDING   = os.getenv("ENABLE_RECORDING", "false").lower() == "true"
+ENABLE_COMMAND_LOG = os.getenv("ENABLE_COMMAND_LOG", "true").lower() == "true"
+CERT_FILE          = os.getenv("CERT_FILE", os.path.join(ROOT, "cert.pem"))
+KEY_FILE           = os.getenv("KEY_FILE", os.path.join(ROOT, "key.pem"))
+
+_CET = ZoneInfo("Europe/Rome")
 
 # Active peer connections dictionary for managing multiple clients.
 active_connections = {}
+
+
+# DDS velocity command structure published to the robot.
+@dataclass
+class VelocityCommand(IdlStruct, typename="VelocityCommand"):
+    vx: float32
+    vy: float32
+    omega: float32
+
+
+console.log("Initializing CycloneDDS...")
+try:
+    dds_dp = DomainParticipant(0)
+    dds_topic = Topic(dds_dp, "VelocityTopic", VelocityCommand)
+    dds_writer = DataWriter(dds_dp, dds_topic)
+    console.log("✅ CycloneDDS Publisher Ready")
+except Exception as e:
+    console.log(f"❌ Failed to initialize CycloneDDS: {e}")
+    sys.exit(1)
+
+
+def stop_robot_dds():
+    """Publish a zero-velocity command so the robot halts safely."""
+    try:
+        dds_writer.write(VelocityCommand(vx=0.0, vy=0.0, omega=0.0))
+        console.log("🛑 Robot safely stopped via DDS.")
+    except Exception as e:
+        console.log(f"⚠️ Failed to send DDS stop command: {e}")
+
+def close_command_log(pc):
+    if hasattr(pc, 'command_log') and pc.command_log:
+        log_name = os.path.basename(pc.command_log.name)
+        try:
+            pc.command_log.close()
+            console.log(f"💾 Command log saved: {log_name}")
+        except Exception as e:
+            console.log(f"⚠️ Error closing command log: {e}")
+        pc.command_log = None
 
 def get_camera_track():
     """Returns a video track from the robot camera."""
@@ -55,14 +120,14 @@ def get_camera_track():
         player = MediaPlayer(
             f"{CAMERA_SOURCE}:none",
             format="avfoundation",
-            options={"framerate": "30", "video_size": "1280x720"},
+            options={"framerate": CAMERA_FRAMERATE, "video_size": CAMERA_RESOLUTION},
         )
     else:
         # Linux (robot): v4l2
         player = MediaPlayer(
             f"/dev/video{CAMERA_SOURCE}",
             format="v4l2",
-            options={"framerate": "30", "video_size": "1280x720"},
+            options={"framerate": CAMERA_FRAMERATE, "video_size": CAMERA_RESOLUTION},
         )
     console.log(f"🎥 Camera track created from source: {CAMERA_SOURCE}")
     return player.video
@@ -91,10 +156,17 @@ async def offer(request):
     pc_id = f"pc_{id(pc)}"
     active_connections[pc_id] = pc
 
-    #MediaRecorder for recording video.
-    pc.recorder = MediaRecorder(f"{OUTPUT_DIR}/{pc_id}.mp4", format='mp4')
+    session_name = datetime.now(_CET).strftime('session %Y-%m-%d at %H.%M.%S')
+    pc.recorder = MediaRecorder(f"{OUTPUT_DIR}/{session_name}.mp4", format='mp4') if ENABLE_RECORDING else None
 
-    console.log(f"🔗 New connection: {pc_id}")
+    if ENABLE_COMMAND_LOG:
+        log_path = os.path.join(OUTPUT_DIR, f"{session_name}.txt")
+        pc.command_log = open(log_path, 'w', buffering=1)
+        pc.command_log.write("timestamp,vx,vy,omega\n")
+    else:
+        pc.command_log = None
+
+    console.log(f"🔗 New connection: {pc_id} → {session_name}")
 
     # Add camera track 
     video_track_active = False
@@ -102,18 +174,19 @@ async def offer(request):
         video_track = get_camera_track()
         pc.addTrack(video_track)
         video_track_active = True
-        pc.recorder.addTrack(video_track)
+        if pc.recorder:
+            pc.recorder.addTrack(video_track)
         console.log("📹 Camera track added")
 
-        #This event is triggered when the video track ends.
         @video_track.on("ended")
         async def on_video_ended():
             nonlocal video_track_active
             video_track_active = False
-            console.log("🔴 Video track ended")  
-            await pc.recorder.stop()
-            pc.recorder = None
-            console.log(f"🎥 Recording saved: {OUTPUT_DIR}/{pc_id}.mp4")
+            console.log("🔴 Video track ended")
+            if pc.recorder:
+                await pc.recorder.stop()
+                pc.recorder = None
+                console.log(f"🎥 Recording saved: {OUTPUT_DIR}/{session_name}.mp4")
     except Exception as e:
         console.log(f"❌ Could not open camera: {e}")
         # Fallback: test pattern so connection can still be verified
@@ -134,24 +207,31 @@ async def offer(request):
                 console.log("⚠️ Command rejected — video stream not active")
                 channel.send("⚠️ Cannot send commands without active video")
                 return
-            console.log(f"📩 Command: {message}")
-            if message.startswith("stream:"):
-                stream_type = message.split(":")[1]
-                if isinstance(video_track, RealSenseTrack):
-                    video_track.set_stream(stream_type)
-                    channel.send(f"✅ Switched to {stream_type} stream")
-                else:
-                    channel.send("⚠️ RealSense not active (using fallback player)")
-                return
 
-            # TODO: forward robot control commands here
-            channel.send(f"📢 Echo: {message}")
+            try:
+                cmd = json.loads(message)
+                if all(k in cmd for k in ("vx", "vy", "omega")):
+                    console.log(f"📩 Command: {json.dumps(cmd)}")
+                    dds_writer.write(VelocityCommand(
+                        vx=float(cmd["vx"]),
+                        vy=float(cmd["vy"]),
+                        omega=float(cmd["omega"]),
+                    ))
+                    if pc.command_log:
+                        ts = datetime.now(_CET).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+                        pc.command_log.write(f"{ts},{cmd['vx']},{cmd['vy']},{cmd['omega']}\n")
+                    return
+                console.log(f"📩 Unrecognized JSON format: {cmd}")
+            except json.JSONDecodeError:
+                console.log(f"📩 Raw Text Command: {message}")
+                channel.send(f"📢 Echo: {message}")
         
         # This events are triggered when the data channel is closed/error.
         def on_data_channel_issue(reason: str):
             console.log(f"⚠️ Data channel issue: {reason}")
             console.log(f"🗑️ Eliminating {pc_id} from active connections")
-            # TODO: forward robot stop command here
+            stop_robot_dds()
+            close_command_log(pc)
             active_connections.pop(pc_id, None)
             console.log(f"📊 Active connections: {len(active_connections)}")
         @channel.on('close')
@@ -174,7 +254,8 @@ async def offer(request):
                     console.log(f"⚠️ Error stopping recorder: {e}")
             video_track_active = False
             await pc.close()
-            # TODO: forward robot stop command here
+            stop_robot_dds()
+            close_command_log(pc)
             active_connections.pop(pc_id, None)
             console.log(f"🗑️  Removed {pc_id}. Active: {len(active_connections)}")
 
@@ -183,9 +264,9 @@ async def offer(request):
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
     console.log(f"✅ SDP answer sent to {pc_id}")
-    if video_track_active:
+    if video_track_active and pc.recorder:
         await pc.recorder.start()
-        console.log(f"🎥 Recording started for {pc_id}")
+        console.log(f"🎥 Recording started for {session_name}")
 
     return web.Response(
         content_type="application/json",
@@ -209,14 +290,16 @@ async def stop(request):
             except Exception as e:
                 console.log(f"⚠️ Error stopping recorder: {e}")
         # Close the peer connection.
-        try: 
+        try:
             await pc.close()
             console.log(f"✅ Closed {pc_id}")
         except Exception as e:
             console.log(f"⚠️ Error closing peer connection {pc_id}: {e}")
 
+        stop_robot_dds()
+        close_command_log(pc)
         active_connections.pop(pc_id, None)
-        
+
         return web.Response(text="ok")
     return web.Response(status=404, text="not found")
 
@@ -256,7 +339,9 @@ if __name__ == "__main__":
     console.log(f"🏠 Local:    https://localhost:{SERVER_PORT}")
     console.log(f"🌐 Network:  https://{private_ip}:{SERVER_PORT}")
     console.log("=" * 55)
-    console.log(f"📹 Camera source: {CAMERA_SOURCE}")
+    console.log(f"📹 Camera source: {CAMERA_SOURCE}  |  {CAMERA_RESOLUTION} @ {CAMERA_FRAMERATE}fps")
+    console.log(f"🎥 Recording: {'enabled' if ENABLE_RECORDING else 'disabled'}")
+    console.log(f"📝 Command log: {'enabled' if ENABLE_COMMAND_LOG else 'disabled'}")
     console.log("📱 Use the Network URL in your Vision Pro app")
     console.log("=" * 55)
 

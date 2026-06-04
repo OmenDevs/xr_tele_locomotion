@@ -4,16 +4,18 @@
 //
 //  Created by Julio Enrique Sanchez Guajardo on 09/04/26.
 //
+
 import Foundation
+
 @Observable
 class InteractionConfig {
-    var selectedInteraction: InteractionProtocol = .joystick2D
+    var selectedInteraction: InteractionProtocol = .joystick3D
 }
 
 enum InteractionProtocol: String, CaseIterable, Identifiable {
-    case joystick2D = "Joystick 2D"
     case joystick3D = "Joystick 3D"
-    case firstInteraction = "First Interaction"
+    case gestureBased = "Astrolabium"
+    case joystick2D = "Joystick 2D"
 
     var id: Self { self }
 }

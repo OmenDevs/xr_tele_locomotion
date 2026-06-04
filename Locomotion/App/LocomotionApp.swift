@@ -13,13 +13,16 @@ struct LocomotionApp: App {
     @State private var input = InputViewModel.shared
     @State private var recording = RecordingViewModel()
     @State private var interactionConfig = InteractionConfig()
+    @State private var skeletonData = HandSkeletonData()
+    @State private var povSimulator = POVSimulatorViewModel()
 
     var body: some Scene {
         WindowGroup(id: "landing") {
             LandingView()
+                .environment(client)
                 .environment(interactionConfig)
         }
-        .windowStyle(.plain)
+        .defaultSize(width: 1000, height: 700)
 
         WindowGroup(id: "camera") {
             CameraView()
@@ -28,37 +31,47 @@ struct LocomotionApp: App {
         }
         .defaultSize(width: 1280, height: 720)
 
-        WindowGroup(id: "controls") {
-            PanelView()
-                .environment(client)
-        }
-        .defaultSize(width: 250, height: 280)
-
         ImmersiveSpace(id: "teleoperation") {
             TeleoperationView()
+                .environment(client)
                 .environment(interactionConfig)
+                .environment(skeletonData)
         }
 
         ImmersiveSpace(id: "simulation") {
             SimulationView(recording: recording)
                 .environment(interactionConfig)
+                .environment(skeletonData)
+                .environment(povSimulator)
         }
+
+        WindowGroup(id: "portal") {
+            PortalWindowView()
+                .environment(povSimulator)
+                .environment(interactionConfig)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 1280, height: 720)
 
         WindowGroup(id: "dashboard") {
             DashboardView(recording: recording)
         }
         .windowStyle(.plain)
-
-        WindowGroup(id: "log") {
-            LogView(recording: recording)
+        .defaultWindowPlacement { _, context in
+            if let mainWindow = context.windows.first {
+                return WindowPlacement(.leading(mainWindow))
+            }
+            return WindowPlacement(.none)
         }
-        .windowStyle(.plain)
 
         WindowGroup(id: "joystick") {
-            ControlPanelView()
+            ControlPanelView(client: client)
                 .environment(input)
         }
         .windowStyle(.plain)
         .defaultSize(width: 620, height: 400)
+        .defaultWindowPlacement { _, _ in
+            return WindowPlacement(.utilityPanel)
+        }
     }
 }
