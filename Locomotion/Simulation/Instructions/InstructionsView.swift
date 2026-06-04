@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AVKit
 
 struct InstructionsView: View {
     @Environment(InteractionConfig.self) private var interactionConfig
@@ -22,14 +21,10 @@ struct InstructionsView: View {
     var totalInstructions: Int { instructions.count }
     @State private var currentIndex: Int = 0
     @State private var isForward: Bool = true
-    @State private var playerCache: [String: AVPlayer] = [:]
-    @State private var looperCache: [String: AVPlayerLooper] = [:]
-    @State private var areVideosLoaded: Bool = false
     var isFirst: Bool { currentIndex == 0 }
     var isLast: Bool { currentIndex == totalInstructions - 1 }
 
     private let ornamentSize: CGSize = .init(width: 400, height: 440)
-    private let ornamentSpacing: CGFloat = 80
     private var spacerHorizontal: CGFloat = 450
     private var spacerVertical: CGFloat = 250
 
@@ -60,17 +55,11 @@ struct InstructionsView: View {
                                 Text(instructions[currentIndex].text)
                                     .fontWeight(.bold)
                                     .multilineTextAlignment(.center)
-                                    .lineLimit(4)
                                     .padding(.horizontal)
-                                if let videoName = instructions[currentIndex].video {
-                                    if areVideosLoaded, let player = playerCache[videoName] {
-                                        VideoPlayer(player: player)
-                                            .frame(height: 200)
-                                            .disabled(true)
-                                    } else {
-                                        ProgressView()
-                                            .frame(height: 200)
-                                    }
+                                if let gifName = instructions[currentIndex].video {
+                                    AnimatedGIFView(name: gifName)
+                                        .frame(maxWidth: .infinity, maxHeight: 200)
+                                        .clipped()
                                 }
                             }
                             .id(currentIndex)
@@ -99,7 +88,6 @@ struct InstructionsView: View {
             }
             Spacer(minLength: spacerVertical)
         }
-        .onAppear { preloadPlayers() }
         .onChange(of: input.velocityX) { _, _ in checkCompletion() }
         .onChange(of: input.velocityY) { _, _ in checkCompletion() }
         .onChange(of: input.angularVelocity) { _, _ in checkCompletion() }
@@ -157,21 +145,30 @@ struct InstructionsView: View {
             currentIndex = 0
         }
     }
+}
 
-    private func preloadPlayers() {
-        let videoNames = Set(instructions.compactMap { $0.video })
-        areVideosLoaded = false
-        for name in videoNames {
-            guard playerCache[name] == nil,
-                  let url = Bundle.main.url(forResource: name, withExtension: "mp4") else { continue }
-            let item = AVPlayerItem(url: url)
-            let player = AVQueuePlayer(playerItem: item)
-            let looper = AVPlayerLooper(player: player, templateItem: item)
-            playerCache[name] = player
-            looperCache[name] = looper
-            player.play()
+private struct AnimatedGIFView: UIViewRepresentable {
+    let name: String
+
+    func makeUIView(context: Context) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        imageView.image = loadGIF()
+        return imageView
+    }
+
+    func updateUIView(_ imageView: UIImageView, context: Context) { }
+
+    private func loadGIF() -> UIImage? {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "gif"),
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+        let count = CGImageSourceGetCount(source)
+        let frames = (0..<count).compactMap {
+            CGImageSourceCreateImageAtIndex(source, $0, nil).map { UIImage(cgImage: $0) }
         }
-        areVideosLoaded = true
+        return UIImage.animatedImage(with: frames, duration: Double(count) * 0.05)
     }
 }
 

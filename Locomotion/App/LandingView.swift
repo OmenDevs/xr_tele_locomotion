@@ -89,7 +89,7 @@ struct LandingView: View {
                 .buttonStyle(.plain)
             }
             Picker("Interaction", selection: $interactionConfig.selectedInteraction) {
-                ForEach(InteractionProtocol.allCases.filter { $0 != .joystick2D }) { interaction in
+                ForEach(InteractionProtocol.allCases) { interaction in
                     Text(interaction.rawValue).tag(interaction)
                 }
             }

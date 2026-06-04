@@ -71,6 +71,7 @@ librealsense/
 *.pem
 Server/recordings/
 
+*.mp4
 *.bag
 *.log
 build/
