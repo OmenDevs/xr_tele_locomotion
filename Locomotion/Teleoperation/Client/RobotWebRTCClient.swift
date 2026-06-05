@@ -1,10 +1,3 @@
-//
-//  RobotWebRTCClient.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 25/02/26
-//
-
 import LiveKitWebRTC
 
 /// A client that manages a WebRTC connection to a robot, handling video streaming and signaling.

@@ -1,10 +1,3 @@
-//
-//  SelfSignedCertDelegate.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 25/02/26.
-//
-
 import LiveKitWebRTC
 
 /// A delegate for `URLSession` that bypasses standard SSL certificate validation.

@@ -1,10 +1,3 @@
-//
-//  TeleoperationView.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 10/04/26.
-//
-
 import SwiftUI
 import RealityKit
 

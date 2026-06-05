@@ -1,6 +1,3 @@
-//
-//  HandSkeletonProvider.swift
-
 import ARKit
 
 @MainActor

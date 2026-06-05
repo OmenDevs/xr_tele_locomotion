@@ -1,10 +1,3 @@
-//
-//  GestureInputViewModelTests.swift
-//  LocomotionAppTests
-//
-//  Created by Can Dindar on 11/05/2026.
-//
-
 import Testing
 import simd
 @testable import LocomotionApp
