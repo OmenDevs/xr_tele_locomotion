@@ -1,8 +1,3 @@
-//
-//  HandSkeletonData.swift
-//  Extracting files
-//
-
 import ARKit
 
 /// Shared snapshot of the latest hand-tracking state.

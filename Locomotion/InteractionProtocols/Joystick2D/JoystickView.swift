@@ -1,10 +1,3 @@
-//
-//  JoystickView.swift
-//  Locomotion
-//
-//  Created by Bekhruzjon Hakmirzaev on 26/03/26.
-//
-
 import SwiftUI
 
 /// A single dual-axis joystick. Outputs normalized x / y in -1…+1.

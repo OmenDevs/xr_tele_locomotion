@@ -1,10 +1,3 @@
-//
-//  InteractionConfig.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 09/04/26.
-//
-
 import Foundation
 
 @Observable

@@ -1,10 +1,3 @@
-//
-//  CameraView.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 23/02/26.
-//
-
 import SwiftUI
 
 private enum ConnectionPhase {

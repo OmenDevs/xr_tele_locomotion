@@ -1,10 +1,3 @@
-//
-//  InputViewModel.swift
-//  Locomotion
-//
-//  Created by Bekhruzjon Hakmirzaev on 26/03/26.
-//
-
 import SwiftUI
 import Observation
 
