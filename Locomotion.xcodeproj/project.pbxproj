@@ -23,7 +23,7 @@
 
 /* Begin PBXFileReference section */
 		FC05A3412F9B872500B12FF7 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
-		FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocomotionAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocomotionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCF41E702F45BE9C006293B5 /* LocomotionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocomotionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -38,9 +38,9 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */ = {
+		FC4A77A62FB1178D00C5F81D /* LocomotionTest */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LocomotionAppTests;
+			path = LocomotionTest;
 			sourceTree = "<group>";
 		};
 		FCF41E722F45BE9C006293B5 /* Locomotion */ = {
@@ -86,7 +86,7 @@
 			children = (
 				FCF41E722F45BE9C006293B5 /* Locomotion */,
 				FC05A3422F9B873D00B12FF7 /* Packages */,
-				FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */,
+				FC4A77A62FB1178D00C5F81D /* LocomotionTest */,
 				FCF41E712F45BE9C006293B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				FCF41E702F45BE9C006293B5 /* LocomotionApp.app */,
-				FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */,
+				FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -103,9 +103,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FC4A77A42FB1178D00C5F81D /* LocomotionAppTests */ = {
+		FC4A77A42FB1178D00C5F81D /* LocomotionTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionAppTests" */;
+			buildConfigurationList = FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionTests" */;
 			buildPhases = (
 				FC4A77A12FB1178D00C5F81D /* Sources */,
 				FC4A77A22FB1178D00C5F81D /* Frameworks */,
@@ -117,13 +117,13 @@
 				FC4A77AA2FB1178D00C5F81D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				FC4A77A62FB1178D00C5F81D /* LocomotionAppTests */,
+				FC4A77A62FB1178D00C5F81D /* LocomotionTest */,
 			);
-			name = LocomotionAppTests;
+			name = LocomotionTests;
 			packageProductDependencies = (
 			);
 			productName = LocomotionAppTests;
-			productReference = FC4A77A52FB1178D00C5F81D /* LocomotionAppTests.xctest */;
+			productReference = FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		FCF41E6F2F45BE9C006293B5 /* Locomotion */ = {
@@ -189,7 +189,7 @@
 			projectRoot = "";
 			targets = (
 				FCF41E6F2F45BE9C006293B5 /* Locomotion */,
-				FC4A77A42FB1178D00C5F81D /* LocomotionAppTests */,
+				FC4A77A42FB1178D00C5F81D /* LocomotionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -247,10 +247,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp.LocomotionAppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion.LocomotionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -270,10 +270,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J2Y9Q88D3V;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp.LocomotionAppTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion.LocomotionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
@@ -420,7 +420,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Locomotion/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Locomotion uses the camera to stream video for robot teleoperation";
+				INFOPLIST_KEY_CFBundleDisplayName = FOXR;
+				INFOPLIST_KEY_NSCameraUsageDescription = "FOXR uses the camera to stream video for robot teleoperation";
 				INFOPLIST_KEY_NSHandsTrackingUsageDescription = "Required for hand tracking and spatial interaction";
 				INFOPLIST_KEY_NSWorldSensingUsageDescription = "Required for hand tracking and spatial interaction";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -444,7 +445,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion;
 				PRODUCT_NAME = LocomotionApp;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = xros;
@@ -474,7 +475,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Locomotion/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Locomotion uses the camera to stream video for robot teleoperation";
+				INFOPLIST_KEY_CFBundleDisplayName = FOXR;
+				INFOPLIST_KEY_NSCameraUsageDescription = "FOXR uses the camera to stream video for robot teleoperation";
 				INFOPLIST_KEY_NSHandsTrackingUsageDescription = "Required for hand tracking and spatial interaction";
 				INFOPLIST_KEY_NSWorldSensingUsageDescription = "Required for hand tracking and spatial interaction";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -498,7 +500,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Arte-Omen.LocomotionApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion;
 				PRODUCT_NAME = LocomotionApp;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = xros;
@@ -517,7 +519,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionAppTests" */ = {
+		FC4A77AB2FB1178D00C5F81D /* Build configuration list for PBXNativeTarget "LocomotionTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FC4A77AC2FB1178D00C5F81D /* Debug */,

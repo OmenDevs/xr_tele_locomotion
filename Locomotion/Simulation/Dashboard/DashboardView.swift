@@ -1,10 +1,3 @@
-//
-//  DashboardView.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 26/03/26.
-//
-
 import SwiftUI
 import Charts
 

@@ -1,6 +1,6 @@
-# Contributing to Locomotion
+# Contributing to xr_tele_locomotion
 
-A warm welcome, and thank you for thinking about contributing to Locomotion!
+A warm welcome, and thank you for thinking about contributing to xr_tele_locomotion!
 We want to make the process as easy and transparent as possible, whether you're reporting a bug, submitting a fix, proposing a new feature, or improving the documentation.
 Reading these guidelines will make things smoother for everyone involved.
 
@@ -12,11 +12,11 @@ Reading these guidelines will make things smoother for everyone involved.
 * **Clone** your fork:
 
   ```bash
-  git clone git@github.com:<your-org>/Locomotion.git
-  cd Locomotion
+  git clone git@github.com:OmenDevs/xr_tele_locomotion.git
+  cd xr_tele_locomotion
   ```
 * **Install** dependencies and verify the project builds:
-  * Open `Locomotion.xcodeproj` in Xcode and let Swift packages resolve.
+  * Open `xr_tele_locomotion.xcodeproj` in Xcode and let Swift packages resolve.
   * For the server see the [Server README](Server/README.md) for setup details.
 
 ### Prerequisites
@@ -69,7 +69,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 Before opening a Pull Request:
 
-* [ ] Add or update **unit tests** under `LocomotionAppTests/` for any new or modified functionality.
+* [ ] Add or update **unit tests** under `xr_tele_locomotionTests/` for any new or modified functionality.
 * [ ] Ensure all tests **pass** locally.
 * [ ] Verify the app builds cleanly on the visionOS simulator or device.
 * [ ] Build the app and resolve any SwiftLint warnings or errors surfaced by the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build plugin.
@@ -109,4 +109,4 @@ For security issues, contact the maintainers directly instead of filing a public
 By contributing, you agree that your contributions are licensed under the terms in [LICENSE](LICENSE). 
 For questions or issues, feel free to open an **issue** on GitHub.
 
-Thank you for helping make Locomotion better! 🚀
+Thank you for helping make xr_tele_locomotion better! 🚀

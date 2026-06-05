@@ -1,10 +1,3 @@
-//
-//  DragGestureVisualizer+Build.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 07/05/2026.
-//
-
 import RealityKit
 import UIKit
 import simd

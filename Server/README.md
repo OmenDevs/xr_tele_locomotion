@@ -1,4 +1,4 @@
-# Locomotion — Robot Camera Server 🤖
+# xr_tele_locomotion — Robot Camera Server 🤖
 
 WebRTC server that streams a RealSense D435i camera to an iOS/visionOS client, with real-time depth, color, and infrared stream switching.
 
@@ -24,7 +24,7 @@ WebRTC server that streams a RealSense D435i camera to an iOS/visionOS client, w
 
 2. Clone and build `librealsense` inside the project folder:
    ```bash
-   cd Locomotion
+   cd xr_tele_locomotion
    git clone https://github.com/realsenseai/librealsense.git
    cd librealsense
    mkdir build && cd build
@@ -48,7 +48,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ### 2. Install Python Server dependencies
 
 ```bash
-cd Locomotion/Server
+cd xr_tele_locomotion/Server
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

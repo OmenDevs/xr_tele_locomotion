@@ -1,10 +1,3 @@
-//
-//  SimulationView.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 25/03/26.
-//
-
 import SwiftUI
 import RealityKit
 import RealityKitContent

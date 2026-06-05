@@ -1,10 +1,3 @@
-//
-//  POVSimulatorViewModelTests.swift
-//  LocomotionAppTests
-//
-//  Created by Can Dindar on 10/05/2026.
-//
-
 import Testing
 @testable import LocomotionApp
 

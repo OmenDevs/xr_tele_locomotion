@@ -1,10 +1,3 @@
-//
-//  PortalWindowView.swift
-//  Locomotion
-//
-//  Created by Bekhruzjon Hakmirzaev on 11/05/26.
-//
-
 import SwiftUI
 import RealityKit
 import RealityKitContent

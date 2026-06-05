@@ -1,10 +1,3 @@
-//
-//  LandingView.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 25/03/26.
-//
-
 import SwiftUI
 
 struct LandingView: View {

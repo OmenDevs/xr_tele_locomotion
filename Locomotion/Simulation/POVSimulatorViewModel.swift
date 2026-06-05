@@ -1,10 +1,3 @@
-//
-//  POVSimulatorViewModel.swift
-//  Locomotion
-//
-//  Created by Julio Enrique Sanchez Guajardo on 27/03/26.
-//
-
 import Foundation
 
 /// Integrates normalized joystick/gesture inputs into a 2D world pose

@@ -1,10 +1,3 @@
-//
-//  RobotWebRTCClient+sendOfferToServer.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 25/02/26.
-//
-
 import LiveKitWebRTC
 
 extension RobotWebRTCClient {

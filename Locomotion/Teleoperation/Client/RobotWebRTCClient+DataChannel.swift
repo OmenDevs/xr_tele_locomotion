@@ -1,10 +1,3 @@
-//
-//  RobotWebRTCClient+DataChannel.swift
-//  Locomotion
-//
-//  Created by Can Dindar on 25/02/26.
-//
-
 import LiveKitWebRTC
 
 extension RobotWebRTCClient: LKRTCDataChannelDelegate {
