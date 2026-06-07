@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FCF41E6F2F45BE9C006293B5"
-               BuildableName = "LocomotionApp.app"
+               BuildableName = "Locomotion.app"
                BlueprintName = "Locomotion"
                ReferencedContainer = "container:Locomotion.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FCF41E6F2F45BE9C006293B5"
-            BuildableName = "LocomotionApp.app"
+            BuildableName = "Locomotion.app"
             BlueprintName = "Locomotion"
             ReferencedContainer = "container:Locomotion.xcodeproj">
          </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "FCF41E6F2F45BE9C006293B5"
-            BuildableName = "LocomotionApp.app"
+            BuildableName = "Locomotion.app"
             BlueprintName = "Locomotion"
             ReferencedContainer = "container:Locomotion.xcodeproj">
          </BuildableReference>

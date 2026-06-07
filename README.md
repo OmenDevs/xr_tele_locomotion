@@ -69,12 +69,12 @@ The server prints its local and network URLs on startup. Note the **Network URL*
 
 ### 2. Run the app
 
-1. Open `xr_tele_locomotion.xcodeproj` in Xcode and let Swift packages resolve.
+1. Open `Locomotion.xcodeproj` in Xcode and let Swift packages resolve.
 2. Build & run the app on device or in the Xcode visionOS simulator.
 3. On the landing screen:
-   - Paste the server's `/offer` URL, for example `https://192.168.1.10:8000/offer`.
    - Pick an [interaction protocol](#interaction-protocols).
-   - Tap **Start RobotControl** (or **Start Simulation** to try the offline scene to practice interaction protocols).
+   - Tap **Connect the Robot** to teleoperate, then paste the server's `/offer` URL (for example `https://192.168.1.10:8000/offer`) into the field in the camera view.
+   - Or tap **Simulator** to try the offline scene and practice the interaction protocols.
 
 The server and the client both typically need to share the same local network for the development setup.
 
@@ -88,7 +88,7 @@ Both protocols write into the same `InputViewModel` and produce the same `(veloc
 
 Hand and head tracking are powered by ARKit `HandTrackingProvider` and `WorldTrackingProvider`.
 
-For implementation detail, see the module guide in [`xr_tele_locomotion/xr_tele_locomotion.docc/InputModule.md`](xr_tele_locomotion/xr_tele_locomotion.docc/InputModule.md).
+For implementation detail, see the module guide in [`Locomotion/Locomotion.docc/InputModule.md`](Locomotion/Locomotion.docc/InputModule.md).
 
 ## Wire Protocol
 

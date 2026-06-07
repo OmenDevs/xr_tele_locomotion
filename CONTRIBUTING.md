@@ -16,7 +16,7 @@ Reading these guidelines will make things smoother for everyone involved.
   cd xr_tele_locomotion
   ```
 * **Install** dependencies and verify the project builds:
-  * Open `xr_tele_locomotion.xcodeproj` in Xcode and let Swift packages resolve.
+  * Open `Locomotion.xcodeproj` in Xcode and let Swift packages resolve.
   * For the server see the [Server README](Server/README.md) for setup details.
 
 ### Prerequisites
@@ -69,7 +69,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 Before opening a Pull Request:
 
-* [ ] Add or update **unit tests** under `xr_tele_locomotionTests/` for any new or modified functionality.
+* [ ] Add or update **unit tests** under `LocomotionTest/` for any new or modified functionality.
 * [ ] Ensure all tests **pass** locally.
 * [ ] Verify the app builds cleanly on the visionOS simulator or device.
 * [ ] Build the app and resolve any SwiftLint warnings or errors surfaced by the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build plugin.

@@ -24,7 +24,7 @@
 /* Begin PBXFileReference section */
 		FC05A3412F9B872500B12FF7 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocomotionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		FCF41E702F45BE9C006293B5 /* LocomotionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocomotionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCF41E702F45BE9C006293B5 /* Locomotion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Locomotion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -94,7 +94,7 @@
 		FCF41E712F45BE9C006293B5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FCF41E702F45BE9C006293B5 /* LocomotionApp.app */,
+				FCF41E702F45BE9C006293B5 /* Locomotion.app */,
 				FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */,
 			);
 			name = Products;
@@ -122,7 +122,7 @@
 			name = LocomotionTests;
 			packageProductDependencies = (
 			);
-			productName = LocomotionAppTests;
+			productName = LocomotionTests;
 			productReference = FC4A77A52FB1178D00C5F81D /* LocomotionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -148,7 +148,7 @@
 				FC05A3462F9B887B00B12FF7 /* RealityKitContent */,
 			);
 			productName = Locomotion;
-			productReference = FCF41E702F45BE9C006293B5 /* LocomotionApp.app */;
+			productReference = FCF41E702F45BE9C006293B5 /* Locomotion.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -259,7 +259,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 7;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocomotionApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LocomotionApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Locomotion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Locomotion";
 				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
@@ -282,7 +282,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 7;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocomotionApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LocomotionApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Locomotion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Locomotion";
 				VALIDATE_PRODUCT = YES;
 				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
@@ -446,7 +446,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion;
-				PRODUCT_NAME = LocomotionApp;
+				PRODUCT_NAME = Locomotion;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = xros;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -501,7 +501,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.OmenDevs.Locomotion;
-				PRODUCT_NAME = LocomotionApp;
+				PRODUCT_NAME = Locomotion;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = xros;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
