@@ -40,6 +40,7 @@ jobs:
             -destination 'generic/platform=visionOS Simulator' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
             | xcbeautify
 
   test:
@@ -74,4 +75,5 @@ jobs:
             -destination 'platform=visionOS Simulator,name=Apple Vision Pro' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
             | xcbeautify
