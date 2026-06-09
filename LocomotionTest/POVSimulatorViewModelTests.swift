@@ -1,5 +1,5 @@
 import Testing
-@testable import LocomotionApp
+@testable import Locomotion
 
 struct POVSimulatorViewModelTests {
 
