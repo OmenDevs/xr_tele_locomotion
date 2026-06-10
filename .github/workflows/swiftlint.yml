@@ -1,0 +1,28 @@
+name: SwiftLint
+
+on:
+  pull_request:
+    branches: [Development]
+    paths:
+      - "**/*.swift"
+      - ".swiftlint.yml"
+
+concurrency:
+  group: swiftlint-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: SwiftLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --strict
+        env:
+          DIFF_BASE: ${{ github.base_ref }}

@@ -1,5 +1,5 @@
 import Testing
-@testable import LocomotionApp
+@testable import Locomotion
 
 struct POVSimulatorViewModelTests {
 
@@ -74,13 +74,14 @@ struct POVSimulatorViewModelTests {
     @Test func angularInputAdvancesHeading() {
         let sim = POVSimulatorViewModel()
 
+        let deltaTime = 0.5
         sim.updateScenario(normalizedVelocityX: 0,
                            normalizedVelocityY: 0,
                            normalizedAngularVelocity: 1,
-                           deltaTime: 0.5)
+                           deltaTime: deltaTime)
 
         // Heading should increase by angular speed × delta time.
-        #expect(abs(sim.scenarioHeading - 0.25) < tolerance)
+        #expect(abs(sim.scenarioHeading - sim.maxAngularSpeed * deltaTime) < tolerance)
 
         // No movement input, so position stays the same.
         #expect(sim.scenarioX == 0.0)

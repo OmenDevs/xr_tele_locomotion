@@ -78,7 +78,9 @@ cp .env.example .env
 | `CAMERA_SOURCE` | `0` | Camera device index |
 | `CAMERA_FRAMERATE` | `30` | Stream frame rate |
 | `CAMERA_RESOLUTION` | `1280x720` | Stream resolution |
-| `ENABLE_RECORDING` | `false` | Set to `true` to save sessions to `recordings/` |
+| `ENABLE_RECORDING` | `false` | Set to `true` to save session `.mp4` recordings to `recordings/` |
+| `ENABLE_COMMAND_LOG` | `true` | Set to `false` to stop saving the per-session velocity-command `.txt` log to `recordings/` |
+| `CYCLONEDDS_NETWORK_INTERFACE` | `wlan0` | Network interface CycloneDDS binds to. Use `en0` for macOS local dev |
 
 ---
 
