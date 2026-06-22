@@ -1,6 +1,6 @@
 import Testing
 import simd
-@testable import LocomotionApp
+@testable import Locomotion
 
 @MainActor
 struct GestureInputViewModelTests {

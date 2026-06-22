@@ -1,0 +1,103 @@
+name: Deploy to TestFlight
+
+on:
+  push:
+    tags:
+      - "v*.*.*"   # triggers on tags like v1.0.0, v1.2.3
+  workflow_dispatch:   # adds a manual "Run workflow" button in the Actions tab
+
+jobs:
+  deploy:
+    name: Archive + TestFlight
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.4'
+
+      - name: Trust Swift package plugins (SwiftLint)
+        run: defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
+
+      - name: Install signing certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # Decode the certificate
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+
+          # Create a temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Import the certificate
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+      - name: Prepare App Store Connect API key
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: |
+          # altool searches ./private_keys; xcodebuild reads it via -authenticationKeyPath
+          mkdir -p ./private_keys
+          echo -n "$APPSTORE_PRIVATE_KEY" | base64 --decode \
+            -o "./private_keys/AuthKey_$APPSTORE_KEY_ID.p8"
+
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project Locomotion.xcodeproj \
+            -scheme Locomotion
+
+      - name: Archive
+        run: |
+          xcodebuild clean archive \
+            -project Locomotion.xcodeproj \
+            -scheme Locomotion \
+            -sdk xros \
+            -destination 'generic/platform=visionOS' \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/Locomotion.xcarchive
+
+      - name: Export IPA
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/Locomotion.xcarchive \
+            -exportOptionsPlist ci/ExportOptions.plist \
+            -exportPath $RUNNER_TEMP/build \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$PWD/private_keys/AuthKey_$APPSTORE_KEY_ID.p8" \
+            -authenticationKeyID "$APPSTORE_KEY_ID" \
+            -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID"
+
+      - name: Upload to TestFlight
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app \
+            -f $RUNNER_TEMP/build/Locomotion.ipa \
+            -t visionos \
+            --apiKey $APPSTORE_KEY_ID \
+            --apiIssuer $APPSTORE_ISSUER_ID
+
+      - name: Clean up
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true
+          rm -rf ./private_keys
