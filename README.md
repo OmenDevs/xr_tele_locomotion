@@ -5,6 +5,8 @@
 
 **Teleoperate a humanoid robot from Apple Vision Pro using hand gestures and WebRTC.**
 
+https://github.com/user-attachments/assets/cd809d3e-8c73-481a-a952-15deabbc9220
+
 [![Platform](https://img.shields.io/badge/platform-visionOS-blue)](https://developer.apple.com/visionos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)](https://swift.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
