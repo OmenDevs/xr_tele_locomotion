@@ -5,8 +5,6 @@
 
 **Teleoperate a humanoid robot from Apple Vision Pro using hand gestures and WebRTC.**
 
-https://github.com/user-attachments/assets/cd809d3e-8c73-481a-a952-15deabbc9220
-
 [![Platform](https://img.shields.io/badge/platform-visionOS-blue)](https://developer.apple.com/visionos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)](https://swift.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
@@ -17,6 +15,8 @@ https://github.com/user-attachments/assets/cd809d3e-8c73-481a-a952-15deabbc9220
 > An open-source telepresence project using Apple Vision Pro that delivers first-person robot embodiment, allowing users to see through the robot’s camera while manually controlling its locomotion.
 
 xr_tele_locomotion pairs a **visionOS app** with a **Python WebRTC server** so an operator wearing a Vision Pro can see what the robot sees and control the locomotion in real time. The visionOS app renders the robot's camera feed, captures operator intent through custom hand gestures. A built-in simulation mode runs the same input stack against a virtual scene, so users can practice the gestures.
+
+https://github.com/user-attachments/assets/cd809d3e-8c73-481a-a952-15deabbc9220
 
 ## Features
 
