@@ -16,6 +16,8 @@
 
 xr_tele_locomotion pairs a **visionOS app** with a **Python WebRTC server** so an operator wearing a Vision Pro can see what the robot sees and control the locomotion in real time. The visionOS app renders the robot's camera feed, captures operator intent through custom hand gestures. A built-in simulation mode runs the same input stack against a virtual scene, so users can practice the gestures.
 
+https://github.com/user-attachments/assets/cd809d3e-8c73-481a-a952-15deabbc9220
+
 ## Features
 
 - **WebRTC peer-to-peer link** — sub-second video from the robot, sub-second commands back. STUN-assisted ICE for NAT traversal during development.
